@@ -1,0 +1,338 @@
+{
+  "tabPane": [
+    {
+      "title": "SmartDashboard",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "SmartDashboard/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "3,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "PID Control",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Toggle Switch",
+                  "_source0": "network_table:///SmartDashboard/Mode",
+                  "_title": "Position/Velocity Control",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/P Gain",
+                  "_title": "P Gain",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/I Gain",
+                  "_title": "I Gain",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/D Gain",
+                  "_title": "D Gain",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/I Zone",
+                  "_title": "I Zone",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feed Forward",
+                  "_title": "Feed Forward",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Min Output",
+                  "_title": "Min Output",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Max Output",
+                  "_title": "Max Output",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Min Velocity",
+                  "_title": "Min Velocity",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Max Velocity",
+                  "_title": "Max Velocity",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Max Acceleration",
+                  "_title": "Max Acceleration",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Allowed Closed Loop Error",
+                  "_title": "Allowed Closed Loop Error",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/IAccumMax",
+                  "_title": "SmartDashboard/IAccumMax",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
+            }
+          },
+          "0,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Process Variable",
+              "_source1": "network_table:///SmartDashboard/SetPoint",
+              "_title": "Process Variable",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 100.0,
+              "Y-axis/Lower bound": -350.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Process Variable": true,
+              "Visible data/SmartDashboard/SetPoint": true
+            }
+          },
+          "0,3": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Output",
+              "_title": "Output",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Output": true
+            }
+          },
+          "5,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Set Position",
+              "_title": "Set Position",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,0": {
+            "size": [
+              4,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/Set Velocity",
+              "_title": "Set Velocity",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Slider Settings/Min": -5.0,
+              "Slider Settings/Max": 5.0,
+              "Slider Settings/Block increment": 1.0,
+              "Visuals/Display value": true
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/conversion_factor",
+              "_title": "conversion_factor",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/POSITION",
+              "_title": "POSITION",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/VELOCITY",
+              "_title": "VELOCITY",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Set Velocity",
+              "_title": "Set Velocity",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,1": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Current",
+              "_title": "Current",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data/SmartDashboard/Current": true
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/IAccum",
+              "_title": "SmartDashboard/IAccum",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/RioEncoder",
+              "_title": "SmartDashboard/RioEncoder",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 10.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul"
+            }
+          },
+          "8,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/AbsEncoder",
+              "_title": "SmartDashboard/AbsEncoder",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 5.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LiveWindow",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": 134.0,
+    "y": 0.0,
+    "width": 1793.0,
+    "height": 1047.0
+  }
+}
