@@ -9,20 +9,16 @@ import constants
 from subsystems.drivetrain import Drivetrain
 from subsystems.vision import Vision
 from subsystems.led import Led
-from subsystems.bucket import Bucket
 
 from misc.axis_button import AxisButton
 from commands.drive_by_joystick import DriveByJoystick
 from commands.drive_velocity_stick import DriveByJoystickVelocity
 from commands.led_loop import LedLoop
-from commands.bucket_move import BucketMove
 
 
-from autonomous.charge_station_balance import ChargeStationBalance
-from autonomous.drive_wait import DriveWait
-from autonomous.drive_move import DriveMove
-from autonomous.drive_and_balance import DriveAndBalance
-from autonomous.drive_climber import DriveClimber
+# from autonomous.drive_wait import DriveWait
+# from autonomous.drive_move import DriveMove
+
 
 class RobotContainer:
     """
@@ -40,7 +36,6 @@ class RobotContainer:
         self.drive = Drivetrain()
         self.vision = Vision()
         self.led = Led()
-        self.bucket = Bucket()
 
         self.game_piece_mode = 'cube'
 
@@ -50,12 +45,12 @@ class RobotContainer:
 
         # Set up default drive command
       #  if wpilib.RobotBase.isSimulation():
-        if False:
+      #  if False:
 
-            self.drive.setDefaultCommand(DriveByJoystick(self, self.drive,lambda: -self.driver_controller.getRawAxis(1),
-                    lambda: self.driver_controller.getRawAxis(4),))
-        else:
-            self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
+        #    self.drive.setDefaultCommand(DriveByJoystick(self, self.drive,lambda: -self.driver_controller.getRawAxis(1),
+         #   lambda: self.driver_controller.getRawAxis(4),))
+    #    else:
+        self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
 
         self.led.setDefaultCommand(LedLoop(container=self))
 
@@ -111,11 +106,9 @@ class RobotContainer:
 
         # All untested still
         # bind commands to driver
-        self.buttonY.whileHeld(ChargeStationBalance(self, self.drive, velocity=10, tolerance=10))
+
 
         # bind commands to co-pilot
-        self.co_buttonA.whenPressed(BucketMove(self, setpoint=100, bucket=self.bucket, wait_to_finish=True ))
-        self.co_buttonB.whenPressed(BucketMove(self, setpoint=0, bucket=self.bucket, wait_to_finish=True ))
 
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))
         # self.co_buttonBack.whenPressed(SafeCarry(self))
@@ -132,16 +125,14 @@ class RobotContainer:
     def initialize_dashboard(self):
 
         # lots of putdatas for testing on the dash
-        wpilib.SmartDashboard.putData(key='DriveMove', data=DriveMove(container=self, drive=self.drive, setpoint=1).withTimeout(5))
-        wpilib.SmartDashboard.putData(key='DriveAndBalance',data=DriveAndBalance(container=self).withTimeout(10))
+#        wpilib.SmartDashboard.putData(key='DriveMove', data=DriveMove(container=self, drive=self.drive, setpoint=1).withTimeout(5))
+
 
         # populate autonomous routines
-        self.autonomous_chooser = wpilib.SendableChooser()
-        wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
-        self.autonomous_chooser.addOption('do nothing', DriveWait(self, duration=1))
-        self.autonomous_chooser.addOption('drive 2m', DriveMove(self, self.drive, setpoint=2).withTimeout(4))
-        self.autonomous_chooser.addOption('drive and balance', DriveAndBalance(self).withTimeout(15))
-        self.autonomous_chooser.addOption('station climb 2m', DriveClimber(self, self.drive, setpoint_distance=1.9).withTimeout(8))
+        # self.autonomous_chooser = wpilib.SendableChooser()
+        # wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
+        # self.autonomous_chooser.addOption('do nothing', DriveWait(self, duration=1))
+        # self.autonomous_chooser.addOption('drive 2m', DriveMove(self, self.drive, setpoint=2).withTimeout(4))
 
         self.led_modes = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('LED', self.led_modes)
