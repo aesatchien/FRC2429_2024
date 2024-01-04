@@ -16,6 +16,15 @@ class LedToggle(commands2.CommandBase):
             'cone',
             'cube',
         ]
+        self.indicators = [
+            self.container.led.indicator.PICKUP_COMPLETE,
+            self.container.led.indicator.VISION_TARGET_FAILURE,
+            self.container.led.indicator.VISION_TARGET_SUCCESS,
+            self.container.led.indicator.AUTO_STRAFE_COMPLETE,
+            self.container.led.indicator.RAINBOW,
+            self.container.led.indicator.RSL,
+            self.container.led.indicator.NONE,
+        ]
 
     def runsWhenDisabled(self) -> bool:
         return True
@@ -28,13 +37,18 @@ class LedToggle(commands2.CommandBase):
 
     def execute(self) -> None:
         self.counter += 1
-        active_mode = self.modes[self.counter % len(self.modes)]
+        active_mode = self.indicators[self.counter % len(self.indicators)]
+        #active_mode = self.modes[self.counter % len(self.modes)]
         self.container.game_piece_mode = active_mode
 
-        if active_mode == 'cone':
-            self.container.led.set_mode(Led.Mode.CONE)
-        elif active_mode == 'cube':
-            self.container.led.set_mode(Led.Mode.CUBE)
+        # if active_mode == 'cone':
+        #   self.container.led.set_mode(Led.Mode.CONE)
+        # elif active_mode == 'cube':
+        #   self.container.led.set_mode(Led.Mode.CUBE)
+
+
+        self.container.led.set_indicator(active_mode)
+
 
     def isFinished(self) -> bool:
         return True

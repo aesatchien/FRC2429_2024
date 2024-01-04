@@ -65,60 +65,6 @@ k_drive_accumulator_max = 0.5  # limit on forward I - negative has no limit :(  
 # --------------  SCORING  SUBSYSTEMS ---------------
 k_deriv_tolerance = 5  # 5 degrees per second. (Experimental value; not determined yet.  Will need to actually test).
 
-
-# --------------  TURRET  ---------------
-k_turret_motor_port = 9  # sparkmax with a NEO550 - full speed is 11k
-k_turret_abs_encoder_port = 5  # analog absolute encoder on turret
-k_turret_abs_encoder_dio = 9  # if it is a PWM, use this port
-k_turret_encoder_conversion_factor = 360 / 462.2  # Armabot has 462:1 gear ratio?  Circle has 360 degrees-->  0.779°/rot
-# TODO: verify turret velocity PID values, burn to slot 0  - tested on 2023 0226
-k_PID_dict_vel_turret = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.4e-4, 'kArbFF':0,
-                         'kMaxOutput': 0.8, 'kMinOutput': -0.8, 'SM_MaxVel':5500,
-                         'SM_MaxAccel':3800}
-
-# --------------  ELEVATOR  ---------------
-k_elevator_motor_port = 10  # sparkmax with a NEO
-k_elevator_timeoflight = 13  # time of flight CAN ID
-# 4.11mm/rev - comes from 25x reduction motor to shaft, one sprocket rot is 4.05in, so 0.162in / rot * 25.4 mm/in
-k_elevator_encoder_conversion_factor = 4.05 / 16  * 25.4   # 6.43
-# TODO: verify elevator velocity PID values  - # 25000V and 35000A worked well in practice  20230121
-# Updated: 16x reduction 04082023 with kFF 3.1e-5, maxVel 60000, maxAccel 60000
-k_PID_dict_vel_elevator = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 2e-4, 'kFF': 3.1e-5, 'kArbFF':0,
-                         'kMaxOutput': 0.9, 'kMinOutput': -0.9, 'SM_MaxVel':60000,
-                         'SM_MaxAccel':60000}
-
-# --------------  ARM  ---------------
-k_arm_motor_port = 11  # sparkmax with a NEO550 - full speed is 11k
-# 60x reduction motor to shaft, one drum rot is 1.9*pi inch, then x 25.4 so we are measuring in mm
-k_arm_encoder_conversion_factor = (1.9 * 3.14 / 45) * 25.4  # 3.367 mm per revolution
-# TODO: verify arm velocity PID values
-# ToDo: update the kff for the new gear ratio
-k_PID_dict_vel_arm = {'kP': 1e-5, 'kI': 1e-5, 'kD': 0, 'kIz': 1e-5, 'kFF': 3.5e-5, 'kArbFF':0,
-                         'kMaxOutput': 0.95, 'kMinOutput': -0.95, 'SM_MaxVel':70000,
-                      'SM_MaxAccel':70000}
-k_PID_dict_vel_arm_retract = {'kP': 1e-5, 'kI': 1e-5, 'kD': 0, 'kIz': 1e-5, 'kFF': 3.5e-5, 'kArbFF':0,
-                         'kMaxOutput': 0.95, 'kMinOutput': -0.95, 'SM_MaxVel':70000,
-                      'SM_MaxAccel':70000}
-
-# --------------  WRIST  ---------------
-k_wrist_motor_port = 12  # sparkmax with a NEO
-# 9*9*7 = 567x reduction motor to shaft, so in degrees it's 360./567.  Half a second at 6k rpm
-# 7 * 7 * 5 = 245x reduction  1.47 degrees per rotation
-k_wrist_encoder_conversion_factor = 360. / 245  # 0.635 degrees per revolution
-# TODO: verify wrist velocity PID values
-k_PID_dict_vel_wrist = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.01e-4, 'kArbFF':0,
-                         'kMaxOutput': 0.55, 'kMinOutput': -0.55, 'SM_MaxVel':6000,
-                        'SM_MaxAccel':4500}
-
-# TODO: determine which systems need a limit switch
-k_wrist_limit_switch = 1  # DIO for the wrist limit switch
-k_arm_limit_switch = 3
-
-# --------------  PNEUMATICS  ---------------
-k_manipulator_open_port = 0  # Double solenoid port 1 of two
-k_manipulator_closed_port = 1  #
-k_manipulator_timeofflight = 14
-
 # ------------------- LED -------------------
 k_led_pwm_port = 3
 k_led_count = 36
