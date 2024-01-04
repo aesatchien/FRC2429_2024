@@ -12,6 +12,8 @@ FRC robot code for the 2024 robot using robotpy-commands-v2.
 * tests - simple one-file robots for testing a system using wpilib.TimedRobot
   * distance sensors, drivetrain, elevator/turret/wrist/arm, pneumatics
 * other_robots  - code for practie bots, characterization, etc
+   * swerve_base - stripped-down swerve base
+   * wcd_bot - stripped-down WCD base
 
 
 ---
@@ -24,7 +26,7 @@ Clone the git and install on your own machine:
 Use "git clone https://github.com/aesatchien/FRC2429_2024.git" from the git bash (or any git aware) shell to download.  If you don't have git and you just want to look at the code, you can download the repository from the links on the right.
 
 Notes on how to install python and the necessary accessories (particularly the robotpy libraries) that will get all of this running:
-https://docs.google.com/document/d/1oS4aMhn9Rf_kpubbQ_JGEtOcRR36LoU-QbJQERZtyIU/edit#heading=h.665ussze99ev but may be a bit cryptic.  I'll help if you need it.
+[2023 Python Installation](https://docs.google.com/document/d/1_vxWjIw8nM5AjNjTPKxya4tTktGJlWZwqxxyE0r1mTI/edit?usp=sharing) but may be a bit cryptic.  I'll help if you need it.
 basically, in your python environment you'll need a `pip install robotpy[all]` and if you are working on anything else several more packages.
 
 Once everything is installed, you need to go to the folder with robot.py.  From there, commands like
