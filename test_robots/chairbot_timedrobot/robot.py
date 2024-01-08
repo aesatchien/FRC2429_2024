@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# chairbot_timedrobot - using the simple wpilib.TimedRobot
+# this is a demonstration robot on how to use the basics of wpilib
+# after this, upgrade to a TimedCommandRobot template and move all code to appropriate subsystems
 
 import wpilib
 from wpimath.filter import SlewRateLimiter
@@ -38,24 +41,32 @@ class MyRobot(wpilib.TimedRobot):
         # class variables
         self.counter = 0
         self.thrust = 0
-        self.previous_thrust = 0
-        self.max_thrust_change = 0.5
-        self.max_twist_change = 0.5
+        self.previous_thrust = 0  # used if we are limiting acceleration by limiting a change on the input
         self.twist = 0
+        # set limits on how fast we can go in thrust (forward/reverse) and twist (turning)
         self.thrust_limit = .25
         self.twist_limit = .33
         self.deadband = 0.1
-        self.slew_rate_limiter = SlewRateLimiter(self.max_thrust_change, -self.max_thrust_change)
+        # rate limit calculators
+        self.limit_type = "slewrate"
+        if self.limit_type == "slewrate":  # if we use wpilib's slew rate limiter
+            self.max_thrust_change = 0.5  # slew rate limiters take units of 100's of percent per second (weird)
+        else:  # if we calculate things ourselves by calculating the delta
+            self.max_thrust_change = 0.04  # allowed change in thrust per robot cycle, in terms of power output
+        self.max_twist_change = 0.5  # only demonstrating slewratelimiter on twist
+        self.thrust_slew_rate_limiter = SlewRateLimiter(self.max_thrust_change, -self.max_thrust_change)
         self.twist_slew_rate_limiter = SlewRateLimiter(self.max_thrust_change, -self.max_thrust_change)
+
         # control mode takes values remote or onboard
         self.control_mode = 'remote'
         wpilib.SmartDashboard.putString('control_mode', self.control_mode)
         wpilib.SmartDashboard.putNumber('thrust_limit', self.thrust_limit)
         wpilib.SmartDashboard.putNumber('twist_limit', self.twist_limit)
 
-        # networktables section
+        # networktables section - using the NT4 version from 2023+
         self.inst = ntcore.NetworkTableInstance.getDefault()
         self.table = self.inst.getTable("datatable")
+        # publishers - call the set() function to write them
         self.thrust_limit_pub = self.table.getDoubleTopic("thrust_limit").publish()
         self.max_thrust_change_pub = self.table.getDoubleTopic("max_thrust_change").publish()
         self.twist_limit_pub = self.table.getDoubleTopic("twist_limit").publish()
@@ -64,53 +75,57 @@ class MyRobot(wpilib.TimedRobot):
         self.max_thrust_change_pub.set(self.max_thrust_change)
         self.twist_limit_pub.set(self.twist_limit)
         self.control_mode_pub.set(self.control_mode)
+        # subscribers - call the get() function to read them
         self.thrust_limit_sub = self.table.getDoubleTopic("thrust_limit").subscribe(self.thrust_limit)
         self.max_thrust_change_sub = self.table.getDoubleTopic("max_thrust_change").subscribe(self.max_thrust_change)
         self.twist_limit_sub = self.table.getDoubleTopic("twist_limit").subscribe(self.twist_limit)
         self.control_mode_sub = self.table.getStringTopic("control_mode").subscribe(self.control_mode)
 
     def teleopPeriodic(self) -> None:
+        # teleop is quite simple for this robot - just set the motors
         self.drive_l1.set(self.thrust + self.twist)
         self.drive_r1.set(self.thrust - self.twist)
 
     def robotPeriodic(self) -> None:
+        # here we do all the checking of the robot state - read inputs, calculate outputs
         self.counter += 1
-
-        if self.control_mode == 'remote':
+        # calculate outputs based on if we care controlled by driver station joystick or human in chairbot
+        if self.control_mode == 'remote':  # control from driver station joystick
             self.thrust = self.joystick.getRawAxis(1) * -1 * self.thrust_limit
             self.twist = self.joystick.getRawAxis(4) * self.twist_limit
-        elif self.control_mode == 'onboard':
-            # direction = 1 if not self.left_button.get() else direction = -1 if not self.right_button.get() else direction = 0
+        elif self.control_mode == 'onboard':  # control from the human sitting on chairbot
+            # determine if we are moving forward, backward, or in neutral based on 3-position switch
             direction = 0
             if not self.forward_switch.get():
                 direction = 1
             elif not self.back_switch.get():
                 direction = -1
-            # self.thrust = self.analog_pedal.getVoltage()
+            # get thrust from the analog pedal.  It rests at 0.8V and goes to 3.2V when floored
+            # to map this from 0 to 1, subtract 0.8 and divide by (3.2-0.8)
             self.thrust = direction * max(0, self.analog_pedal.getVoltage() - 0.8) / 2.4  # math to get thrust value between 0 and 1 from pedal
             self.thrust *= self.thrust_limit
+            # analog encoder is at 0.61 at neutral position (not turning) and travels .225 above and below that
+            # so to scale from -1 to 1, subtract the central value and divide by .225
             self.twist = (self.steering_encoder.get() - 0.608) / 0.225
             self.twist *= self.twist_limit
             self.twist = 0 if math.fabs(self.twist) < self.deadband else self.twist
             # self.thrust = 0 if math.fabs(self.thrust) < self.deadband else self.thrust
-
         else:  # end of control mode
-            pass
+            pass  # no other control modes defined
 
-        #enforce acceleration limit
-        limit_type = "slewrate"
-        if limit_type == "slewrate":
-            self.thrust = self.slew_rate_limiter.calculate(self.thrust)
+        # enforce acceleration limit
+        if self.limit_type == "slewrate":  # let the wpilib rate limiters do all the work
+            self.thrust = self.thrust_slew_rate_limiter.calculate(self.thrust)
             self.twist = self.twist_slew_rate_limiter.calculate(self.twist)
-        else:
+        else:  # we calculate the changes manually and limit them to a pre-determined delta
             thrust_change = self.thrust - self.previous_thrust
-            #print(f'{thrust_change}')
             if math.fabs(thrust_change) > self.max_thrust_change:
                 self.thrust = self.previous_thrust + self.max_thrust_change * math.copysign(1, thrust_change)
                 print(f'limiting thrust to {self.thrust}')
         self.previous_thrust = self.thrust
 
         if self.counter % 10 == 0:
+            # read networktables for updates to our mode/limit values
             nt_control_mode = self.control_mode_sub.get()
             if nt_control_mode != self.control_mode:
                 if nt_control_mode in ['remote', 'onboard']:
@@ -131,12 +146,12 @@ class MyRobot(wpilib.TimedRobot):
 
             nt_max_thrust_change = self.max_thrust_change_sub.get()
             if nt_max_thrust_change != self.max_thrust_change:
-                if 0.1 <= nt_max_thrust_change <= 10:
+                if 0.02 <= nt_max_thrust_change <= 10:
                     self.max_thrust_change = nt_max_thrust_change
                     print(f'setting max_thrust_change to {self.max_thrust_change}')
                     wpilib.SmartDashboard.putNumber('max_thrust_change', self.max_thrust_change)
-                    self.slew_rate_limiter = SlewRateLimiter((self.max_thrust_change),
-                                                             (-self.max_thrust_change))
+                    # reset the slew rate limiter with the new value (if we are in this limit mode)
+                    self.thrust_slew_rate_limiter = SlewRateLimiter(self.max_thrust_change, -self.max_thrust_change)
                 else:
                     self.max_thrust_change_pub.set(self.max_thrust_change)
 
@@ -149,6 +164,7 @@ class MyRobot(wpilib.TimedRobot):
                 else:
                     self.twist_limit_pub.set(self.twist_limit)
 
+            # update the SmartDashboard
             wpilib.SmartDashboard.putNumber('twist', self.twist)
             wpilib.SmartDashboard.putNumber('thrust', self.thrust)
             wpilib.SmartDashboard.putNumber('analog_pedal', self.analog_pedal.getVoltage())
@@ -156,8 +172,6 @@ class MyRobot(wpilib.TimedRobot):
             wpilib.SmartDashboard.putBoolean('back_switch', self.back_switch.get())
             wpilib.SmartDashboard.putNumber('steering_encoder_abs', self.steering_encoder.getAbsolutePosition())
             wpilib.SmartDashboard.putNumber('steering_encoder', self.steering_encoder.get())
-
-
 
 
 if __name__ == "__main__":
