@@ -16,3 +16,7 @@ k_control_mode = 'remote'
 
 # slew rate limiters take units of 100's of percent per second (weird)
 k_thrust_slew_limit = 0.5  # 0.5 means 50 percent per second
+
+# led configuration
+k_led_count = 36
+k_led_pwm_port = 3
