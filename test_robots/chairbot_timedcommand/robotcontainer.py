@@ -7,9 +7,11 @@ from commands2.button import JoystickButton, POVButton
 import constants  # all of the constants except for swerve
 
 from subsystems.drivetrain import Drivetrain
+from subsystems.led import Led
 from commands.move_robot import MoveRobot
 from commands.auto_move_forward import AutoMoveForward
-
+from commands.led_toggle import LedToggle
+from commands.led_loop import LedLoop
 
 class RobotContainer:
     """
@@ -25,10 +27,13 @@ class RobotContainer:
 
         # The robot's subsystems
         self.drive = Drivetrain(container=self)
+        self.led = Led()
         self.drive.setDefaultCommand(MoveRobot(container=self, drive=self.drive))
         self.joystick = wpilib.Joystick(0)
         self.buttonA = JoystickButton(self.joystick, 1)
         self.buttonA.whenPressed(AutoMoveForward(container=self, drive=self.drive, joystick=self.joystick))
+        self.buttonB = JoystickButton(self.joystick, 4)
+        self.buttonB.whenPressed(LedToggle(container=self))
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
