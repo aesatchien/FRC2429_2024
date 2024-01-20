@@ -27,13 +27,24 @@ class DriveConstants:
     # Front left is X+Y+, Front right is + -, Rear left is - +, Rear right is - -
     # this should be left as the convention, so match the above.  Then take care of turning issues with the
     # INVERSION OF THE TURN OR DRIVE MOTORS
+    orientation_standard = [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # this fails: TODO: MAKE SURE ANGLE ENCODERS ARE CCW +
+    orientation_2023 = [(-1, 1), (-1, -1), (1, 1), (1, -1)]  # this drives correctly but Y is swapped in odometry
+    orientation_test = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+    orient = orientation_2023
 
     kModulePositions = [
-        Translation2d(-kWheelBase / 2, kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
-        Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
-        Translation2d(kWheelBase / 2, kTrackWidth / 2),
-        Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+        Translation2d(orient[0][0]*kWheelBase / 2, orient[0][1]*kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
+        Translation2d(orient[1][0]*kWheelBase / 2, orient[1][1]*kTrackWidth / 2),
+        Translation2d(orient[2][0]*kWheelBase / 2, orient[2][1]*kTrackWidth / 2),
+        Translation2d(orient[3][0]*kWheelBase / 2, orient[3][1]*kTrackWidth / 2),
     ]
+
+    # kModulePositions = [
+    #     Translation2d(-kWheelBase / 2, kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
+    #     Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
+    #     Translation2d(kWheelBase / 2, kTrackWidth / 2),
+    #     Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+    # ]
     kDriveKinematics = SwerveDrive4Kinematics(*kModulePositions)
 
     kGyroReversed = True

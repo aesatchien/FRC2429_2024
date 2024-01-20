@@ -51,6 +51,7 @@ class Led(commands2.SubsystemBase):
 
     def set_indicator(self, indicator) -> None:
         self.indicator = indicator
+        print(f'setting indicator to {indicator}')
 
     def set_indicator_with_timeout(self, indicator: Indicator, timeout: float) -> commands2.StartEndCommand:
         return commands2.StartEndCommand(

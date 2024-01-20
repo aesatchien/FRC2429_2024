@@ -45,10 +45,7 @@ class LedToggle(commands2.CommandBase):
         #   self.container.led.set_mode(Led.Mode.CONE)
         # elif active_mode == 'cube':
         #   self.container.led.set_mode(Led.Mode.CUBE)
-
-
         self.container.led.set_indicator(active_mode)
-
 
     def isFinished(self) -> bool:
         return True

@@ -311,7 +311,7 @@ def four_motor_swerve_drivetrain(
     )
 
     Vx *= 0.25
-    Vy *= -0.25  # I cheated on this to swap left and right.  Where is the right place to do this?
+    Vy *= -0.25  # -----  TODO: I cheated on this to swap left and right.  Where is the right place to do this?  ------
     Vw *= 0.25
 
     wpilib.SmartDashboard.putNumberArray('sim_chassis', [Vx, Vy, Vw])

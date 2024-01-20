@@ -96,6 +96,9 @@ class Swerve (SubsystemBase):
             pose = self.get_pose()  # self.odometry.getPose()
             if wpilib.RobotBase.isReal():
                 wpilib.SmartDashboard.putNumberArray('drive_pose', [pose.X(), pose.Y(), pose.rotation().degrees()])
+                wpilib.SmartDashboard.putNumberArray('drive_x', pose.X())
+                wpilib.SmartDashboard.putNumberArray('drive_y', pose.Y())
+                wpilib.SmartDashboard.putNumberArray('drive_theta', pose.rotation().degrees())
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.navx.getYaw())
 
