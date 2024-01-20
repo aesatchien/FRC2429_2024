@@ -64,9 +64,9 @@ class Drivetrain(SubsystemBase):
 
 
         # add two dummy PWMs so we can track the SparkMax in the sim (should be updated in sim periodic)
-        if wpilib.RobotBase.isSimulation():
-            self.dummy_motor_left = PWMSparkMax(1)
-            self.dummy_motor_right = PWMSparkMax(3)
+        # if wpilib.RobotBase.isSimulation():
+        #     self.dummy_motor_left = PWMSparkMax(1)
+        #     self.dummy_motor_right = PWMSparkMax(3)
 
     # ----------------- DRIVE METHODS -----------------------
 

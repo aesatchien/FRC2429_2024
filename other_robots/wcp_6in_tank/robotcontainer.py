@@ -9,11 +9,15 @@ import constants
 from subsystems.drivetrain import Drivetrain
 from subsystems.vision import Vision
 from subsystems.led import Led
+from subsystems.shooter import Shooter
 
 from misc.axis_button import AxisButton
 from commands.drive_by_joystick import DriveByJoystick
 from commands.drive_velocity_stick import DriveByJoystickVelocity
 from commands.led_loop import LedLoop
+from commands.led_toggle import LedToggle
+from commands.shooter_toggle import ShooterToggle
+
 
 
 # from autonomous.drive_wait import DriveWait
@@ -36,12 +40,13 @@ class RobotContainer:
         self.drive = Drivetrain()
         self.vision = Vision()
         self.led = Led()
+        self.shooter = Shooter()
 
         self.game_piece_mode = 'cube'
 
         self.configureButtonBindings()
 
-        self.initialize_dashboard()
+        # self.initialize_dashboard()
 
         # Set up default drive command
       #  if wpilib.RobotBase.isSimulation():
@@ -104,25 +109,34 @@ class RobotContainer:
             self.co_buttonRightAxis = AxisButton(self.co_driver_controller, 3)
 
 
+        else:
+            self.co_driver_controller = None
+
         # All untested still
         # bind commands to driver
 
+        #bind shooter
+        self.buttonA.whenPressed(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
+        self.buttonB.whenPressed(ShooterToggle(container=self, shooter=self.shooter, force='off'))
+
+        #bind LED
+        self.buttonX.whenPressed(LedToggle(container=self))
 
         # bind commands to co-pilot
-
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))
         # self.co_buttonBack.whenPressed(SafeCarry(self))
 
         # testing turret and elevator
-        enable_testing = False
-        if enable_testing:
-            pass
+        # enable_testing = False
+        # if enable_testing:
+        #     pass
 
         # commands2.button.JoystickButton(self.driverController, 3).whenHeld(
         #     HalveDriveSpeed(self.drive)
         # )
 
-    def initialize_dashboard(self):
+
+    # def initialize_dashboard(self):
 
         # lots of putdatas for testing on the dash
 #        wpilib.SmartDashboard.putData(key='DriveMove', data=DriveMove(container=self, drive=self.drive, setpoint=1).withTimeout(5))
@@ -134,13 +148,13 @@ class RobotContainer:
         # self.autonomous_chooser.addOption('do nothing', DriveWait(self, duration=1))
         # self.autonomous_chooser.addOption('drive 2m', DriveMove(self, self.drive, setpoint=2).withTimeout(4))
 
-        self.led_modes = wpilib.SendableChooser()
-        wpilib.SmartDashboard.putData('LED', self.led_modes)
-        self.led_modes.setDefaultOption('NONE', 'NONE')
-        self.led_modes.addOption('CONE', Led.Mode.CONE)
-        self.led_modes.addOption('CUBE', Led.Mode.CUBE)
-        self.led_modes.addOption('READY', Led.Mode.READY)
-        self.led_modes.addOption('OFF', Led.Mode.OFF)
+        # self.led_modes = wpilib.SendableChooser()
+        # wpilib.SmartDashboard.putData('LED', self.led_modes)
+        # self.led_modes.setDefaultOption('NONE', 'NONE')
+        # self.led_modes.addOption('CONE', Led.Mode.CONE)
+        # self.led_modes.addOption('CUBE', Led.Mode.CUBE)
+        # self.led_modes.addOption('READY', Led.Mode.READY)
+        # self.led_modes.addOption('OFF', Led.Mode.OFF)
 
-    def get_autonomous_command(self):
-        return self.autonomous_chooser.getSelected()
+    # def get_autonomous_command(self):
+    #     return self.autonomous_chooser.getSelected()

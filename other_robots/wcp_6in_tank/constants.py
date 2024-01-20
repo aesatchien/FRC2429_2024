@@ -69,9 +69,13 @@ k_PID_dict_vel_slow = {'kP': 1e-5, 'kI': 4e-6, 'kD': 0.00, 'kIz': 0, 'kFF': 0.00
                 'kMinOutput': -0.5, 'SM_MaxVel':120, 'SM_MaxAccel':120}  # 120 is 2 m/s and 2m/s/s
 k_drive_accumulator_max = 0.5  # limit on forward I - negative has no limit :(  Units in volts?
 
+# ------------------- SHOOTER -------------------
+k_flywheel_left_neo_port = 8 # CAN ID
+k_flywheel_right_neo_port = 6 # CAN ID
+
 # ------------------- LED -------------------
-k_led_pwm_port = 7
-k_led_count = 40
+k_led_pwm_port = 3
+k_led_count = 36
 
 # --------------  SIMULATION  ---------------
 k_start_x = 7.647
