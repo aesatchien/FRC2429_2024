@@ -1,8 +1,9 @@
-from commands2.button import Button
+# from commands2.button import Button
+from commands2.button import JoystickButton
 from wpilib import XboxController
 
 
-class AxisButton(Button):
+class AxisButton(JoystickButton):
     """
     A custom button that is used when pretending an axis button is digital.
     Note - don't forget the init for the parent!  Will crash in 2020 w/o it.

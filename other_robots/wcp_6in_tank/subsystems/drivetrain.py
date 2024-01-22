@@ -22,7 +22,7 @@ class Drivetrain(SubsystemBase):
         self.navx = navx.AHRS.create_spi()
 
         # initialize motors
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        motor_type = rev.CANSparkLowLevel.MotorType.kBrushless
         self.spark_neo_left_front = rev.CANSparkMax(constants.k_left_motor1_port, motor_type)
         self.spark_neo_left_back = rev.CANSparkMax(constants.k_left_motor2_port, motor_type)
         self.spark_neo_right_front = rev.CANSparkMax(constants.k_right_motor1_port, motor_type)

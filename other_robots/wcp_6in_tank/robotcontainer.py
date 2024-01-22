@@ -86,8 +86,8 @@ class RobotContainer:
         self.buttonDown = POVButton(self.driver_controller, 180)
         self.buttonLeft = POVButton(self.driver_controller, 270)
         self.buttonRight = POVButton(self.driver_controller, 90)
-        self.buttonLeftAxis = AxisButton(self.driver_controller, 2)
-        self.buttonRightAxis = AxisButton(self.driver_controller, 3)
+        # self.buttonLeftAxis = AxisButton(self.driver_controller, 2)
+        # self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
         # co-pilot controller
         use_co_pilot = True
@@ -105,8 +105,8 @@ class RobotContainer:
             self.co_buttonDown = POVButton(self.co_driver_controller, 180)
             self.co_buttonLeft = POVButton(self.co_driver_controller, 270)
             self.co_buttonRight = POVButton(self.co_driver_controller, 90)
-            self.co_buttonLeftAxis = AxisButton(self.co_driver_controller, 2)
-            self.co_buttonRightAxis = AxisButton(self.co_driver_controller, 3)
+            # self.co_buttonLeftAxis = AxisButton(self.co_driver_controller, 2)
+            # self.co_buttonRightAxis = AxisButton(self.co_driver_controller, 3)
 
 
         else:
@@ -116,11 +116,11 @@ class RobotContainer:
         # bind commands to driver
 
         #bind shooter
-        self.buttonA.whenPressed(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
-        self.buttonB.whenPressed(ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
+        self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         #bind LED
-        self.buttonX.whenPressed(LedToggle(container=self))
+        self.buttonX.onTrue(LedToggle(container=self))
 
         # bind commands to co-pilot
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))

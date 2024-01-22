@@ -3,7 +3,8 @@
 import math
 import wpilib.simulation as simlib  # 2021 name for the simulation library
 from wpilib import RobotController, SmartDashboard
-from wpimath.system import LinearSystemId
+# from wpimath.system import LinearSystemId
+from wpimath.system import LinearSystem_1_1_1
 from wpimath.system.plant import DCMotor
 import wpimath.geometry as geo
 import ntcore as nt
@@ -46,7 +47,7 @@ class PhysicsEngine:
         self.l_spark_output = self.l_spark.getDouble('Applied Output')  # SparkMAX controller output
         self.r_spark_output = self.r_spark.getDouble('Applied Output')
 
-        self.system = LinearSystemId.identifyDrivetrainSystem(
+        self.system = LinearSystem_1_1_1.identifyDrivetrainSystem(
             constants.kv_volt_seconds_per_meter,  # The linear velocity gain in volt seconds per distance.
             constants.ka_volt_seconds_squared_per_meter,  # The linear acceleration gain, in volt seconds^2 per distance.
             1.5,  # The angular velocity gain, in volt seconds per angle.

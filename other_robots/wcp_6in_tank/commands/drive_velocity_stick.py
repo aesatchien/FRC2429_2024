@@ -71,10 +71,10 @@ class DriveByJoystickVelocity(commands2.CommandBase):
             velocities = [thrust_vel + twist_vel, thrust_vel - twist_vel]
             if (thrust**2 + twist**2)**0.5 > 0.05:
                 for controller, velocity, multiplier in zip(self.drive.pid_controllers, velocities, self.multipliers):
-                    controller.setReference(velocity * multiplier * slowmode_multiplier, rev.CANSparkMaxLowLevel.ControlType.kSmartVelocity, 1)
+                    controller.setReference(velocity * multiplier * slowmode_multiplier, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 1)
             else:
                 for controller in self.drive.pid_controllers:
-                    controller.setReference(0, rev.CANSparkMaxLowLevel.ControlType.kSmartVelocity, 1)
+                    controller.setReference(0, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 1)
         else:  # arcade drive
             # fix this - get the thrusts again
             self.drive.arcade_drive(thrust * self.max_arcade_thrust, twist * self.max_arcade_twist)
@@ -85,7 +85,7 @@ class DriveByJoystickVelocity(commands2.CommandBase):
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
         for controller in self.drive.pid_controllers:
-            controller.setReference(0, rev.CANSparkMaxLowLevel.ControlType.kSmartVelocity, 0)
+            controller.setReference(0, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 0)
 
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
