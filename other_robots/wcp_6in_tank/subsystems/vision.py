@@ -12,6 +12,15 @@ class Vision(SubsystemBase):
         self.setName('Vision')
         self.counter = 0
         self.inst = NetworkTableInstance.getDefault()
+
+        self.speaker_distance = 0
+
+        self.amp_distance = 0
+
+        self.source_distance = 0
+
+        self.chute_distance = 0
+
         self.photonvision_table = self.inst.getTable("photonvision/Microsoft_LifeCam_HD-3000")
         self.photonvision_yaw = self.photonvision_table.getDoubleTopic("targetYaw").subscribe(0)
         self.photonvision_has_target = self.photonvision_table.getBooleanTopic("hasTarget").subscribe(False)
