@@ -42,13 +42,6 @@ k_right_motor2_port = 4
 # k_right_motor1_port = 1
 # k_right_motor2_port = 2
 
-# --------------  BUCKET  ---------------
-k_bucket = 5
-k_bucket_conversion_factor = 360/21.0
-k_PID_dict_vel_bucket = {'kP': 0.00001, 'kI': 0, 'kD': 0.00001, 'kIz': 2e-4, 'kFF': 8.1e-7, 'kArbFF':0,
-                         'kMaxOutput': 0.9, 'kMinOutput': -0.9, 'SM_MaxVel':35000,
-                         'SM_MaxAccel':35000}
-
 # drivetrain constants
 k_wheel_diameter_in = 6  # wheel diameter in inches
 k_wheel_diameter_m =  k_wheel_diameter_in * 0.0254  # wheel diameter in meters
@@ -70,10 +63,18 @@ k_PID_dict_vel_slow = {'kP': 1e-5, 'kI': 4e-6, 'kD': 0.00, 'kIz': 0, 'kFF': 0.00
 k_drive_accumulator_max = 0.5  # limit on forward I - negative has no limit :(  Units in volts?
 
 # ------------------- SHOOTER -------------------
-k_flywheel_left_neo_port = 8 # CAN ID
-k_flywheel_right_neo_port = 6 # CAN ID
+# k_flywheel_left_neo_port = 8 # CAN ID
+# k_flywheel_right_neo_port = 6 # CAN ID
 k_flywheel_lower_left_neo_port = 10 #CAN ID
-k_flywheel_upper_left_neo_port = 9 #CAN ID
+k_flywheel_upper_left_neo_port = 11 #CAN ID
+
+# ------------------- CRANK -------------------
+# k_crank_motor_port = 12 # CAN ID
+# k_crank_encoder_conversion_factor = 360. / 245 # 023 bot wrist conversion
+
+# ------------------- Intake -------------------
+# k_flywheel_left = 8
+# k_flywheel_right = 7
 
 # ------------------- LED -------------------
 k_led_pwm_port = 3
