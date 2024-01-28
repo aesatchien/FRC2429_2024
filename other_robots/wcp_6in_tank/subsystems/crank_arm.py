@@ -1,9 +1,9 @@
 """
-Wrist subsystem
-Shares the following with networktables:  wrist_position
+Crank-Arm subsystem
+Shares the following with networktables:  crank_arm_position
 """
 import time
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 import rev
 import wpilib
 from wpilib import SmartDashboard
@@ -12,16 +12,16 @@ from misc.configure_controllers import configure_sparkmax
 #from misc.sparksim import CANSparkMax  # takes care of switching to PWM for sim
 
 
-class Intake(SubsystemBase):
-    # wrist should probably have four positions that we need to map out
-    positions = {'short_shot': 93, 'mid_shot': 55,'source_pickup': 25, 'far_shot': 10, 'floor_pickup': -25, 'amp_dropoff': -50}
+class CrankArm(Subsystem):
+    # CrankArm should probably have four positions that we need to map out
+    positions = {'intake': 30, 'rest': 90,'trap': 120}  # todo: set "amp" position
 
     def __init__(self):
         super().__init__()
         self. counter = 20  # offset the periodics
         # defining angles so 0 is horizontal
-        self.max_angle = 94  # call all the way up 125 degrees  todo: remeasure
-        self.min_angle = -26
+        self.max_angle = 120  # call all the way up 125 degrees  todo: remeasure
+        self.min_angle = 30
 
         self.in_use_by_driver = False
 
@@ -56,7 +56,7 @@ class Intake(SubsystemBase):
 
         # self.pid_controller.setFeedbackDevice(sensor=self.abs_encoder)
 
-        # initialize the location of the wrist - from absolute encoder
+        # initialize the location of the CrankArm - from absolute encoder
         self.angle = self.abs_encoder.getPosition()
         # sometimes it does not initialize, so try again
         if abs(self.angle) < 0.1:
@@ -78,7 +78,7 @@ class Intake(SubsystemBase):
     #     else:
     #         return self.angle
 
-    def set_wrist_angle(self, angle, mode='smartmotion'):
+    def set_crankarm_angle(self, angle, mode='smartmotion'):
         if mode == 'smartmotion':
             # use smartmotion to send you there quickly
             self.pid_controller.setReference(angle, rev.CANSparkMax.ControlType.kSmartMotion)
