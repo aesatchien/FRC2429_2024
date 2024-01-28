@@ -1,7 +1,8 @@
 import commands2
 from wpilib import SmartDashboard
 
-class ShooterToggle(commands2.CommandBase):
+
+class ShooterToggle(commands2.Command):
 
     SmartDashboard.putNumber('set shooter rpm', 2500)
 
@@ -15,7 +16,6 @@ class ShooterToggle(commands2.CommandBase):
         self.addRequirements(shooter)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
-
         rpm = SmartDashboard.getNumber('set shooter rpm', 2500)
         
         if self.force == 'on':

@@ -3,7 +3,7 @@ from wpilib import SmartDashboard
 from subsystems.led import Led
 
 
-class LedLoop(commands2.CommandBase):
+class LedLoop(commands2.Command):
 
     def __init__(self, container) -> None:
         super().__init__()

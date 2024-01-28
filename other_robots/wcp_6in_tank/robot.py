@@ -34,18 +34,18 @@ class MyRobot(commands2.TimedCommandRobot):
     def disabledPeriodic(self) -> None:
         """This function is called periodically when disabled"""
 
-    def autonomousInit(self) -> None:
-        """This autonomous runs the autonomous command selected by your RobotContainer class."""
-
-        self.container.set_start_time()  # putting this after the scheduler is bad
-
-        self.autonomousCommand = self.container.get_autonomous_command()
-
-        if self.autonomousCommand:
-            self.autonomousCommand.schedule()
-
-    def autonomousPeriodic(self) -> None:
-        """This function is called periodically during autonomous"""
+    # def autonomousInit(self) -> None:
+    #     """This autonomous runs the autonomous command selected by your RobotContainer class."""
+    #
+    #     self.container.set_start_time()  # putting this after the scheduler is bad
+    #
+    #     self.autonomousCommand = self.container.get_autonomous_command()
+    #
+    #     if self.autonomousCommand:
+    #         self.autonomousCommand.schedule()
+    #
+    # def autonomousPeriodic(self) -> None:
+    #     """This function is called periodically during autonomous"""
 
     def teleopInit(self) -> None:
 

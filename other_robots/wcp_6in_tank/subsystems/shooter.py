@@ -1,14 +1,14 @@
 # drivetrain to use both in sim and robot mode - sim handles the Sparkmax now
 # started 2022 0102 to update to commands2
 
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
 
 import constants
 
 
-class Shooter(SubsystemBase):
+class Shooter(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Shooter')
@@ -39,6 +39,8 @@ class Shooter(SubsystemBase):
         # controller
         self.flywheel_lower_left_controller = self.flywheel_lower_left.getPIDController()
         self.flywheel_lower_left_controller.setP(0)
+        self.flywheel_upper_left_controller = self.flywheel_upper_left.getPIDController()
+        self.flywheel_upper_left_controller.setP(0)
         # self.flywheel_left_controller = self.flywheel_left.getPIDController()
         # self.flywheel_left_controller.setP(0)
        # self.flywheel_right_controller = self.flywheel_right.getPIDController()
@@ -54,7 +56,7 @@ class Shooter(SubsystemBase):
         # self.flywheel_left_controller.setReference(rpm, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 0)
         self.shooter_voltage = 5  # CJH increment voltage test
         self.flywheel_lower_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
-        # self.flywheel_upper_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
+        self.flywheel_upper_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         #self.flywheel_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         #self.flywheel_right_controller.setReference(self.shooter_voltage, rev.CANSparkLowLevel.ControlType.kVoltage, 0)
         self.shooter_enable = True
@@ -64,7 +66,7 @@ class Shooter(SubsystemBase):
     
     def stop_shooter(self):
         self.flywheel_lower_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
-        #self.flywheel_upper_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.flywheel_upper_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         #self.flywheel_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         #self.flywheel_right_controller.setReference(0, rev.CANSparkLowLevel.ControlType.kVoltage)
         self.shooter_enable = False
