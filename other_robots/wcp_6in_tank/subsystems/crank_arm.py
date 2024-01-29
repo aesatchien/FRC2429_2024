@@ -14,7 +14,7 @@ from misc.configure_controllers import configure_sparkmax
 
 class CrankArm(Subsystem):
     # CrankArm should probably have four positions that we need to map out
-    positions = {'intake': 30, 'rest': 90,'trap': 120}  # todo: set "amp" position
+    positions = {'rest': 30, 'amp': 90,'trap': 120}  # todo: might need to set "intake" position
 
     def __init__(self):
         super().__init__()
@@ -30,7 +30,7 @@ class CrankArm(Subsystem):
 
         # self.wrist_controller.restoreFactoryDefaults()
         self.crank_arm_controller.setIdleMode(mode=rev.CANSparkMax.IdleMode.kBrake)
-        self.crank_arm_controller.setInverted(True)  # verified that this is true for the directions we want on wrist
+        self.crank_arm_controller.setInverted(True)  # verified that this is true for the directions we want on crank arm
         self.sparkmax_encoder = self.crank_arm_controller.getEncoder()
 
         # update sparkmax with appropriate system gains and constraints
