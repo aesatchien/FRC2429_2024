@@ -8,7 +8,7 @@ changes.
 
 k_competition_mode = False  # use for compressor and some joystick settings
 k_burn_flash = False  # if we want to burn the settings to the sparkmaxes
-k_enable_soft_limts = True
+k_enable_soft_limits = True
 
 # --------------  OI  ---------------
 # ID for the driver's joystick (template)
@@ -69,8 +69,12 @@ k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
 
 # ------------------- CRANK -------------------
-# k_crank_motor_port = 12 # CAN ID
-# k_crank_encoder_conversion_factor = 360. / 245 # 023 bot wrist conversion
+k_crank_motor_port = 12  # CAN ID
+k_crank_encoder_conversion_factor = 360. / 225  # 023 bot wrist conversion
+
+k_PID_dict_vel_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.01e-4, 'kArbFF':0,
+                         'kMaxOutput': 0.55, 'kMinOutput': -0.55, 'SM_MaxVel':6000,
+                        'SM_MaxAccel':4500}       # ToDo: change values
 
 # ------------------- Intake -------------------
 # k_flywheel_left = 8
