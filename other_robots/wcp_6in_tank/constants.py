@@ -77,8 +77,7 @@ k_PID_dict_vel_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.01e
                         'SM_MaxAccel':4500}       # ToDo: change values
 
 # ------------------- Intake -------------------
-# k_flywheel_left = 8
-# k_flywheel_right = 7
+k_intake_neo_port = 9 #CAN ID
 
 # ------------------- LED -------------------
 k_led_pwm_port = 3

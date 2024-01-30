@@ -1,10 +1,10 @@
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
 
 import constants
 
-class Intake(SubsystemBase) :
+class Intake(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Intake')
@@ -15,8 +15,8 @@ class Intake(SubsystemBase) :
         self.shooter_voltage = 10
 
         motor_type = rev.CANSparkFlex.MotorType.kBrushless
-        self.intake_motor_left = rev.CANSparkFlex(constants.k_flywheel_left, motor_type)
-        self.intake_motor_right = rev.CANSparkFlex(constants.k_flywheel_right, motor_type)
+        self.intake_motor_left = rev.CANSparkFlex(constants.k_intake_neo_port, motor_type)
+
 
         self.intake_motor_left.setInverted(False)
 
@@ -34,9 +34,10 @@ class Intake(SubsystemBase) :
         SmartDashboard.putBoolean('intake_state', self.intake_enable)
 
     def stop_intake(self):
-        self.intake_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.flywheel_lower_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.flywheel_upper_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         self.intake_enable = False
-        self.intake_enable = 0
+        self.intake_voltage = 0
         SmartDashboard.putBoolean('intake_state', self.intake_enable)
 
     def get_intake_motor(self):

@@ -10,6 +10,7 @@ from subsystems.drivetrain import Drivetrain
 from subsystems.vision import Vision
 from subsystems.led import Led
 from subsystems.shooter import Shooter
+from subsystems.intake import Intake
 
 from misc.axis_button import AxisButton
 from commands.drive_by_joystick import DriveByJoystick
@@ -17,7 +18,7 @@ from commands.drive_velocity_stick import DriveByJoystickVelocity
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
-
+from commands.intake_toggle import IntakeToggle
 
 
 # from autonomous.drive_wait import DriveWait
@@ -41,6 +42,7 @@ class RobotContainer:
         self.vision = Vision()
         self.led = Led()
         self.shooter = Shooter()
+        self.intake = Intake()
 
         self.game_piece_mode = 'cube'
 
@@ -119,7 +121,10 @@ class RobotContainer:
         self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
         self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
-        #bind LED
+        # bind shooter
+        self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+
+       # bind LED
         self.buttonX.onTrue(LedToggle(container=self))
 
         # bind commands to co-pilot
