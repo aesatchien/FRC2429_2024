@@ -4,6 +4,7 @@ import rev
 
 import constants
 
+
 class Intake(Subsystem):
     def __init__(self):
         super().__init__()
@@ -16,9 +17,6 @@ class Intake(Subsystem):
 
         motor_type = rev.CANSparkFlex.MotorType.kBrushless
         self.intake_motor_left = rev.CANSparkFlex(constants.k_intake_neo_port, motor_type)
-
-
-        self.intake_motor_left.setInverted(False)
 
         self.intake_controller = self.intake_motor_left.getPIDController()
         self.intake_controller.setP(0)
@@ -34,14 +32,13 @@ class Intake(Subsystem):
         SmartDashboard.putBoolean('intake_state', self.intake_enable)
 
     def stop_intake(self):
-        self.flywheel_lower_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
-        self.flywheel_upper_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.intake_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         self.intake_enable = False
         self.intake_voltage = 0
         SmartDashboard.putBoolean('intake_state', self.intake_enable)
 
     def get_intake_motor(self):
-        return self.flywheel_left_encoder.getVelocity()
+        return self.intake_encoder.getVelocity()
 
     def toggle_intake(self, rpm):
         if self.intake_enable:

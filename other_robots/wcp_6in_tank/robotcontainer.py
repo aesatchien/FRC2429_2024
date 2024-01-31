@@ -11,6 +11,7 @@ from subsystems.vision import Vision
 from subsystems.led import Led
 from subsystems.shooter import Shooter
 from subsystems.intake import Intake
+from subsystems.crank_arm import CrankArm
 
 from misc.axis_button import AxisButton
 from commands.drive_by_joystick import DriveByJoystick
@@ -19,6 +20,8 @@ from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.intake_toggle import IntakeToggle
+from commands.crank_arm_move import CrankArmMove
+from commands.crank_arm_toggle import CrankArmToggle
 
 
 # from autonomous.drive_wait import DriveWait
@@ -43,6 +46,7 @@ class RobotContainer:
         self.led = Led()
         self.shooter = Shooter()
         self.intake = Intake()
+        self.crank_arm = CrankArm()
 
         self.game_piece_mode = 'cube'
 
@@ -117,12 +121,16 @@ class RobotContainer:
         # All untested still
         # bind commands to driver
 
-        #bind shooter
+        # bind shooter
         self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
         self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
-        # bind shooter
+        # bind intake
         self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+
+        # bind crank arm
+        self.buttonUp.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, rpm=2500, force='on'))  #ToDo find out how to have it increment to the next position
+        self.buttonDown.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off')) #ToDo find out how to have it increment to the next position
 
        # bind LED
         self.buttonX.onTrue(LedToggle(container=self))

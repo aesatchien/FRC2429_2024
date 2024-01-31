@@ -20,96 +20,150 @@ class CrankArm(Subsystem):
         super().__init__()
         self. counter = 20  # offset the periodics
         # defining angles so 0 is horizontal
+        self.counter = 0
+        self.smartmotion_maxvel = 5001  # rpm
+        self.smartmotion_maxacc = 5001
+        self.current_limit = 35
+        self.shooter_voltage = 5
         self.max_angle = 120  # call all the way up 125 degrees  todo: remeasure
         self.min_angle = 30
 
         self.in_use_by_driver = False
 
         # initialize motors
-        self.crank_arm_controller = rev.CANSparkMax(constants.k_crank_motor_port, rev.CANSparkMax.MotorType.kBrushless)
+        motor_type = rev.CANSparkFlex.MotorType.kBrushless
 
-        # self.wrist_controller.restoreFactoryDefaults()
-        self.crank_arm_controller.setIdleMode(mode=rev.CANSparkMax.IdleMode.kBrake)
-        self.crank_arm_controller.setInverted(True)  # verified that this is true for the directions we want on crank arm
-        self.sparkmax_encoder = self.crank_arm_controller.getEncoder()
+        self.crank_motor_left = rev.CANSparkFlex(constants.k_crank_motor_left,motor_type)
+        self.crank_motor_right = rev.CANSparkFlex(constants.k_crank_motor_right, motor_type)
 
-        # update sparkmax with appropriate system gains and constraints
-        self.sparkmax_encoder.setPositionConversionFactor(constants.k_crank_encoder_conversion_factor)  # Unsure what we want our conversion factor to be (default is set in constants)
-        self.sparkmax_encoder.setVelocityConversionFactor(constants.k_crank_encoder_conversion_factor)  # Unsure what we want our conversion factor to be (default is set in constants)
-        self.pid_controller = self.crank_arm_controller.getPIDController()
+        self.crank_motor_left_controller = self.crank_motor_left.getPIDController()
+        self.crank_motor_left_controller.setP(0)
+        self.crank_motor_right_controller = self.crank_motor_right.getPIDController()
+        self.crank_motor_right_controller.setP(0)
 
-        # set soft limits - do not let spark max put out power above/below a certain value
-        self.crank_arm_controller.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, constants.k_enable_soft_limits)
-        self.crank_arm_controller.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, constants.k_enable_soft_limits)
-        self.crank_arm_controller.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.max_angle)
-        self.crank_arm_controller.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.min_angle)
-        self.crank_arm_controller.setSmartCurrentLimit(20)
-        self.pid_controller.setSmartMotionAllowedClosedLoopError(1)
+        # toogle state
+        self.crank_arm_enable = False
+        SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
 
-        configure_sparkmax(sparkmax=self.crank_arm_controller, pid_controller=self.pid_controller, slot=0, can_id= constants.k_crank_motor_port,
-                           pid_dict=constants.k_PID_dict_vel_crank_arm, pid_only=True, burn_flash=constants.k_burn_flash)
+    def set_crank_arm(self, rpm):
+        self.crank_arm_voltage = 2
+        self.crank_motor_left_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
+        self.crank_motor_left_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
+        self.crank_arm_enable = True
+        print(f'setting rpm to {rpm} {self.crank_arm_voltage}')
+        SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
 
-        self.abs_encoder = self.crank_arm_controller.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.abs_encoder.setInverted(True)
-        self.abs_encoder.setPositionConversionFactor(360)
-        self.abs_encoder.setZeroOffset(360 * 0.38)
+    def stop_crank_arm(self):
+        self.crank_motor_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.crank_motor_right_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.crank_enable = False
+        self.crank_arm_voltage =0
+        SmartDashboard.putBoolean('crank_state', self.crank_enable)
 
-        self.pid_controller.setFeedbackDevice(sensor=self.abs_encoder)
-
-        # initialize the location of the CrankArm - from absolute encoder
-        self.angle = self.abs_encoder.getPosition()
-        # sometimes it does not initialize, so try again
-        if abs(self.angle) < 0.1:
-            print(f'Crank absolute encoder measurement was {self.angle}; retrying')
-            time.sleep(0.2)  # robot will complain, but it's only on boot up
-            self.angle = self.abs_encoder.getPosition()
-
-        if self.angle > 180:  # correct for if we start out negative.  e.g. -10 would come out as 350
-            self.angle = self.angle - 360
-        self.sparkmax_encoder.setPosition(self.angle)
-        self.setpoint = self.angle
-        SmartDashboard.putNumber('crank_arm_angle', self.angle)
-        SmartDashboard.putNumber('crank_arm_setpoint', self.setpoint)
-        self.is_moving = False  # use for determining if we are jumping setpoints
-
-    def get_angle(self):  # getter for the relevant elevator parameter
-        if wpilib.RobotBase.isReal():
-            return self.sparkmax_encoder.getPosition()
+    def crank_arm_toggle(self,rpm):
+        if self.crank_arm_enable:
+            self.stop_crank_arm()
         else:
-            return self.angle
+            self.set_crank_arm(rpm)
 
-    def set_crank_arm_angle(self, angle, mode='smartmotion'):
-        if mode == 'smartmotion':
-            # use smartmotion to send you there quickly
-            self.pid_controller.setReference(angle, rev.CANSparkMax.ControlType.kSmartMotion)
-        elif mode == 'position':
-            # just use the position PID
-            self.pid_controller.setReference(angle, rev.CANSparkMax.ControlType.kPosition)
+    def set_pids(self, burn_flash=True):
+        self.error_dict = {}
+        i = 0
 
-        self.setpoint = angle
-        SmartDashboard.putNumber('crank_arm_setpoint', angle)
-        if wpilib.RobotBase.isSimulation():
-            self.angle = angle
-            SmartDashboard.putNumber('crank_arm_angle', self.angle)
+        self.error_dict.update({'kP0_' + str(i): self.crank_motor_left_controller.setP(self.PID_dict_vel['kP'], 0)})
+        self.error_dict.update({'kI0_' + str(i): self.crank_motor_right_controller.setI(self.PID_dict_vel['kI'], 0)})
+        self.error_dict.update({'kIz0_' + str(i): self.crank_motor_left_controller.setIZone(self.PID_dict_vel['kIz'], 0)})
+        self.error_dict.update({'kD0_' + str(i): self.crank_motor_right_controller.setD(self.PID_dict_vel['kD'], 0)})
+        self.error_dict.update({'kD0_' + str(i): self.crank_motor_left_controller.setFF(self.PID_dict_vel['kFF'], 0)})
+        self.error_dict.update({'Accel0_' + str(i): self.crank_motor_right_controller.setSmartMotionMaxVelocity(self.smartmotion_maxvel, 0)})  #
+        self.error_dict.update({'Vel0_' + str(i): self.crank_motor_left_controller.setSmartMotionMaxAccel(self.smartmotion_maxacc, 0)})
 
-    def set_encoder_position(self, angle):
-        self.sparkmax_encoder.setPosition(angle)
-        if wpilib.RobotBase.isSimulation():
-            self.angle = angle
-
-    def set_driver_flag(self, state=False):
-        self.in_use_by_driver = state
-        SmartDashboard.putBoolean('crank_arm_in_use', state)
-
-    def get_driver_flag(self):
-        return self.in_use_by_driver
+        if burn_flash:
+            # self.flywheel_left.burnFlash()
+            self.crank_motor_left_controller.burnFlash()
 
     def periodic(self) -> None:
+
         self.counter += 1
 
-        if self.counter % 25 == 0:
-            self.angle = self.get_angle()
-            SmartDashboard.putNumber('crank_arm_angle', self.angle)
-            SmartDashboard.putNumber('crank_arm_abs_encoder', self.abs_encoder.getPosition())
+        SmartDashboard.putBoolean('crank_arm_enable', self.crank_arm_enable)
+            #
+                # self.angle = self.get_angle()
+                # SmartDashboard.putNumber('crank_arm_angle', self.angle)
+                # SmartDashboard.putNumber('crank_arm_abs_encoder', self.abs_encoder.getPosition())
+                # # SmartDashboard.putBoolean('crank_arm_enable', self.crank_arm_enable)
+                #
+                # self.is_moving = abs(self.sparkmax_encoder.getVelocity()) > 100  #
 
-            self.is_moving = abs(self.sparkmax_encoder.getVelocity()) > 100  #
+        # self.crank_arm_controller.restoreFactoryDefaults()
+        # self.crank_arm_controller.setIdleMode(mode=rev.CANSparkMax.IdleMode.kBrake)
+        # self.crank_arm_controller.setInverted(True)  # verified that this is true for the directions we want on crank arm
+        # self.sparkmax_encoder = self.crank_arm_controller.getEncoder()
+
+        # update sparkmax with appropriate system gains and constraints
+        # self.sparkmax_encoder.setPositionConversionFactor(constants.k_crank_encoder_conversion_factor)  # Unsure what we want our conversion factor to be (default is set in constants)
+        # self.sparkmax_encoder.setVelocityConversionFactor(constants.k_crank_encoder_conversion_factor)  # Unsure what we want our conversion factor to be (default is set in constants)
+        # self.pid_controller = self.crank_arm_controller.getPIDController()
+
+        # # set soft limits - do not let spark max put out power above/below a certain value
+        # self.crank_arm_controller.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, constants.k_enable_soft_limits)
+        # self.crank_arm_controller.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, constants.k_enable_soft_limits)
+        # self.crank_arm_controller.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.max_angle)
+        # self.crank_arm_controller.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.min_angle)
+        # self.crank_arm_controller.setSmartCurrentLimit(20)
+        # self.pid_controller.setSmartMotionAllowedClosedLoopError(1)
+        #
+        # configure_sparkmax(sparkmax=self.crank_arm_controller, pid_controller=self.pid_controller, slot=0, can_id= constants.k_crank_motor_port,
+        #                    pid_dict=constants.k_PID_dict_vel_crank_arm, pid_only=True, burn_flash=constants.k_burn_flash)
+        #
+        # self.abs_encoder = self.crank_arm_controller.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+        # self.abs_encoder.setInverted(True)
+        # self.abs_encoder.setPositionConversionFactor(360)
+        # self.abs_encoder.setZeroOffset(360 * 0.38)
+        #
+        # self.pid_controller.setFeedbackDevice(sensor=self.abs_encoder)
+
+        # initialize the location of the CrankArm - from absolute encoder
+        # self.angle = self.abs_encoder.getPosition()
+        # # sometimes it does not initialize, so try again
+        # if abs(self.angle) < 0.1:
+        #     print(f'Crank absolute encoder measurement was {self.angle}; retrying')
+        #     time.sleep(0.2)  # robot will complain, but it's only on boot up
+        #     self.angle = self.abs_encoder.getPosition()
+        #
+        # if self.angle > 180:  # correct for if we start out negative.  e.g. -10 would come out as 350
+        #     self.angle = self.angle - 360
+        # self.sparkmax_encoder.setPosition(self.angle)
+        # self.setpoint = self.angle
+        # SmartDashboard.putNumber('crank_arm_angle', self.angle)
+        # SmartDashboard.putNumber('crank_arm_setpoint', self.setpoint)
+        # self.is_moving = False  # use for determining if we are jumping setpoints
+
+    # def get_angle(self):  # getter for the relevant elevator parameter
+    #     if wpilib.RobotBase.isReal():
+    #         return self.sparkmax_encoder.getPosition()
+    #     else:
+    #         return self.angle
+
+
+    # def set_crank_arm_angle(self, angle, mode='smartmotion'):
+    #     if mode == 'smartmotion':
+    #         # use smartmotion to send you there quickly
+    #         self.pid_controller.setReference(angle, rev.CANSparkMax.ControlType.kSmartMotion)
+    #     elif mode == 'position':
+    #         # just use the position PID
+    #         self.pid_controller.setReference(angle, rev.CANSparkMax.ControlType.kPosition)
+    #
+    #     self.setpoint = angle
+    #     SmartDashboard.putNumber('crank_arm_setpoint', angle)
+    #     if wpilib.RobotBase.isSimulation():
+    #         self.angle = angle
+    #         SmartDashboard.putNumber('crank_arm_angle', self.angle)
+    #
+    # def set_encoder_position(self, angle):
+    #     self.sparkmax_encoder.setPosition(angle)
+    #     if wpilib.RobotBase.isSimulation():
+    #         self.angle = angle
+
+
+
