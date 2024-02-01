@@ -17,7 +17,7 @@ class Shooter(Subsystem):
         self.smartmotion_maxvel = 5001  # rpm
         self.smartmotion_maxacc = 5001
         self.current_limit = 35
-        self.shooter_voltage = 12
+        self.shooter_voltage = 2
 
         # initialize motors
         # looking from back to front
@@ -32,6 +32,7 @@ class Shooter(Subsystem):
         #self.flywheel_right.follow(self.flywheel_left, invert=False)
         # the follower is inverted
         self.flywheel_lower_left.setInverted(False)
+        self.flywheel_upper_left.setInverted(True)
         # self.flywheel_upper_left.follow(self.flywheel_lower_left, invert=False)
         # encoders
         # self.flywheel_left_encoder = self.flywheel_left.getEncoder()
@@ -54,7 +55,7 @@ class Shooter(Subsystem):
 
     def set_flywheel(self, rpm):
         # self.flywheel_left_controller.setReference(rpm, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 0)
-        self.shooter_voltage = 5  # CJH increment voltage test
+        self.shooter_voltage = self.shooter_voltage + 1 if self.shooter_voltage < 12 else 5  # CJH increment voltage test
         self.flywheel_lower_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         self.flywheel_upper_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         #self.flywheel_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
