@@ -18,7 +18,7 @@ class CrankArm(Subsystem):
 
     def __init__(self):
         super().__init__()
-        self. counter = 20  # offset the periodics
+        self.setName('Crank Arm')
         # defining angles so 0 is horizontal
         self.counter = 0
         self.smartmotion_maxvel = 5001  # rpm
@@ -48,7 +48,7 @@ class CrankArm(Subsystem):
     def set_crank_arm(self, rpm):
         self.crank_arm_voltage = 2
         self.crank_motor_left_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
-        self.crank_motor_left_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
+        self.crank_motor_right_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         self.crank_arm_enable = True
         print(f'setting rpm to {rpm} {self.crank_arm_voltage}')
         SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
@@ -56,13 +56,13 @@ class CrankArm(Subsystem):
     def stop_crank_arm(self):
         self.crank_motor_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         self.crank_motor_right_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
-        self.crank_enable = False
+        self.crank_arm_enable = False
         self.crank_arm_voltage =0
-        SmartDashboard.putBoolean('crank_state', self.crank_enable)
+        SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
 
     def crank_arm_toggle(self,rpm):
         if self.crank_arm_enable:
-            self.stop_crank_arm()
+            self.stop_crank_arm() # is this right? Maybe switch code w/line 67
         else:
             self.set_crank_arm(rpm)
 
