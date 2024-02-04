@@ -8,7 +8,7 @@ from rev import CANSparkMax
 class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
-    kMaxSpeedMetersPerSecond = 1.5# 4.25 is Haochen competition, 4.8 is full out
+    kMaxSpeedMetersPerSecond = 1.0# 4.25 is Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.25 * math.tau  # radians per second
     kMaxTotalSpeed = math.sqrt(2) *  kMaxAngularSpeed  # sum of angular and rotational, should probably do hypotenuse
     kMagnitudeSlewRate = 5  # hundred percent per second (1 = 100%)
@@ -27,11 +27,14 @@ class DriveConstants:
     # Front left is X+Y+, Front right is + -, Rear left is - +, Rear right is - -
     # this should be left as the convention, so match the above.  Then take care of turning issues with the
     # INVERSION OF THE TURN OR DRIVE MOTORS
-    orientation_standard = [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # this fails: TODO: MAKE SURE ANGLE ENCODERS ARE CCW +
+    orientation_standard = [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # 2023 this fails: TODO: MAKE SURE ANGLE ENCODERS ARE CCW +
     orientation_2023 = [(-1, 1), (-1, -1), (1, 1), (1, -1)]  # this drives correctly but Y is swapped in odometry
-    orientation_test = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-    orient = orientation_2023
-
+    orient = orientation_standard
+    kGyroReversed = False  # True for 2023;  False for 2024
+    # used in the swerve modules themselves to reverse the direction of the analog encoder
+    k_reverse_analogs = False  # True for 2023; False for 2024
+    k_drive_motors_inverted = False  # False for 2023, STAYS THE SAME
+    k_turn_motor_inverted = True  # False for 2023, True for 2024
     kModulePositions = [
         Translation2d(orient[0][0]*kWheelBase / 2, orient[0][1]*kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
         Translation2d(orient[1][0]*kWheelBase / 2, orient[1][1]*kTrackWidth / 2),
@@ -47,20 +50,19 @@ class DriveConstants:
     # ]
     kDriveKinematics = SwerveDrive4Kinematics(*kModulePositions)
 
-    kGyroReversed = True
-
     # which motors need to be inverted  - none?
     # code seems to ignore this, so I turned the right wheels around instead, to have billet gears always point right.
     # that is a mistake, and need to rectify this
-    k_lf_drive_motor_inverted = False
-    k_lb_drive_motor_inverted = False
-    k_rf_drive_motor_inverted = False
-    k_rb_drive_motor_inverted = False
 
-    k_lf_turn_motor_inverted = False
-    k_lb_turn_motor_inverted = False
-    k_rf_turn_motor_inverted = False
-    k_rb_turn_motor_inverted = False
+    k_lf_drive_motor_inverted = k_drive_motors_inverted
+    k_lb_drive_motor_inverted = k_drive_motors_inverted
+    k_rf_drive_motor_inverted = k_drive_motors_inverted
+    k_rb_drive_motor_inverted = k_drive_motors_inverted
+
+    k_lf_turn_motor_inverted = k_turn_motor_inverted
+    k_lb_turn_motor_inverted = k_turn_motor_inverted
+    k_rf_turn_motor_inverted = k_turn_motor_inverted
+    k_rb_turn_motor_inverted = k_turn_motor_inverted
 
     # absolute encoder values when wheels facing forward  - 20230322 CJH
     # NOW IN RADIANS to feed right to the AnalogPotentiometer on the module

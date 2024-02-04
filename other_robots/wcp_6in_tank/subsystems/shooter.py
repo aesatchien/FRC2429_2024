@@ -68,7 +68,7 @@ class Shooter(Subsystem):
     def stop_shooter(self):
         self.flywheel_lower_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         self.flywheel_upper_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
-        #self.flywheel_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        # self.flywheel_left_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
         #self.flywheel_right_controller.setReference(0, rev.CANSparkLowLevel.ControlType.kVoltage)
         self.shooter_enable = False
         self.shooter_voltage = 0  # CJH for 2024 testing

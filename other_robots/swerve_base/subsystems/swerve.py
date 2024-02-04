@@ -76,7 +76,7 @@ class Swerve (SubsystemBase):
         # Odometry class for tracking robot pose
         self.odometry = SwerveDrive4Odometry(
             dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
-        initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
+            initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
 
     def periodic(self) -> None:
 
@@ -96,9 +96,9 @@ class Swerve (SubsystemBase):
             pose = self.get_pose()  # self.odometry.getPose()
             if wpilib.RobotBase.isReal():
                 wpilib.SmartDashboard.putNumberArray('drive_pose', [pose.X(), pose.Y(), pose.rotation().degrees()])
-                wpilib.SmartDashboard.putNumberArray('drive_x', pose.X())
-                wpilib.SmartDashboard.putNumberArray('drive_y', pose.Y())
-                wpilib.SmartDashboard.putNumberArray('drive_theta', pose.rotation().degrees())
+                wpilib.SmartDashboard.putNumber('drive_x', pose.X())
+                wpilib.SmartDashboard.putNumber('drive_y', pose.Y())
+                wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.navx.getYaw())
 
@@ -180,13 +180,14 @@ class Swerve (SubsystemBase):
         if self.time_since_rotation < 0.5:  # (update keep_angle until 0.5s after rotate command stops to allow rotate to finish)
             self.keep_angle = self.get_yaw()  # todo: double check SIGN (and units are in degrees)
         elif math.fabs(rot) < dc.k_inner_deadband and self.time_since_drive < 0.25:  # stop keep_angle .25s after you stop driving
-            output = self.keep_angle_pid.calculate(-self.get_angle(), self.keep_angle)
+            # output = self.keep_angle_pid.calculate(-self.get_angle(), self.keep_angle)  # 2023
+            output = self.keep_angle_pid.calculate(self.get_angle(), self.keep_angle)  # 2024, reversed get angle
             output = output if math.fabs(output) < 0.2 else 0.2 * math.copysign(1, output)  # clamp at 0.2
 
         return output
 
     def set_drive_motor_references(self, setpoint, control_type = rev.CANSparkMax.ControlType.kVoltage,
-                                    pidSlot=1, arbFeedForward=0):
+                                   pidSlot=1, arbFeedForward=0):
         # Make sure you've turned the swerve into a tank drive before calling this
         for module in self.swerve_modules:
             module.drivingPIDController.setReference(setpoint, control_type, pidSlot=pidSlot)
@@ -244,6 +245,7 @@ class Swerve (SubsystemBase):
 
     def get_yaw(self):  # helpful for determining nearest heading parallel to the wall
         return self.gyro.getYaw()
+        # return self.gyro.getYaw() if dc.kGyroReversed else -self.gyro.getYaw()  #2024 possible update
 
     def get_pitch(self):  # need to calibrate the navx, apparently
         return self.gyro.getPitch() - 4.75

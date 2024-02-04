@@ -90,7 +90,8 @@ class SwerveModule:
 
     def get_turn_encoder(self):
         # how we invert the absolute encoder
-        return -1 * self.absolute_encoder.get()
+        analog_reverse_multiplier = -1 if dc.k_reverse_analogs else 1
+        return analog_reverse_multiplier * self.absolute_encoder.get()
 
     def getState(self) -> SwerveModuleState:
         """Returns the current state of the module.
