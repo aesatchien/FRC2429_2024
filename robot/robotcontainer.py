@@ -1,0 +1,81 @@
+#  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
+
+import time, enum
+import wpilib
+import commands2
+from commands2.button import JoystickButton, POVButton
+
+import constants  # all of the constants except for swerve
+
+
+class RobotContainer:
+    """
+    This class is where the bulk of the robot should be declared. Since Command-based is a
+    "declarative" paradigm, very little robot logic should actually be handled in the :class:`.Robot`
+    periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+    subsystems, commands, and button mappings) should be declared here.
+    """
+
+    def __init__(self) -> None:
+
+        self.start_time = time.time()
+
+        # The robot's subsystems
+        self.drive = Swerve()
+
+        self.configure_joysticks()
+        self.bind_buttons()
+        self.configure_swerve_bindings()
+
+        self.initialize_dashboard()
+
+        # swerve driving
+        self.drive.setDefaultCommand(DriveByJoystickSwerve(container=self, swerve=self.drive,
+                            field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+
+    def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
+        self.start_time = time.time()
+
+    def get_enabled_time(self):  # call when we want to know the start/elapsed time for status and debug messages
+        return time.time() - self.start_time
+
+    def configure_joysticks(self):
+        """
+        Use this method to define your button->command mappings. Buttons can be created by
+        instantiating a :GenericHID or one of its subclasses (Joystick or XboxController),
+        and then passing it to a JoystickButton.
+        """
+        # The driver's controller
+        self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)
+        self.buttonA = JoystickButton(self.driver_controller, 1)
+        self.buttonB = JoystickButton(self.driver_controller, 2)
+        self.buttonX = JoystickButton(self.driver_controller, 3)
+        self.buttonY = JoystickButton(self.driver_controller, 4)
+        self.buttonLB = JoystickButton(self.driver_controller, 5)
+        self.buttonRB = JoystickButton(self.driver_controller, 6)
+        self.buttonBack = JoystickButton(self.driver_controller, 7)
+        self.buttonStart = JoystickButton(self.driver_controller, 8)
+        self.buttonUp = POVButton(self.driver_controller, 0)
+        self.buttonDown = POVButton(self.driver_controller, 180)
+        self.buttonLeft = POVButton(self.driver_controller, 270)
+        self.buttonRight = POVButton(self.driver_controller, 90)
+        #self.buttonLeftAxis = AxisButton(self.driver_controller, 2)
+        #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
+
+    def configure_swerve_bindings(self):
+        # self.buttonA.debounce(0.1).onTrue(SwerveX(container=self, swerve=self.drive))
+        self.buttonB.debounce(0.1).onTrue(GyroReset(self, swerve=self.drive))
+
+    def bind_buttons(self):
+       pass
+
+    def initialize_dashboard(self):
+
+        # populate autonomous routines
+        self.autonomous_chooser = wpilib.SendableChooser()
+        wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
+        self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
+        self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
+
+    def get_autonomous_command(self):
+        return self.autonomous_chooser.getSelected()
