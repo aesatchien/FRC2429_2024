@@ -25,16 +25,16 @@ class Swerve (SubsystemBase):
         self.frontLeft = SwerveModule(
             drivingCANId=dc.kFrontLeftDrivingCanId, turningCANId=dc.kFrontLeftTurningCanId,
             encoder_analog_port=dc.kFrontLeftAbsEncoderPort, turning_encoder_offset=dc.k_lf_zero_offset,
-            driving_inverted=dc.k_lf_drive_motor_inverted, turning_inverted=dc.k_lf_turn_motor_inverted, label= 'lf' )
+            driving_inverted=dc.k_drive_motors_inverted, turning_inverted=dc.k_turn_motors_inverted, label= 'lf' )
         self.frontRight = SwerveModule(
             dc.kFrontRightDrivingCanId, dc.kFrontRightTurningCanId, dc.kFrontRightAbsEncoderPort, dc.k_rf_zero_offset,
-            dc.k_rf_drive_motor_inverted, dc.k_rf_turn_motor_inverted, label='rf')
+            dc.k_drive_motors_inverted, dc.k_turn_motors_inverted, label='rf')
         self.rearLeft = SwerveModule(
             dc.kRearLeftDrivingCanId, dc.kRearLeftTurningCanId, dc.kBackLeftAbsEncoderPort, dc.k_lb_zero_offset,
-            dc.k_lb_drive_motor_inverted, dc.k_lb_turn_motor_inverted, label='lb')
+            dc.k_drive_motors_inverted, dc.k_turn_motors_inverted, label='lb')
         self.rearRight = SwerveModule(
             dc.kRearRightDrivingCanId, dc.kRearRightTurningCanId, dc.kBackRightAbsEncoderPort, dc.k_rb_zero_offset,
-            dc.k_rb_drive_motor_inverted, dc.k_rb_turn_motor_inverted, label='rb')
+            dc.k_drive_motors_inverted, dc.k_turn_motors_inverted, label='rb')
 
         # let's make this pythonic so we can do things quickly and with readability
         self.swerve_modules = [self.frontLeft, self.frontRight, self.rearLeft, self.rearRight]

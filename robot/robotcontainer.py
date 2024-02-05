@@ -7,6 +7,13 @@ from commands2.button import JoystickButton, POVButton
 
 import constants  # all of the constants except for swerve
 
+# subsystems
+from subsystems.swerve import Swerve
+
+# commands
+from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
+from commands.gyro_reset import GyroReset
+
 
 class RobotContainer:
     """
@@ -63,7 +70,6 @@ class RobotContainer:
         #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
     def configure_swerve_bindings(self):
-        # self.buttonA.debounce(0.1).onTrue(SwerveX(container=self, swerve=self.drive))
         self.buttonB.debounce(0.1).onTrue(GyroReset(self, swerve=self.drive))
 
     def bind_buttons(self):
@@ -74,8 +80,8 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
-        self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
-        self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
+        #self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
+        #self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()

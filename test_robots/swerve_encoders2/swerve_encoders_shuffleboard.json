@@ -1,0 +1,139 @@
+{
+  "tabPane": [
+    {
+      "title": "SmartDashboard",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "SmartDashboard/",
+      "widgetPane": {
+        "gridSize": 32.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "12,0": {
+            "size": [
+              7,
+              8
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "List Layout",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/AbsEncoder_20",
+                  "_title": "AbsEncoder_20",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/AbsEncoder_22",
+                  "_title": "AbsEncoder_22",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/AbsEncoder_24",
+                  "_title": "AbsEncoder_24",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/AbsEncoder_26",
+                  "_title": "AbsEncoder_26",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
+            }
+          },
+          "5,0": {
+            "size": [
+              7,
+              5
+            ],
+            "content": {
+              "_type": "Grid Layout",
+              "_title": "Grid Layout",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Number of columns": 3,
+              "Layout/Number of rows": 3,
+              "Layout/Label position": "BOTTOM",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/RegEncoder_20",
+                  "_title": "RegEncoder_20",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "0,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/RegEncoder_22",
+                  "_title": "RegEncoder_22",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/RegEncoder_24",
+                  "_title": "RegEncoder_24",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                "1,1": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/RegEncoder_26",
+                  "_title": "RegEncoder_26",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              }
+            }
+          },
+          "19,0": {
+            "size": [
+              6,
+              11
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Subsystem Layout",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "LiveWindow",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 32.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": 45.0,
+    "y": 67.0,
+    "width": 1793.0,
+    "height": 729.0
+  }
+}

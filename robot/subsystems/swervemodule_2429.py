@@ -1,5 +1,5 @@
 import wpilib
-from rev import CANSparkMax
+from rev import CANSparkMax, CANSparkFlex
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModuleState, SwerveModulePosition
 from wpilib import AnalogEncoder, AnalogPotentiometer
@@ -20,8 +20,8 @@ class SwerveModule:
         self.desiredState = SwerveModuleState(0.0, Rotation2d())  # initialize desired state
         self.turning_output = 0
 
-        # get our two motor controllers and a simulation dummy
-        self.drivingSparkMax = CANSparkMax(drivingCANId, CANSparkMax.MotorType.kBrushless)
+        # get our two motor controllers and a simulation dummy  TODO: set motor types in swerve_constants?
+        self.drivingSparkMax = CANSparkFlex(drivingCANId, CANSparkFlex.MotorType.kBrushless)
         self.turningSparkMax = CANSparkMax(turningCANId, CANSparkMax.MotorType.kBrushless)
         if wpilib.RobotBase.isSimulation():  # check in sim to see if we are reacting to inputs
             self.dummy_motor_driving = wpilib.PWMSparkMax(drivingCANId-16)
@@ -35,19 +35,17 @@ class SwerveModule:
         self.drivingSparkMax.setInverted(driving_inverted)
         self.drivingSparkMax.enableVoltageCompensation(constants.k_volt_compensation)
 
-
         # Get driving encoder from the sparkmax
         self.drivingEncoder = self.drivingSparkMax.getEncoder()
         self.drivingEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor)
         self.drivingEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor)
-        # Configure driving PID gains for the driving motor.
+        # Configure driving PID gains for the driving motor
         self.drivingPIDController = self.drivingSparkMax.getPIDController()
         self.drivingPIDController.setFeedbackDevice(self.drivingEncoder)
-        self.drivingPIDController.setP(ModuleConstants.kDrivingP)
-        self.drivingPIDController.setI(ModuleConstants.kDrivingI)
-        self.drivingPIDController.setD(ModuleConstants.kDrivingD)
-        self.drivingPIDController.setFF(ModuleConstants.kDrivingFF)
-        self.drivingPIDController.setOutputRange(ModuleConstants.kDrivingMinOutput, ModuleConstants.kDrivingMaxOutput)
+        # Set/Save the configurations. If a SPARK MAX browns out during operation, it will maintain the above config
+        # Saves p,i,d, ff, min/max, smart motion etc - do we need more than one slot used?  might as well always be 0
+        configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=1,
+                               burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
 
         #  ---------------- TURNING SPARKMAX  ------------------
         self.turningSparkMax.restoreFactoryDefaults()
@@ -57,21 +55,19 @@ class SwerveModule:
         self.turningSparkMax.enableVoltageCompensation(constants.k_volt_compensation)
 
         # Setup encoders for the turning SPARKMAX - just to watch it if we need to for velocities, etc.
+        # WE DO NOT USE THIS FOR ANYTHING - THE ABSOLUTE ENCODER IS USED FOR TURNING AND GOES INTO THE RIO ANALOG PORT
         self.turningEncoder = self.turningSparkMax.getEncoder()
         self.turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor)
         self.turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor)
 
-        configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=1,
-                               burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
-        # Save the SPARK MAX configurations. If a SPARK MAX browns out during
-        # operation, it will maintain the above configurations.
-        if constants.k_burn_flash:
-            self.drivingSparkMax.burnFlash()
+        if constants.k_burn_flash:  # until we make the turning motor settings a dictinary
+            # self.drivingSparkMax.burnFlash()  # already done in the configure step above
             self.turningSparkMax.burnFlash()
 
         #  ---------------- ABSOLUTE ENCODER AND PID FOR TURNING  ------------------
         # create the AnalogPotentiometer with the offset.  TODO: this probably has to be 5V hardware but need to check
         # automatically always in radians and the turnover offset is built in, so the PID is easier
+        # TODO: double check that the scale factor is the same on the new thrifty potentiometers
         self.absolute_encoder = AnalogPotentiometer(encoder_analog_port,
                                                     dc.k_analog_encoder_scale_factor * math.tau, -turning_encoder_offset)
         self.turning_PID_controller = PIDController(Kp=ModuleConstants.kTurningP, Ki=ModuleConstants.kTurningI, Kd=ModuleConstants.kTurningD)
@@ -79,18 +75,14 @@ class SwerveModule:
 
         # TODO: use the absolute encoder to set this - need to check the math carefully
         self.drivingEncoder.setPosition(0)
-
-        # if constants.k_use_abs_encoder_on_swerve:
-        #     self.update_turning_encoder(self.absolute_encoder.get() )
-        # else:
         self.turningEncoder.setPosition(self.get_turn_encoder())
 
         # self.chassisAngularOffset = chassisAngularOffset  # not yet
         self.desiredState.angle = Rotation2d(self.get_turn_encoder())
 
     def get_turn_encoder(self):
-        # how we invert the absolute encoder
-        analog_reverse_multiplier = -1 if dc.k_reverse_analogs else 1
+        # how we invert the absolute encoder if necessary (which it probably isn't in the standard mk4i config)
+        analog_reverse_multiplier = -1 if dc.k_reverse_analog_encoders else 1
         return analog_reverse_multiplier * self.absolute_encoder.get()
 
     def getState(self) -> SwerveModuleState:
@@ -144,8 +136,6 @@ class SwerveModule:
                                 [self.drivingSparkMax.getAppliedOutput(), self.turningSparkMax.getAppliedOutput()])
             wpilib.SmartDashboard.putNumberArray(f'{self.label}_actual_vel_angle',
                                 [self.drivingEncoder.getVelocity(), self.turningEncoder.getPosition()])
-
-
 
         self.desiredState = desiredState
 

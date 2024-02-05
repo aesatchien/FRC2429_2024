@@ -8,85 +8,56 @@ from rev import CANSparkMax
 class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
-    kMaxSpeedMetersPerSecond = 1.0# 4.25 is Haochen competition, 4.8 is full out
+    kMaxSpeedMetersPerSecond = 1.0  # 4.25 was Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.25 * math.tau  # radians per second
+    # TODO: actually figure out what the total max speed should be - vector sum?
     kMaxTotalSpeed = math.sqrt(2) *  kMaxAngularSpeed  # sum of angular and rotational, should probably do hypotenuse
+    # set the acceleration limits used in driving using the SlewRateLimiter tool
     kMagnitudeSlewRate = 5  # hundred percent per second (1 = 100%)
     kRotationalSlewRate = 5  # hundred percent per second (1 = 100%)
     k_inner_deadband = 0.08  # use deadbands for joystick transformations and keepangle calculations
-    k_outer_deadband = 0.95
-    k_minimum_rotation = kMaxAngularSpeed * k_inner_deadband
+    k_outer_deadband = 0.95  # above this you just set it to 1 - makes going diagonal easier
+    # k_minimum_rotation = kMaxAngularSpeed * k_inner_deadband
 
-    # Chassis configuration - not sure it even matters if we're square
+    # Chassis configuration - not sure it even matters if we're square because wpilib accounts for it
+    # MK4i modules have the centers of the wheels 2.5" from the edge, so this is robot length (or width) minus 5
     kTrackWidth = units.inchesToMeters(23.0)  # Distance between centers of right and left wheels on robot
     kWheelBase = units.inchesToMeters(23.0)   # Distance between front and back wheels on robot
 
-    # This is key !  Here is where you get left and right correct
-    # It's the minus signs in the 2nd column that swap l/r  - but it can still mess up
     # kinematics gets passed [self.frontLeft, self.frontRight, self.rearLeft, self.rearRight]
-    # Front left is X+Y+, Front right is + -, Rear left is - +, Rear right is - -
+    # Front left is X+Y+, Front right is + -, Rear left is - +, Rear right is - - (otherwise odometery is wrong)
     # this should be left as the convention, so match the above.  Then take care of turning issues with the
-    # INVERSION OF THE TURN OR DRIVE MOTORS
-    orientation_standard = [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # 2023 this fails: TODO: MAKE SURE ANGLE ENCODERS ARE CCW +
-    orientation_2023 = [(-1, 1), (-1, -1), (1, 1), (1, -1)]  # this drives correctly but Y is swapped in odometry
-    orient = orientation_standard
-    kGyroReversed = False  # True for 2023;  False for 2024
-    # used in the swerve modules themselves to reverse the direction of the analog encoder
-    k_reverse_analogs = False  # True for 2023; False for 2024
-    k_drive_motors_inverted = False  # False for 2023, STAYS THE SAME
-    k_turn_motor_inverted = True  # False for 2023, True for 2024
+    # INVERSION OF THE TURN OR DRIVE MOTORS, GYRO and ABSOLUTE ENCODERS
+    swerve_orientation = [(1, 1), (1, -1), (-1, 1), (-1, -1)]  # MAKE SURE ANGLE ENCODERS ARE CCW +
     kModulePositions = [
-        Translation2d(orient[0][0]*kWheelBase / 2, orient[0][1]*kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
-        Translation2d(orient[1][0]*kWheelBase / 2, orient[1][1]*kTrackWidth / 2),
-        Translation2d(orient[2][0]*kWheelBase / 2, orient[2][1]*kTrackWidth / 2),
-        Translation2d(orient[3][0]*kWheelBase / 2, orient[3][1]*kTrackWidth / 2),
+        Translation2d(swerve_orientation[0][0]*kWheelBase / 2, swerve_orientation[0][1]*kTrackWidth / 2),
+        Translation2d(swerve_orientation[1][0]*kWheelBase / 2, swerve_orientation[1][1]*kTrackWidth / 2),
+        Translation2d(swerve_orientation[2][0]*kWheelBase / 2, swerve_orientation[2][1]*kTrackWidth / 2),
+        Translation2d(swerve_orientation[3][0]*kWheelBase / 2, swerve_orientation[3][1]*kTrackWidth / 2),
     ]
-
-    # kModulePositions = [
-    #     Translation2d(-kWheelBase / 2, kTrackWidth / 2),  # i swapped F and B to get the diamond on rotation
-    #     Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
-    #     Translation2d(kWheelBase / 2, kTrackWidth / 2),
-    #     Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-    # ]
+    # set up kinematics object for swerve subsystem
     kDriveKinematics = SwerveDrive4Kinematics(*kModulePositions)
 
-    # which motors need to be inverted  - none?
-    # code seems to ignore this, so I turned the right wheels around instead, to have billet gears always point right.
-    # that is a mistake, and need to rectify this
+    # which motors need to be inverted - depends on if on top or bottom
+    k_drive_motors_inverted = False  # False for 2023 - motors below
+    k_turn_motors_inverted = True  # True for 2023 - motors below
+    # incorrect gyro inversion will make the pose odometry have the wrong sign on rotation
+    kGyroReversed = False  # False for 2023, probably always
+    # used in the swerve modules themselves to reverse the direction of the analog encoder
+    # note turn motors and analog encoders must agree - or you go haywire
+    k_reverse_analog_encoders = False  # False for 2024 and probably always.
 
-    k_lf_drive_motor_inverted = k_drive_motors_inverted
-    k_lb_drive_motor_inverted = k_drive_motors_inverted
-    k_rf_drive_motor_inverted = k_drive_motors_inverted
-    k_rb_drive_motor_inverted = k_drive_motors_inverted
-
-    k_lf_turn_motor_inverted = k_turn_motor_inverted
-    k_lb_turn_motor_inverted = k_turn_motor_inverted
-    k_rf_turn_motor_inverted = k_turn_motor_inverted
-    k_rb_turn_motor_inverted = k_turn_motor_inverted
+    # max absolute encoder value on each wheel - 20230322 CJH
+    k_analog_encoder_abs_max = 0.989  # determined by filtering and watching as it flips from 1 to 0
+    # we pass this next one to the analog potentiometer object t0 determine the full range
+    k_analog_encoder_scale_factor = 1 / k_analog_encoder_abs_max  # 1.011  #so have to scale back up to be b/w 0 and 1
 
     # absolute encoder values when wheels facing forward  - 20230322 CJH
     # NOW IN RADIANS to feed right to the AnalogPotentiometer on the module
-    k_lf_zero_offset = 1.011 * math.tau * 0.836  # 0.105 rad
-    k_rf_zero_offset = 1.011 * math.tau * 0.745  # 4.682 rad   billet gear out on rf
-    k_lb_zero_offset = 1.011 * math.tau * 0.723  # 4.531 rad
-    k_rb_zero_offset = 1.011 * math.tau * 0.872  # 5.478 rad  billet gear out on rf
-
-
-    # max absolute encoder value on each wheel  - 20230322 CJH
-    # going to stop using this - it's probably 3.3 and it doesn't actually matter much considering our noise level
-    # need to figure out where to account for this
-    k_analog_encoder_scale_factor = 1.011  #  this thing only hits 0.989 for some reason
-    k_lf_filtered_abs_max = 0.989
-    k_rf_filtered_abs_max = 0.989
-    k_lb_filtered_abs_max = 0.989
-    k_rb_filtered_abs_max = 0.989
-
-    # Angular offsets of the modules relative to the chassis in radians  -
-    # (CJH: they want to put the abs encoder offsets here and set and forget)
-    kFrontLeftChassisAngularOffset = math.tau * k_lf_zero_offset / k_lf_filtered_abs_max  # 5.389
-    kFrontRightChassisAngularOffset = math.tau * k_rf_zero_offset / k_rf_filtered_abs_max  # 4.732
-    kBackLeftChassisAngularOffset = math.tau * k_lb_zero_offset / k_lb_filtered_abs_max  # 4.611
-    kBackRightChassisAngularOffset = math.tau * k_rb_zero_offset / k_rb_filtered_abs_max  # 5.581
+    k_lf_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.836  # 0.105 rad
+    k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.745  # 4.682 rad   billet gear out on rf
+    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.723  # 4.531 rad
+    k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.872  # 5.478 rad  billet gear out on rf
 
     # SPARK MAX CAN IDs
     kFrontLeftDrivingCanId = 21
@@ -110,10 +81,6 @@ class NeoMotorConstants:
 
 class ModuleConstants:
 
-    # Invert the turning encoder, since the output shaft rotates in the opposite direction of
-    # the steering motor in the MAXSwerve Module.
-    kTurningEncoderInverted = False # True for absolute encoder, but not built-in
-
     # Calculations required for driving motor conversion factors and feed forward
     kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60
     kWheelDiameterMeters = 4 * 0.0254  #  0.1016  =  four inches
@@ -136,8 +103,10 @@ class ModuleConstants:
     kDrivingI = 0
     kDrivingD = 0
     kDrivingFF = 1 / kDriveWheelFreeSpeedRps  # CJH tested 3/19/2023, works ok  - 0.2235
-    kDrivingMinOutput = -1
-    kDrivingMaxOutput = 1
+    kDrivingMinOutput = -0.96
+    kDrivingMaxOutput = 0.96
+    k_smartmotion_max_velocity = 3  # m/s
+    k_smartmotion_max_accel = 2  # m/s/s
 
     kTurningP = 0.3 #  CJH tested this 3/19/2023  and 0.25 was good
     kTurningI = 0.0
@@ -146,8 +115,9 @@ class ModuleConstants:
     kTurningMinOutput = -1
     kTurningMaxOutput = 1
 
-    k_PID_dict_vel = {'kP': 0.0, 'kI': 0.000, 'kD': 0.00, 'kIz': 0.001, 'kFF': kDrivingFF, 'kArbFF':0, 'kMaxOutput': 0.95,
-                'kMinOutput': -0.95, 'SM_MaxVel':3, 'SM_MaxAccel':2}  # 180 is 3 m/s and 3m/s/s
+    # used for configuring and burning the flash - I think we only need slot 0 - we only do velocity control?
+    k_PID_dict_vel = {'kP': kDrivingP, 'kI': kDrivingI, 'kD': kDrivingD, 'kIz': 0.001, 'kFF': kDrivingFF, 'kArbFF':0, 'kMaxOutput': kDrivingMaxOutput,
+                'kMinOutput': kDrivingMinOutput, 'SM_MaxVel':k_smartmotion_max_velocity, 'SM_MaxAccel':k_smartmotion_max_accel}
 
     kDrivingMotorIdleMode = CANSparkMax.IdleMode.kBrake
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
@@ -155,7 +125,7 @@ class ModuleConstants:
     kDrivingMotorCurrentLimit = 50  # amp
     kTurningMotorCurrentLimit = 20  # amp
 
-class AutoConstants:
+class AutoConstants:  # retaining this from original swerve code template, but we don't use (yet)
     kMaxSpeedMetersPerSecond = 3
     kMaxAccelerationMetersPerSecondSquared = 3
     kMaxAngularSpeedRadiansPerSecond = math.pi
