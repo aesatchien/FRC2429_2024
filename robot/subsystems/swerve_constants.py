@@ -3,11 +3,12 @@ from wpimath import units
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 from wpimath.trajectory import TrapezoidProfileRadians
-from rev import CANSparkMax
+from rev import CANSparkMax, CANSparkFlex
 
 class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
+    k_drive_controller_type = CANSparkFlex
     kMaxSpeedMetersPerSecond = 1.0  # 4.25 was Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.25 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
@@ -39,10 +40,10 @@ class DriveConstants:
     kDriveKinematics = SwerveDrive4Kinematics(*kModulePositions)
 
     # which motors need to be inverted - depends on if on top or bottom
-    k_drive_motors_inverted = False  # False for 2023 - motors below
-    k_turn_motors_inverted = True  # True for 2023 - motors below
+    k_drive_motors_inverted = True  # False for 2023 - motors below
+    k_turn_motors_inverted = False  # True for 2023 - motors below
     # incorrect gyro inversion will make the pose odometry have the wrong sign on rotation
-    kGyroReversed = False  # False for 2023, probably always
+    kGyroReversed = True  # False for 2023 (was upside down), True for 2024?
     # used in the swerve modules themselves to reverse the direction of the analog encoder
     # note turn motors and analog encoders must agree - or you go haywire
     k_reverse_analog_encoders = False  # False for 2024 and probably always.
@@ -54,10 +55,10 @@ class DriveConstants:
 
     # absolute encoder values when wheels facing forward  - 20230322 CJH
     # NOW IN RADIANS to feed right to the AnalogPotentiometer on the module
-    k_lf_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.836  # 0.105 rad
-    k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.745  # 4.682 rad   billet gear out on rf
-    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.723  # 4.531 rad
-    k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * 0.872  # 5.478 rad  billet gear out on rf
+    k_lf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.829)  #  rad
+    k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.783)  #  rad   billet gear out on rf
+    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.304)  #  rad
+    k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.986)  #  rad  billet gear out on rb
 
     # SPARK MAX CAN IDs
     kFrontLeftDrivingCanId = 21
@@ -77,7 +78,7 @@ class DriveConstants:
     kBackRightAbsEncoderPort = 3
 
 class NeoMotorConstants:
-    kFreeSpeedRpm = 5676
+    kFreeSpeedRpm = 6784  # neo is 5676, vortex is 6784
 
 class ModuleConstants:
 
@@ -119,7 +120,7 @@ class ModuleConstants:
     k_PID_dict_vel = {'kP': kDrivingP, 'kI': kDrivingI, 'kD': kDrivingD, 'kIz': 0.001, 'kFF': kDrivingFF, 'kArbFF':0, 'kMaxOutput': kDrivingMaxOutput,
                 'kMinOutput': kDrivingMinOutput, 'SM_MaxVel':k_smartmotion_max_velocity, 'SM_MaxAccel':k_smartmotion_max_accel}
 
-    kDrivingMotorIdleMode = CANSparkMax.IdleMode.kBrake
+    kDrivingMotorIdleMode = DriveConstants.k_drive_controller_type.IdleMode.kBrake
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
 
     kDrivingMotorCurrentLimit = 50  # amp

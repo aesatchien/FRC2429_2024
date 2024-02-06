@@ -16,14 +16,14 @@ class Robot(wpilib.TimedRobot):
         self.ids = {'lf':0, 'rf':1, 'lb':2, 'rb':3}
 
 
-        self.turning_motors = {'lf': {'id': 20, 'max': 1, 'offset': 5.252, 'analog_port': 0},
-                               'rf': {'id': 24, 'max': 1, 'offset': 4.682, 'analog_port': 1},
-                               'lb': {'id': 22, 'max': 1, 'offset': 4.531, 'analog_port': 2},
-                               'rb': {'id': 26, 'max': 1, 'offset': 5.478, 'analog_port': 3 }}
+        self.turning_motors = {'lf': {'id': 20, 'max': 1, 'offset': 0, 'analog_port': 0},
+                               'rf': {'id': 24, 'max': 1, 'offset': 0, 'analog_port': 1},
+                               'lb': {'id': 22, 'max': 1, 'offset': 0, 'analog_port': 2},
+                               'rb': {'id': 26, 'max': 1, 'offset': 0, 'analog_port': 3}}
 
         for (key, motor_info) in self.turning_motors.items():
             motor = rev.CANSparkMax(motor_info['id'], rev.CANSparkMax.MotorType.kBrushless)
-            analog = wpilib.AnalogPotentiometer(motor_info['analog_port'], math.tau, -motor_info['offset'])
+            analog = wpilib.AnalogPotentiometer(motor_info['analog_port'],1, -motor_info['offset'])
             # analog = wpilib.AnalogPotentiometer(motor_info['analog_port'], 1, 0)
 
             temp_dict = {

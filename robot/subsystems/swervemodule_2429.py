@@ -43,7 +43,9 @@ class SwerveModule:
         self.drivingPIDController = self.drivingSparkMax.getPIDController()
         self.drivingPIDController.setFeedbackDevice(self.drivingEncoder)
         # Set/Save the configurations. If a SPARK MAX browns out during operation, it will maintain the above config
-        # Saves p,i,d, ff, min/max, smart motion etc - do we need more than one slot used?  might as well always be 0
+        # Saves p,i,d, ff, min/max, smart motion etc - do we need more than one slot used?  might as well always be
+        configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=0,
+                               burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
         configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=1,
                                burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
 
@@ -117,7 +119,7 @@ class SwerveModule:
         optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState, Rotation2d(self.get_turn_encoder()))
 
         # Command driving and turning SPARKS MAX towards their respective setpoints.
-        self.drivingPIDController.setReference(optimizedDesiredState.speed, CANSparkMax.ControlType.kVelocity)
+        self.drivingPIDController.setReference(optimizedDesiredState.speed, dc.k_drive_controller_type.ControlType.kVelocity)
 
         # calculate the PID value for the turning motor  - use the roborio instead of the sparkmax
         # self.turningPIDController.setReference(optimizedDesiredState.angle.radians(), CANSparkMax.ControlType.kPosition)

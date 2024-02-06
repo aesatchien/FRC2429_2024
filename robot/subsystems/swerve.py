@@ -85,7 +85,8 @@ class Swerve (SubsystemBase):
         # TODO - figure out if the odometry and the swerve use the same angle conventions - seems backwards
         # or I faked it incorrectly in the sim
         if wpilib.RobotBase.isReal():
-            self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), *self.get_module_positions(),)
+            pass
+            # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), *self.get_module_positions(),)
         else:
             pass
             # get pose from simulation's post to NT
@@ -186,7 +187,7 @@ class Swerve (SubsystemBase):
 
         return output
 
-    def set_drive_motor_references(self, setpoint, control_type = rev.CANSparkMax.ControlType.kVoltage,
+    def set_drive_motor_references(self, setpoint, control_type = dc.k_drive_controller_type.ControlType.kVoltage,
                                    pidSlot=1, arbFeedForward=0):
         # Make sure you've turned the swerve into a tank drive before calling this
         for module in self.swerve_modules:
