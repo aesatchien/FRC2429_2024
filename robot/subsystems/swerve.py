@@ -74,6 +74,7 @@ class Swerve (SubsystemBase):
         self.prevTime = wpilib.Timer.getFPGATimestamp()
 
         # Odometry class for tracking robot pose
+        # when we boot should we always be at zero angle?
         self.odometry = SwerveDrive4Odometry(
             dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
             initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))

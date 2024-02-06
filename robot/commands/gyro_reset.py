@@ -5,7 +5,6 @@ from wpimath.filter import Debouncer
 
 
 class GyroReset(commands2.Command):
-
     def __init__(self, container, swerve: Swerve) -> None:
         super().__init__()
         self.setName('GyroReset')
@@ -13,7 +12,7 @@ class GyroReset(commands2.Command):
         self.swerve = swerve
         self.counter = 0
 
-        self.debouncer = Debouncer(debounceTime=0.1)
+        self.debouncer = Debouncer(debounceTime=0.05)
         self.addRequirements(self.swerve)  # commandsv2 version of requirements
 
     def runsWhenDisabled(self):  # ok to run when disabled - override the base method
