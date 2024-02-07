@@ -96,11 +96,12 @@ class Swerve (SubsystemBase):
 
         if self.counter % 10 == 0:
             pose = self.get_pose()  # self.odometry.getPose()
-            if wpilib.RobotBase.isReal():
+            if wpilib.RobotBase.isReal():  # update the NT with odometry for the dashboard - sim will do its own
                 wpilib.SmartDashboard.putNumberArray('drive_pose', [pose.X(), pose.Y(), pose.rotation().degrees()])
                 wpilib.SmartDashboard.putNumber('drive_x', pose.X())
                 wpilib.SmartDashboard.putNumber('drive_y', pose.Y())
                 wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
+
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.navx.getYaw())
 
@@ -185,6 +186,10 @@ class Swerve (SubsystemBase):
             # output = self.keep_angle_pid.calculate(-self.get_angle(), self.keep_angle)  # 2023
             output = self.keep_angle_pid.calculate(self.get_angle(), self.keep_angle)  # 2024, reversed get angle
             output = output if math.fabs(output) < 0.2 else 0.2 * math.copysign(1, output)  # clamp at 0.2
+
+        if wpilib.RobotBase.isSimulation():
+            wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
+            wpilib.SmartDashboard.putNumber('keep_angle_output', output)
 
         return output
 

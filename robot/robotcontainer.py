@@ -4,6 +4,7 @@ import time, enum
 import wpilib
 import commands2
 from commands2.button import JoystickButton, POVButton
+from commands2.button import CommandXboxController
 
 import constants  # all of the constants except for swerve
 
@@ -13,7 +14,7 @@ from subsystems.swerve import Swerve
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
-
+from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
 
 class RobotContainer:
     """
@@ -53,9 +54,13 @@ class RobotContainer:
         and then passing it to a JoystickButton.
         """
         # The driver's controller
-        self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)
-        self.buttonA = JoystickButton(self.driver_controller, 1)
-        self.buttonB = JoystickButton(self.driver_controller, 2)
+        self.driver_command_controller = CommandXboxController(constants.k_driver_controller_port)  # 2024 way
+        self.trigger_a = self.driver_command_controller.a()  # 2024 way
+        self.trigger_b = self.driver_command_controller.b()
+
+        self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)  # 2023 way
+        # self.buttonA = JoystickButton(self.driver_controller, 1)
+        # self.buttonB = JoystickButton(self.driver_controller, 2)
         # self.buttonX = JoystickButton(self.driver_controller, 3)
         # self.buttonY = JoystickButton(self.driver_controller, 4)
         # self.buttonLB = JoystickButton(self.driver_controller, 5)
@@ -70,7 +75,9 @@ class RobotContainer:
         #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
     def configure_swerve_bindings(self):
-        self.buttonB.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
+        self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=3,
+        direction = 'forwards', decide_by_turret = False))
+        self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
 
     def bind_buttons(self):
        pass

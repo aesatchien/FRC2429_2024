@@ -9,10 +9,10 @@ class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
     k_drive_controller_type = CANSparkFlex
-    kMaxSpeedMetersPerSecond = 1.49  # 4.25 was Haochen competition, 4.8 is full out
-    kMaxAngularSpeed = 0.25 * math.tau  # radians per second
+    kMaxSpeedMetersPerSecond = 1  # 4.25 was Haochen competition, 4.8 is full out
+    kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
-    kMaxTotalSpeed = math.sqrt(2) *  kMaxAngularSpeed  # sum of angular and rotational, should probably do hypotenuse
+    kMaxTotalSpeed = math.sqrt(2) *  kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
     # set the acceleration limits used in driving using the SlewRateLimiter tool
     kMagnitudeSlewRate = 5  # hundred percent per second (1 = 100%)
     kRotationalSlewRate = 5  # hundred percent per second (1 = 100%)
@@ -59,6 +59,7 @@ class DriveConstants:
     k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.783)  #  rad   billet gear out on rf
     k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.304)  #  rad
     k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.986)  #  rad  billet gear out on rb
+    k_analog_encoder_offsets = {'lf':0.829, 'rf':0.783, 'lb':0.304, 'rb':0.986}  # use in sim
 
     # SPARK MAX CAN IDs
     kFrontLeftDrivingCanId = 21

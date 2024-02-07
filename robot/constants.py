@@ -11,7 +11,7 @@ k_field_centric = True  # True sets the robot driving to the driver's point of v
 k_burn_flash = False  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_rate_limited = True  # on swerve, use slew limiters to keep acceleration from being too abrupt
-k_debugging_messages = False  # turn these off for competition
+k_debugging_messages = True  # turn these off for competition
 k_slowmode_multiplier = 0.2  # cut max velocity of the robot for fine movement control
 
 # --------------  OI  ---------------

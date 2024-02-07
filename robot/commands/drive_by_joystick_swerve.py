@@ -3,6 +3,8 @@
 import math
 import typing
 import commands2
+import wpilib
+
 from subsystems.swerve import Swerve  # allows us to access the definitions
 from wpilib import SmartDashboard
 from wpimath.geometry import Translation2d
@@ -59,8 +61,9 @@ class DriveByJoystickSwerve(commands2.Command):
             self.swerve.drive(desired_translation.X(), desired_translation.Y(), desired_rot,
                           fieldRelative=self.field_oriented, rate_limited=self.rate_limited)
         else:
+            keep_angle = True if wpilib.RobotBase.isReal() else False  # skip keep_angle in sim for now
             self.swerve.drive(xSpeed=desired_fwd,ySpeed=desired_strafe, rot=desired_rot,
-                              fieldRelative=self.field_oriented, rate_limited=self.rate_limited, keep_angle=True)
+                              fieldRelative=self.field_oriented, rate_limited=self.rate_limited, keep_angle=keep_angle)
 
     def end(self, interrupted: bool) -> None:
         # probably should leave the wheels where they are?

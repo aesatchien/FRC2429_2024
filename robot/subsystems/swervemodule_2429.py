@@ -110,6 +110,7 @@ class SwerveModule:
         :param desiredState: Desired state with speed and angle.
 
         """
+
         # Apply chassis angular offset to the desired state.
         correctedDesiredState = SwerveModuleState()
         correctedDesiredState.speed = desiredState.speed
@@ -117,6 +118,11 @@ class SwerveModule:
 
         # Optimize the reference state to avoid spinning further than 90 degrees.
         optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState, Rotation2d(self.get_turn_encoder()))
+
+        # don't let wheels servo back if we aren't asking the module to move
+        if math.fabs(desiredState.speed) < 0.002:  # need to see what is this minimum m/s that makes sense
+            optimizedDesiredState.speed = 0
+            optimizedDesiredState.angle = self.getState().angle
 
         # Command driving and turning SPARKS MAX towards their respective setpoints.
         self.drivingPIDController.setReference(optimizedDesiredState.speed, dc.k_drive_controller_type.ControlType.kVelocity)
@@ -131,13 +137,13 @@ class SwerveModule:
             self.dummy_motor_driving.set(optimizedDesiredState.speed / 10)
             self.dummy_motor_turning.set(optimizedDesiredState.angle.radians()/10)
 
-        if constants.k_debugging_messages:  # only do this when debugging - it's pretty intensive
-            wpilib.SmartDashboard.putNumberArray(f'{self.label}_target_vel_angle',
-                                [optimizedDesiredState.speed, optimizedDesiredState.angle.radians()])
-            wpilib.SmartDashboard.putNumberArray(f'{self.label}_volts',
-                                [self.drivingSparkMax.getAppliedOutput(), self.turningSparkMax.getAppliedOutput()])
-            wpilib.SmartDashboard.putNumberArray(f'{self.label}_actual_vel_angle',
-                                [self.drivingEncoder.getVelocity(), self.turningEncoder.getPosition()])
+            if constants.k_debugging_messages:  # only do this when debugging - it's pretty intensive
+                wpilib.SmartDashboard.putNumberArray(f'{self.label}_target_vel_angle',
+                                    [optimizedDesiredState.speed, optimizedDesiredState.angle.radians()])
+                wpilib.SmartDashboard.putNumberArray(f'{self.label}_actual_vel_angle',
+                                    [self.drivingEncoder.getVelocity(), self.turningEncoder.getPosition()])
+                wpilib.SmartDashboard.putNumberArray(f'{self.label}_volts',
+                                    [self.drivingSparkMax.getAppliedOutput(), self.turningSparkMax.getAppliedOutput()])
 
         self.desiredState = desiredState
 
