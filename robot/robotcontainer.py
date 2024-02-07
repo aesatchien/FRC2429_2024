@@ -56,21 +56,21 @@ class RobotContainer:
         self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)
         self.buttonA = JoystickButton(self.driver_controller, 1)
         self.buttonB = JoystickButton(self.driver_controller, 2)
-        self.buttonX = JoystickButton(self.driver_controller, 3)
-        self.buttonY = JoystickButton(self.driver_controller, 4)
-        self.buttonLB = JoystickButton(self.driver_controller, 5)
-        self.buttonRB = JoystickButton(self.driver_controller, 6)
-        self.buttonBack = JoystickButton(self.driver_controller, 7)
-        self.buttonStart = JoystickButton(self.driver_controller, 8)
-        self.buttonUp = POVButton(self.driver_controller, 0)
-        self.buttonDown = POVButton(self.driver_controller, 180)
-        self.buttonLeft = POVButton(self.driver_controller, 270)
-        self.buttonRight = POVButton(self.driver_controller, 90)
+        # self.buttonX = JoystickButton(self.driver_controller, 3)
+        # self.buttonY = JoystickButton(self.driver_controller, 4)
+        # self.buttonLB = JoystickButton(self.driver_controller, 5)
+        # self.buttonRB = JoystickButton(self.driver_controller, 6)
+        # self.buttonBack = JoystickButton(self.driver_controller, 7)
+        # self.buttonStart = JoystickButton(self.driver_controller, 8)
+        # self.buttonUp = POVButton(self.driver_controller, 0)
+        # self.buttonDown = POVButton(self.driver_controller, 180)
+        # self.buttonLeft = POVButton(self.driver_controller, 270)
+        # self.buttonRight = POVButton(self.driver_controller, 90)
         #self.buttonLeftAxis = AxisButton(self.driver_controller, 2)
         #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
     def configure_swerve_bindings(self):
-        self.buttonB.debounce(0.1).onTrue(GyroReset(self, swerve=self.drive))
+        self.buttonB.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
 
     def bind_buttons(self):
        pass
