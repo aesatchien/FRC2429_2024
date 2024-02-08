@@ -69,8 +69,8 @@ k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
 
 # ------------------- CRANK -------------------
-k_crank_motor_left = 8
-k_crank_motor_right = 9  # CAN ID
+k_crank_motor_left = 9
+k_crank_motor_right = 8  # CAN ID
 k_crank_encoder_conversion_factor = 360. / 225  # 023 bot wrist conversion
 
 k_PID_dict_vel_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.01e-4, 'kArbFF':0,
