@@ -7,15 +7,14 @@ import wpilib
 
 from subsystems.swerve import Swerve  # allows us to access the definitions
 from wpilib import SmartDashboard
+from commands2.button import CommandXboxController
 from wpimath.geometry import Translation2d
 from wpimath.filter import Debouncer
 import constants
 from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveByJoystickSwerve(commands2.Command):
-    def __init__(
-        self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
-
+    def __init__(self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
         super().__init__()
         self.setName('drive_by_joystick_swerve')
         self.container = container
@@ -26,6 +25,9 @@ class DriveByJoystickSwerve(commands2.Command):
         # chose 5 because that'll cause it to return true after 0.1 seconds like in robotcontainer
         self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.addRequirements(*[self.swerve])
+        # can't import container and don't want to pass lambdas just yet
+        self.controller: typing.Optional[CommandXboxController] = self.container.driver_command_controller
+        self.slow_mode_trigger = self.controller.leftBumper()
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
@@ -36,7 +38,7 @@ class DriveByJoystickSwerve(commands2.Command):
     def execute(self) -> None:
 
         # setting a slow mode here - not sure if it's the best way - may want a debouncer on it
-        if self.debouncer.calculate(self.container.driver_controller.getRawButton(5)):  # holding down button 5
+        if self.debouncer.calculate(self.slow_mode_trigger.getAsBoolean()):  # holding down button 5 - LB
             slowmode_multiplier = constants.k_slowmode_multiplier
         elif self.container.driver_controller.getRawAxis(2) > 0.5:  # squeezing the axisbutton
             slowmode_multiplier = 1.5 * constants.k_slowmode_multiplier
@@ -44,13 +46,16 @@ class DriveByJoystickSwerve(commands2.Command):
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
         max_angular = 1 * slowmode_multiplier
-        # note that x is up/down on the left stick.  (normally think of this as y)
+        # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
         # SO IF IT DOES NOT DRIVE CORRECTLY THAT WAY, CHECK KINEMATICS, THEN INVERSION OF DRIVE/ TURNING MOTORS
         # not all swerves are the same - some require inversion of drive and or turn motors
-        desired_fwd = -self.input_transform(1.0*self.container.driver_controller.getRawAxis(1)) * max_linear
-        desired_strafe = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(0)) * max_linear
-        desired_rot = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(4)) * max_angular
+        # desired_fwd = -self.input_transform(1.0*self.container.driver_controller.getRawAxis(1)) * max_linear
+        # desired_strafe = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(0)) * max_linear
+        # desired_rot = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(4)) * max_angular
+        desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
+        desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
+        desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
 
         correct_like_1706 = False  # this is what 1706 does, but Rev put all that in the swerve module's drive
         if correct_like_1706:
@@ -61,9 +66,8 @@ class DriveByJoystickSwerve(commands2.Command):
             self.swerve.drive(desired_translation.X(), desired_translation.Y(), desired_rot,
                           fieldRelative=self.field_oriented, rate_limited=self.rate_limited)
         else:
-            keep_angle = True if wpilib.RobotBase.isReal() else False  # skip keep_angle in sim for now
             self.swerve.drive(xSpeed=desired_fwd,ySpeed=desired_strafe, rot=desired_rot,
-                              fieldRelative=self.field_oriented, rate_limited=self.rate_limited, keep_angle=keep_angle)
+                              fieldRelative=self.field_oriented, rate_limited=self.rate_limited, keep_angle=True)
 
     def end(self, interrupted: bool) -> None:
         # probably should leave the wheels where they are?

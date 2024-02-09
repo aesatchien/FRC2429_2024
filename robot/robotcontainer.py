@@ -75,8 +75,8 @@ class RobotContainer:
         #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
     def configure_swerve_bindings(self):
-        self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=3,
-        direction = 'forwards', decide_by_turret = False))
+        self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=1,
+        direction = 'forwards', decide_by_turret = False).withTimeout(2))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
 
     def bind_buttons(self):

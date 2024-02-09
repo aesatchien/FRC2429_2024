@@ -9,7 +9,7 @@ class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
     k_drive_controller_type = CANSparkFlex
-    kMaxSpeedMetersPerSecond = 1  # 4.25 was Haochen competition, 4.8 is full out
+    kMaxSpeedMetersPerSecond = 2  # 4.25 was Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
     kMaxTotalSpeed = math.sqrt(2) *  kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
