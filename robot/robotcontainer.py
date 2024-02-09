@@ -15,6 +15,7 @@ from subsystems.swerve import Swerve
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
 from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
+from autonomous.drive_swerve_point_trajectory import DriveSwervePointTrajectory
 
 class RobotContainer:
     """
@@ -57,6 +58,7 @@ class RobotContainer:
         self.driver_command_controller = CommandXboxController(constants.k_driver_controller_port)  # 2024 way
         self.trigger_a = self.driver_command_controller.a()  # 2024 way
         self.trigger_b = self.driver_command_controller.b()
+        self.trigger_y = self.driver_command_controller.y()
 
         self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)  # 2023 way
         # self.buttonA = JoystickButton(self.driver_controller, 1)
@@ -78,6 +80,7 @@ class RobotContainer:
         self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=1,
         direction = 'forwards', decide_by_turret = False).withTimeout(2))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
+        self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
     def bind_buttons(self):
        pass
