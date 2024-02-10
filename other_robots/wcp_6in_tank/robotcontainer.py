@@ -12,6 +12,7 @@ from subsystems.led import Led
 from subsystems.shooter import Shooter
 from subsystems.intake import Intake
 from subsystems.crank_arm import CrankArm
+from subsystems.shooter_arm import ShooterCrankArm
 
 from misc.axis_button import AxisButton
 from commands.drive_by_joystick import DriveByJoystick
@@ -22,6 +23,7 @@ from commands.shooter_toggle import ShooterToggle
 from commands.intake_toggle import IntakeToggle
 from commands.crank_arm_move import CrankArmMove
 from commands.crank_arm_toggle import CrankArmToggle
+from commands.shooter_arm_toggle import ShooterArmToggle
 
 
 # from autonomous.drive_wait import DriveWait
@@ -47,8 +49,9 @@ class RobotContainer:
         self.shooter = Shooter()
         self.intake = Intake()
         self.crank_arm = CrankArm()
+        self.shooter_arm = ShooterCrankArm()
 
-        self.game_piece_mode = 'cube'
+        self.game_piece_mode = 'cube'  # TODO: change to empty and full? orange vs white?
 
         self.configureButtonBindings()
 
@@ -118,7 +121,6 @@ class RobotContainer:
         else:
             self.co_driver_controller = None
 
-        # All untested still
         # bind commands to driver
 
         # bind shooter
@@ -128,9 +130,11 @@ class RobotContainer:
         # bind intake
         #elf.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
-        # bind crank arm
-        self.buttonUp.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=1.5, force='on'))  #ToDo find out how to have it increment to the next position
-        self.buttonDown.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=-1.0, force='on')) #ToDo find out how to have it increment to the next position
+        # bind crank arms for testing
+        self.buttonUp.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=1.5, force='on'))  # ToDo find out how to have it increment to the next position
+        self.buttonDown.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=-1.0, force='on'))
+        self.buttonRight.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=1.5, force='on'))  # ToDo find out how to have it increment to the next position
+        self.buttonLeft.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=-1.0, force='on'))
         self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
 
        # bind LED

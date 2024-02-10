@@ -36,12 +36,6 @@ k_left_motor2_port = 2
 k_right_motor1_port = 3
 k_right_motor2_port = 4
 
-# For when battery is front
-# k_left_motor1_port = 3
-# k_left_motor2_port = 4
-# k_right_motor1_port = 1
-# k_right_motor2_port = 2
-
 # drivetrain constants
 k_wheel_diameter_in = 6  # wheel diameter in inches
 k_wheel_diameter_m =  k_wheel_diameter_in * 0.0254  # wheel diameter in meters
@@ -50,6 +44,7 @@ k_track_width_meters = 27 * 0.0254
 k_robot_wheelbase = 18 * 0.5 * 0.0254
 k_gear_ratio = 10.72  # REV 6in slow (10T) is 11.79:  medium (11T) is 10.72.  Both use the 30/68, so 2.26 * 52/PinionT
 k_sparkmax_conversion_factor_meters = k_wheel_diameter_m * 3.14159 / k_gear_ratio  # used in drivetrain - 0.044 m/rev
+k_neo_freespeed = 5700  # published is 5676
 
 # testing ON BLOCKS shows that flat out at 90% power we top out at 4m/s - still pretty fast
 # kff = 0.24 using k and k/60  but this screws smart motion - it ain't that smart so 0.0040 is the kFF and m/min is vel
@@ -63,32 +58,32 @@ k_PID_dict_vel_slow = {'kP': 1e-5, 'kI': 4e-6, 'kD': 0.00, 'kIz': 0, 'kFF': 0.00
 k_drive_accumulator_max = 0.5  # limit on forward I - negative has no limit :(  Units in volts?
 
 # ------------------- SHOOTER -------------------
-# k_flywheel_left_neo_port = 8 # CAN ID
-# k_flywheel_right_neo_port = 6 # CAN ID
 k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
 
-<<<<<<< HEAD
 # ------------------- Top CRANK -------------------
-k_crank_motor_left = 8
-k_crank_motor_right = 9  # CAN ID
-=======
-# ------------------- CRANK -------------------
-k_crank_motor_left = 9
-k_crank_motor_right = 8  # CAN ID
->>>>>>> eec26f1d07b80327f2b002d680014a52c6e640da
-k_crank_encoder_conversion_factor = 360. / 225  # 023 bot wrist conversion
+k_top_crank_motor_left = 8
+k_top_crank_motor_right = 9  # CAN ID
+k_top_crank_gear_ratio =  5 * 5 * 3 * 2  # 553 (maxplanetary) * 2 (pulley) = 150
+k_top_crank_encoder_conversion_factor = 360. / k_top_crank_gear_ratio  # motor revs to degrees
+kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_encoder_conversion_factor)  # about 7.3E-5 power per degree/minute
+# velocity and acceleration targets will be in degrees per minute, so 6000 would be 100 degrees per second
+k_PID_dict_vel_top_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
+                         'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':3000, 'SM_MaxAccel':3000}
+# ToDo: start with small crank change values and increase as necessary
 
-k_PID_dict_vel_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 1.01e-4, 'kArbFF':0,
-                         'kMaxOutput': 0.55, 'kMinOutput': -0.55, 'SM_MaxVel':6000,
-                        'SM_MaxAccel':4500}       # ToDo: change values
 # ------------------- Lower CRANK -------------------
 k_lower_crank_motor_left = 6
 k_lower_crank_motor_right = 7  # CAN ID
-
+k_lower_crank_gear_ratio =  5 * 5 * 5 * 3  # 555 (maxplanetary) * 3 (pulley) = 375
+k_lower_crank_encoder_conversion_factor = 360. / k_lower_crank_gear_ratio  # motor revs to degrees
+kFF_lower_crank = 1 / (k_neo_freespeed * k_lower_crank_encoder_conversion_factor)  # about 1.8E-4 power per degree/minute
+k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_lower_crank, 'kArbFF':0,
+                         'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':3000, 'SM_MaxAccel':3000}
+# ToDo: start with small crank change values and increase as necessary
 
 # ------------------- Intake -------------------
-k_intake_neo_port = 12 #CAN ID
+k_intake_neo_port = 12  # CAN ID
 
 # ------------------- LED -------------------
 k_led_pwm_port = 3
@@ -98,14 +93,6 @@ k_led_count = 36
 k_start_x = 7.647
 k_start_y = 1.935
 k_start_heading = -90  # looking at the drawing originally tried -109
-k_drivetrain_motor_count = 4
-k_wheel_diameter_m = 6 * 0.0254  # wheel diameter in meters
-k_gear_ratio = 5.39  # 4.17 # high gear 2022
-k_track_width_meters = 24 * 0.0254
-robot_characterization = {'ks':0.291, 'kv':1.63, 'ka':0.293, 'track_width':0.89}  # 2022 climberbot
-ks_volts = robot_characterization['ks']  # so far this is only used in the Ramsete command, but in 2021 we used it in tank model as well
-kv_volt_seconds_per_meter = robot_characterization['kv']  # used in physics_old.py LinearSystemId and Ramsete
-ka_volt_seconds_squared_per_meter = robot_characterization['ka']  # used in physics_old.py LinearSystemId and Ramsete
 
 # --------------  HELPER FUNCTIONS  ---------------
 def clamp(value: float, bottom: float, top: float) -> float:
