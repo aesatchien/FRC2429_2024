@@ -31,12 +31,12 @@ class CrankArm(Subsystem):
         self.in_use_by_driver = False
 
         # initialize motors
-        motor_type = rev.CANSparkFlex.MotorType.kBrushless
+        motor_type = rev.CANSparkMax.MotorType.kBrushless
 
-        self.crank_motor_left = rev.CANSparkFlex(constants.k_crank_motor_left,motor_type)
+        self.crank_motor_left = rev.CANSparkMax(constants.k_crank_motor_left,motor_type)
         self.crank_motor_left.setInverted(False)  # one must be true and the other false
         self.crank_motor_left.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
-        self.crank_motor_right = rev.CANSparkFlex(constants.k_crank_motor_right, motor_type)
+        self.crank_motor_right = rev.CANSparkMax(constants.k_crank_motor_right, motor_type)
         self.crank_motor_right.setInverted(True)
         self.crank_motor_right.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
 
