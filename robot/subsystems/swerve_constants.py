@@ -57,7 +57,7 @@ class DriveConstants:
     # NOW IN RADIANS to feed right to the AnalogPotentiometer on the module
     k_lf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.829)  #  rad
     k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.783)  #  rad   billet gear out on rf
-    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.304)  #  rad
+    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.436)  #  rad
     k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.986)  #  rad  billet gear out on rb
     k_analog_encoder_offsets = {'lf':0.829, 'rf':0.783, 'lb':0.304, 'rb':0.986}  # use in sim
 
