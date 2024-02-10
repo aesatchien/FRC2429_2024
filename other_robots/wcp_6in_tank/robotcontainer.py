@@ -126,11 +126,12 @@ class RobotContainer:
         self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         # bind intake
-        self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+        #elf.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind crank arm
-        self.buttonUp.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, rpm=2500, force='on'))  #ToDo find out how to have it increment to the next position
-        self.buttonDown.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off')) #ToDo find out how to have it increment to the next position
+        self.buttonUp.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=1.5, force='on'))  #ToDo find out how to have it increment to the next position
+        self.buttonDown.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=-1.0, force='on')) #ToDo find out how to have it increment to the next position
+        self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
 
        # bind LED
         self.buttonX.onTrue(LedToggle(container=self))

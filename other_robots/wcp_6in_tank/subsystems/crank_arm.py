@@ -34,7 +34,11 @@ class CrankArm(Subsystem):
         motor_type = rev.CANSparkFlex.MotorType.kBrushless
 
         self.crank_motor_left = rev.CANSparkFlex(constants.k_crank_motor_left,motor_type)
+        self.crank_motor_left.setInverted(False)  # one must be true and the other false
+        self.crank_motor_left.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
         self.crank_motor_right = rev.CANSparkFlex(constants.k_crank_motor_right, motor_type)
+        self.crank_motor_right.setInverted(True)
+        self.crank_motor_right.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
 
         self.crank_motor_left_controller = self.crank_motor_left.getPIDController()
         self.crank_motor_left_controller.setP(0)
@@ -45,12 +49,12 @@ class CrankArm(Subsystem):
         self.crank_arm_enable = False
         SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
 
-    def set_crank_arm(self, rpm):
-        self.crank_arm_voltage = 2
+    def set_crank_arm(self, power):
+        self.crank_arm_voltage = power
         self.crank_motor_left_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         self.crank_motor_right_controller.setReference(self.crank_arm_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         self.crank_arm_enable = True
-        print(f'setting rpm to {rpm} {self.crank_arm_voltage}')
+        print(f'setting power to {self.crank_arm_voltage}')
         SmartDashboard.putBoolean('crank_arm_state', self.crank_arm_enable)
 
     def stop_crank_arm(self):
