@@ -149,8 +149,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_sparkmax_angle', self.get_angle())
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_encoder_degrees', self.abs_encoder.getPosition())
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_sparkmax_angle', self.angle)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle*180/math.pi)
             wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
                                            self.follower.getAppliedOutput()])
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second

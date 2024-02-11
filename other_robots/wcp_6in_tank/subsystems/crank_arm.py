@@ -133,14 +133,15 @@ class CrankArm(Subsystem):
             self.angle = angle
 
     def periodic(self) -> None:
+        super().periodic()  # this does the automatic motion profiling in the background
         self.counter += 1
-        if self.counter % 25 == 0:
+        if self.counter % 10 == 0:
             self.angle = self.get_angle()
-            SmartDashboard.putNumber('lower_crank_sparkmax_angle', self.angle)
-            SmartDashboard.putNumber('lower_crank_encoder_degrees', self.abs_encoder.getPosition())
-            SmartDashboard.putNumberArray('lower_arm_powers', [self.crank_motor_right_spark.getAppliedOutput(),
-                                           self.crank_motor_left_spark.getAppliedOutput()])
-            self.is_moving = abs(self.sparkmax_encoder.getVelocity()) > 100  #
-
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_sparkmax_angle', self.angle)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle*180/math.pi)
+            wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
+                                           self.follower.getAppliedOutput()])
+            self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_is_moving', self.is_moving)
 
 
