@@ -86,8 +86,7 @@ class Swerve (SubsystemBase):
         # TODO - figure out if the odometry and the swerve use the same angle conventions - seems backwards
         # or I faked it incorrectly in the sim
         if wpilib.RobotBase.isReal():
-            pass
-            # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), *self.get_module_positions(),)
+            self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
         else:
             pass
             # get pose from simulation's post to NT
@@ -104,6 +103,10 @@ class Swerve (SubsystemBase):
 
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.navx.getYaw())
+
+            if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
+                wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
+                # wpilib.SmartDashboard.putNumber('keep_angle_output', output)
 
             if constants.k_debugging_messages:  # this is just a bit much, so
                 angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]
@@ -185,11 +188,12 @@ class Swerve (SubsystemBase):
         elif math.fabs(rot) < dc.k_inner_deadband and self.time_since_drive < 0.25:  # stop keep_angle .25s after you stop driving
             # output = self.keep_angle_pid.calculate(-self.get_angle(), self.keep_angle)  # 2023
             # TODO: figure out if we want YAW or ANGLE, and WHY NOT BE CONSISTENT WITH YAW AND ANGLE?
-            output = self.keep_angle_pid.calculate(self.get_yaw(), self.keep_angle)  # 2024, can we just use YAW always?
+            output = self.keep_angle_pid.calculate(self.get_yaw(), self.keep_angle)  # 2024 sim, can we just use YAW always?
+            output = self.keep_angle_pid.calculate(-self.get_yaw(), self.keep_angle)  # 2024 real, can we just use YAW always?
             output = output if math.fabs(output) < 0.2 else 0.2 * math.copysign(1, output)  # clamp at 0.2
 
-        if wpilib.RobotBase.isSimulation():
-            wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
+        if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
+            #wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
             wpilib.SmartDashboard.putNumber('keep_angle_output', output)
 
         return output

@@ -34,13 +34,16 @@ class CrankArm(Subsystem):
         self.controllers = [self.crank_motor_left_controller, self.crank_motor_right_controller]
 
         self.sparkmax_encoder = self.crank_motor_right_spark.getEncoder()  # helps with simulation
+        # self.sparkmax_encoder.setInverted(True)
         self.abs_encoder = self.crank_motor_right_spark.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.abs_encoder.setInverted(True)
+        self.abs_encoder.setInverted(False)  #verfied false by GAN on 20240210
         initial_position = [self.abs_encoder.getPosition() for i in range(5)]
-        self.abs_encoder.setPositionConversionFactor(360/3)  # pulley ratio must be taken into account
-        self.abs_encoder.setZeroOffset(360 * 0.38)  # Todo - figure this out for lower crank - tricky to get 90 as 0
+        self.abs_encoder.setPositionConversionFactor(1)  # pulley ratio must be taken into account
+        self.abs_encoder.setZeroOffset(1 * 0.576)  #verified .576 by GAN on 20240210
         print(f'Lower crank absolute encoder position at boot: {initial_position} set to {self.abs_encoder.getPosition()} degrees')
         self.angle = self.abs_encoder.getPosition()
+        self.sparkmax_encoder.setPositionConversionFactor(360/300)
+        self.sparkmax_encoder.setPosition(360/4 * self.angle +90)
 
         # toogle state
         self.arm_enabled = False
@@ -62,8 +65,8 @@ class CrankArm(Subsystem):
             # set soft limits - do not let spark max put out power above/below a certain value
             spark.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, constants.k_enable_soft_limits)
             spark.enableSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, constants.k_enable_soft_limits)
-            spark.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.max_angle)
-            spark.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.min_angle)
+            #spark.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kForward, self.max_angle)
+            #spark.setSoftLimit(rev.CANSparkMax.SoftLimitDirection.kReverse, self.min_angle)
             # spark.setSmartCurrentLimit(80)
 
             for slot in [0]:  # burn only one slot for now - should be all we need for an arm
@@ -123,6 +126,8 @@ class CrankArm(Subsystem):
             self.angle = self.get_angle()
             SmartDashboard.putNumber('lower_crank_sparkmax_angle', self.angle)
             SmartDashboard.putNumber('lower_crank_encoder_degrees', self.abs_encoder.getPosition())
+            SmartDashboard.putNumber('lower_arm_right_power', self.crank_motor_right_spark.getAppliedOutput())
+            SmartDashboard.putNumber('lower_arm_left_power', self.crank_motor_left_spark.getAppliedOutput())
             self.is_moving = abs(self.sparkmax_encoder.getVelocity()) > 100  #
 
 

@@ -35,10 +35,10 @@ class Shooter(Subsystem):
 
         # controller
         self.flywheel_lower_left_controller = self.flywheel_lower_left.getPIDController()
-        self.flywheel_lower_left_controller.setP(0)
+        self.flywheel_lower_left_controller.setP(0.0001)
         self.flywheel_upper_left_controller = self.flywheel_upper_left.getPIDController()
-        self.flywheel_upper_left_controller.setP(0)
-        self.kFF = 1 / 6784  # feed forward for a spark flex shooter
+        self.flywheel_upper_left_controller.setP(0.0001)
+        self.kFF = 1.03 *  1 / 6784  # feed forward for a spark flex shooter
         self.flywheel_lower_left_controller.setFF(self.kFF, 0)
         self.flywheel_upper_left_controller.setFF(self.kFF, 0)
 

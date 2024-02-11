@@ -37,7 +37,7 @@ class DriveSwerveAutoVelocity(commands2.CommandBase):  # change the name for you
         return False
 
     def end(self, interrupted: bool) -> None:
-        self.drive.drive(0,0,0)  # what should we do here?
+        self.drive.drive(0,0,0,True,True)  # what should we do here?
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

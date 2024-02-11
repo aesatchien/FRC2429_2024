@@ -43,7 +43,7 @@ class RobotContainer:
         self.start_time = time.time()
 
         # The robot's subsystems
-        self.drive = Drivetrain()
+        #self.drive = Drivetrain()
         self.vision = Vision()
         self.led = Led()
         self.shooter = Shooter()
@@ -64,7 +64,7 @@ class RobotContainer:
         #    self.drive.setDefaultCommand(DriveByJoystick(self, self.drive,lambda: -self.driver_controller.getRawAxis(1),
          #   lambda: self.driver_controller.getRawAxis(4),))
     #    else:
-        self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
+        #self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
 
         self.led.setDefaultCommand(LedLoop(container=self))
 
@@ -133,8 +133,8 @@ class RobotContainer:
         # bind crank arms for testing
         self.buttonUp.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=1.5, force='on'))  # ToDo find out how to have it increment to the next position
         self.buttonDown.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=-1.0, force='on'))
-        self.buttonRight.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=1.5, force='on'))  # ToDo find out how to have it increment to the next position
-        self.buttonLeft.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=-1.0, force='on'))
+        self.buttonRight.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=2.0, force='on'))  # ToDo find out how to have it increment to the next position
+        self.buttonLeft.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=-1.5, force='on'))
         self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
 
        # bind LED

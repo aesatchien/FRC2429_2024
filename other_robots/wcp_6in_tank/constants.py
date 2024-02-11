@@ -8,7 +8,7 @@ changes.
 
 k_competition_mode = False  # use for compressor and some joystick settings
 k_burn_flash = False  # if we want to burn the settings to the sparkmaxes
-k_enable_soft_limits = True
+k_enable_soft_limits = False
 
 # --------------  OI  ---------------
 # ID for the driver's joystick (template)
@@ -62,8 +62,8 @@ k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
 
 # ------------------- Top CRANK -------------------
-k_top_crank_motor_left = 8
-k_top_crank_motor_right = 9  # CAN ID
+k_top_crank_motor_left = 9
+k_top_crank_motor_right = 8  # CAN ID
 k_top_crank_gear_ratio =  5 * 5 * 3 * 2  # 553 (maxplanetary) * 2 (pulley) = 150
 k_top_crank_encoder_conversion_factor = 360. / k_top_crank_gear_ratio  # motor revs to degrees
 kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_encoder_conversion_factor)  # about 7.3E-5 power per degree/minute
@@ -73,9 +73,9 @@ k_PID_dict_vel_top_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': k
 # ToDo: start with small crank change values and increase as necessary
 
 # ------------------- Lower CRANK -------------------
-k_lower_crank_motor_left = 6
+k_lower_crank_motor_left = 61
 k_lower_crank_motor_right = 7  # CAN ID
-k_lower_crank_gear_ratio =  5 * 5 * 5 * 3  # 555 (maxplanetary) * 3 (pulley) = 375
+k_lower_crank_gear_ratio = 5 * 5 * 5 * 3  # 555 (maxplanetary) * 3 (pulley) = 375
 k_lower_crank_encoder_conversion_factor = 360. / k_lower_crank_gear_ratio  # motor revs to degrees
 kFF_lower_crank = 1 / (k_neo_freespeed * k_lower_crank_encoder_conversion_factor)  # about 1.8E-4 power per degree/minute
 k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_lower_crank, 'kArbFF':0,
