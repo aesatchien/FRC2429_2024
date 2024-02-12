@@ -66,27 +66,27 @@ k_flywheel_upper_left_neo_port = 11 #CAN ID
 k_top_crank_motor_left = 9
 k_top_crank_motor_right = 8  # CAN ID
 k_top_crank_gear_ratio = 5 * 5 * 4 * 1  # 554 (maxplanetary) * 1 (pulley) = 100
-k_top_crank_abs_encoder_position_conversion_factor = 360  # shooter crank is 1:1 with thru-bore encoder
+k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter crank is 1:1 with thru-bore encoder
 # k_top_crank_encoder_conversion_factor = 360. / k_top_crank_gear_ratio  # motor revs to degrees
 kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_abs_encoder_position_conversion_factor)
 
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_motor_count = 2  #
-k_shooter_arm_kArmOffsetRads = -0.5  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-k_shooter_arm_MaxVelocityRadPerSecond = 0.1
-k_shooter_arm_MaxAccelerationRadPerSecSquared = 0.1
-k_shooter_arm_kSVolts = 0.1 # not estimated by recalc, so we have to make something up
+k_shooter_arm_kArmOffsetRads = -1.5  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
+k_shooter_arm_MaxVelocityRadPerSecond = 1
+k_shooter_arm_MaxAccelerationRadPerSecSquared = 0.5
+k_shooter_arm_kSVolts = 0.1  # not estimated by recalc, so we have to make something up
 k_shooter_arm_kGVolts = 0.71 / k_shooter_arm_motor_count  # cuts in half with two motors, goes up with mass and distance, down with efficiency
 k_shooter_arm_kVVoltSecondPerRad = 1.95  # stays the same with one or two motors, based on the NEO itself and gear ratio
 k_shooter_arm_kAVoltSecondSquaredPerRad = 0.02 / k_shooter_arm_motor_count # cuts in half with two motors
-k_shooter_arm_kP = 0.1  # if we use radians, then we give this much power per radian off setpoint
+k_shooter_arm_kP = 0.8  # if we use radians, then we give this much power per radian off setpoint
 
 # velocity and acceleration targets will be in degrees per second, SmartMotion no good for position slot
 k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_kP, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
-                         'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':1, 'SM_MaxAccel':1}
+                         'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
-                         'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':100, 'SM_MaxAccel':100}
+                         'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':100, 'SM_MaxAccel':100}
 
 
 # ------------------- Lower CRANK -------------------
@@ -102,7 +102,7 @@ k_crank_kP = 0.1  # if we use radians, then we give this much power per radian o
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_motor_count = 1
-k_crank_kArmOffsetRads = 0.5  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
+k_crank_kArmOffsetRads = 1.57  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
 k_crank_MaxVelocityRadPerSecond = 0.1
 k_crank_MaxAccelerationRadPerSecSquared = 0.1
 k_crank_kSVolts = 0.1 # not estimated by recalc, so we have to make something up

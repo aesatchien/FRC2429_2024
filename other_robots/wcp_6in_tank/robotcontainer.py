@@ -22,6 +22,8 @@ from commands.drive_velocity_stick import DriveByJoystickVelocity
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
+from commands.arm_move import ArmMove
+from commands.lower_crank_coast import CrankArmCoast
 from commands.crank_arm_toggle import CrankArmToggle
 from commands.shooter_arm_toggle import ShooterArmToggle
 
@@ -136,10 +138,14 @@ class RobotContainer:
         #self.buttonRight.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=2.0, force='on'))  # ToDo find out how to have it increment to the next position
         #self.buttonLeft.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=-1.5, force='on'))
         #self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
-        self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
-        self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
-        self.buttonRight.onTrue(self.shooter_arm.move_degrees(degrees=10))
-        self.buttonLeft.onTrue(self.shooter_arm.move_degrees(degrees=-10))
+        #self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
+        #self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
+        self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: self.shooter_arm.set_next_position(direction='up'), self.shooter_arm))
+        self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: self.shooter_arm.set_next_position(direction='down'), self.shooter_arm))
+        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=self.shooter_arm, degrees=20))
+        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=self.shooter_arm, degrees=-20))
+        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
        # bind LED
         self.buttonX.onTrue(LedToggle(container=self))

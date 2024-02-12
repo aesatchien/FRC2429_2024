@@ -45,7 +45,7 @@ class ShooterCrankArm(Subsystem):
         pos_factor = constants.k_top_crank_abs_encoder_position_conversion_factor  # 360
         self.abs_encoder.setPositionConversionFactor(pos_factor)  # degrees
         self.abs_encoder.setVelocityConversionFactor(pos_factor / 60)  # degrees per second
-        self.abs_encoder.setZeroOffset(pos_factor * 0.188)  # Todo - figure this out for upper crank - 0 is next / parallel to lower arm
+        self.abs_encoder.setZeroOffset(pos_factor * 0.417)  # Todo - figure this out for upper crank - 0 is next / parallel to lower arm
         print(f'Upper crank absolute encoder position at boot: {initial_position} set to {self.abs_encoder.getPosition()} degrees')
         self.angle = self.abs_encoder.getPosition()
 

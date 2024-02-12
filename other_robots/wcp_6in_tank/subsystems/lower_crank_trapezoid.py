@@ -74,6 +74,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # update controllers from constants file and optionally burn flash
         self.configure_motors()
+        self.disable()
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
@@ -92,10 +93,10 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     # ------------   2429 Additions to the template  ------------
 
-    def enable(self):   # built-in function of the subsystem - turns on continuous motion profiling
+    def enable_arm(self):   # built-in function of the subsystem - turns on continuous motion profiling
         self.enable()
 
-    def disable(self):  # built-in function of the subsystem - turns off continuous motion profiling
+    def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
         self.disable()
 
     def move_rads(self, rads: float) -> commands2.Command:  # way to bump up and down for testing
@@ -135,6 +136,16 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
                                pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=can_id,
                                slot=1, pid_only=False, burn_flash=constants.k_burn_flash)
 
+    def set_brake_mode(self, mode='brake'):
+        if mode == 'brake':
+            brake_mode = rev.CANSparkBase.IdleMode.kBrake
+        else:
+            brake_mode = rev.CANSparkBase.IdleMode.kCoast
+
+        for spark in self.sparks:
+            spark.setIdleMode(brake_mode)
+
+
     def get_angle(self):  # getter for the relevant angles
         if wpilib.RobotBase.isReal():
             return self.abs_encoder.getPosition()
@@ -154,4 +165,4 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
                                            self.follower.getAppliedOutput()])
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_is_moving', self.is_moving)
+            wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_moving', self.is_moving)
