@@ -19,37 +19,38 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     """A robot arm subsystem that moves with a motion profile."""
     
     # CrankArm should probably have four positions that we need to map out
-    positions = {'intake': -90, 'shoot': -45, 'amp': 50, 'trap': 110}  # todo: set a rest?
-    for key in positions.keys():
+    positions = {'intake': -90, 'shoot': -55, 'shoot2': -35, 'amp': 50, 'trap': 110}  # todo: set a rest?
+    for key in positions.keys():  # convert to radians
         positions[key] *= math.pi / 180
 
 
     def __init__(self) -> None:
+        self.dict = constants.k_shooter_arm_dict
         super().__init__(
             wpimath.trajectory.TrapezoidProfile.Constraints(
-                constants.k_shooter_arm_MaxVelocityRadPerSecond,
-                constants.k_shooter_arm_MaxAccelerationRadPerSecSquared,
+                self.dict['k_MaxVelocityRadPerSecond'],
+                self.dict['k_MaxAccelerationRadPerSecSquared'],
             ),
-            constants.k_shooter_arm_kArmOffsetRads,  # neutral position, usually up (0.5) or down (-0.5)
+            self.dict['k_kArmOffsetRads'],  # neutral position, usually up (1.57) or down (-1.57)?
         )
 
         self.feedforward = wpimath.controller.ArmFeedforward(
-            constants.k_shooter_arm_kSVolts,
-            constants.k_shooter_arm_kGVolts,
-            constants.k_shooter_arm_kVVoltSecondPerRad,
-            constants.k_shooter_arm_kAVoltSecondSquaredPerRad,
+            self.dict['k_kSVolts'],
+            self.dict['k_kGVolts'],
+            self.dict['k_kVVoltSecondPerRad'],
+            self.dict['k_kAVoltSecondSquaredPerRad'],
         )
 
         # ------------   2429 Additions to the template's __init__  ------------
-        self.setName('crank_upper')
+        self.setName(self.dict['name'])
         self.counter = 0
-        self.max_angle = 120 * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
-        self.min_angle = -95 * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
+        self.max_angle = self.dict['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
+        self.min_angle = self.dict['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
 
         # initialize the motors
-        self.motor = rev.CANSparkMax(constants.k_top_crank_motor_right, rev.CANSparkMax.MotorType.kBrushless)
-        self.follower = rev.CANSparkMax(constants.k_top_crank_motor_left, rev.CANSparkMax.MotorType.kBrushless)
+        self.motor = rev.CANSparkMax(self.dict['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
+        self.follower = rev.CANSparkMax(self.dict['follower_can_id'], rev.CANSparkMax.MotorType.kBrushless)
         self.follower.follow(self.motor,invert=True)  # now we only have to get one right
         self.sparks = [self.motor, self.follower]
 
@@ -57,10 +58,10 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.abs_encoder = self.motor.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
         self.abs_encoder.setInverted(True)  # needs to be inverted - clockwise on the right arm cranks the shooter down
         # crank abs encoder is 1:1 to the arm
-        pos_factor = constants.k_top_crank_abs_encoder_position_conversion_factor  # 2pi
+        pos_factor = self.dict['encoder_position_conversion_factor']  # 2pi
         self.abs_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.abs_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        self.abs_encoder.setZeroOffset(pos_factor * 0.417)  # TODO - reverify 0.171 is true down
+        self.abs_encoder.setZeroOffset(pos_factor * self.dict['encoder_zero_offset'])  # TODO - get quick recal procedure
         initial_position = [self.abs_encoder.getPosition() for i in range(5)]
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
         boot_message += f'set to {self.abs_encoder.getPosition() * 180 / math.pi:.1f} degrees'
@@ -70,7 +71,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # configure our PID controller
         self.controller = self.motor.getPIDController()
         self.controller.setFeedbackDevice(self.abs_encoder)
-        self.controller.setP(constants.k_shooter_arm_kP)  # P is pretty much all we need in the controller!
+        self.controller.setP(self.dict['k_kP'])  # P is pretty much all we need in the controller!
         self.controller.setPositionPIDWrappingEnabled(enable=True)
         self.controller.setPositionPIDWrappingMaxInput(math.pi)
         self.controller.setPositionPIDWrappingMinInput(-math.pi)

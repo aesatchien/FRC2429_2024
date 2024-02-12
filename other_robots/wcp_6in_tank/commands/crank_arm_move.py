@@ -1,6 +1,6 @@
 import commands2
 from wpilib import SmartDashboard
-from subsystems.crank_arm import CrankArm
+from subsystems.old.crank_arm import CrankArm
 
 
 class CrankArmMove(commands2.Command):

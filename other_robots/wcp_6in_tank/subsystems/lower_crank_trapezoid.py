@@ -22,42 +22,49 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     positions = {'intake': 45, 'shoot': 70, 'amp': 100, 'trap': 110}  # todo: set a rest?
 
     def __init__(self) -> None:
+        self.dict = constants.k_crank_arm_dict
         super().__init__(
             wpimath.trajectory.TrapezoidProfile.Constraints(
-                constants.k_crank_MaxVelocityRadPerSecond,
-                constants.k_crank_MaxAccelerationRadPerSecSquared,
+                self.dict['k_MaxVelocityRadPerSecond'],
+                self.dict['k_MaxAccelerationRadPerSecSquared'],
             ),
-            constants.k_crank_kArmOffsetRads,  # neutral position, usually up (0.5) or down (-0.5)
+            self.dict['k_kArmOffsetRads'],  # neutral position, usually up (1.57) or down (-1.57)?
         )
 
         self.feedforward = wpimath.controller.ArmFeedforward(
-            constants.k_crank_kSVolts,
-            constants.k_crank_kGVolts,
-            constants.k_crank_kVVoltSecondPerRad,
-            constants.k_crank_kAVoltSecondSquaredPerRad,
+            self.dict['k_kSVolts'],
+            self.dict['k_kGVolts'],
+            self.dict['k_kVVoltSecondPerRad'],
+            self.dict['k_kAVoltSecondSquaredPerRad'],
         )
 
         # ------------   2429 Additions to the template's __init__  ------------
-        self.setName('crank_lower')
+        self.setName(self.dict['name'])
         self.counter = 0
-        self.max_angle = 120 * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
-        self.min_angle = 45 * math.pi / 180  # do not close more than this
+        self.max_angle = self.dict[
+                             'max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
+        self.min_angle = self.dict[
+                             'min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
 
         # initialize the motors
-        self.motor = rev.CANSparkMax(constants.k_lower_crank_motor_right, rev.CANSparkMax.MotorType.kBrushless)
-        self.follower = rev.CANSparkMax(constants.k_lower_crank_motor_left, rev.CANSparkMax.MotorType.kBrushless)
-        self.follower.follow(self.motor,invert=True)  # now we only have to get one right
-        self.sparks = [self.motor, self.follower]
+        self.motor = rev.CANSparkMax(self.dict['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
+        if self.dict['k_motor_count'] > 1:
+            self.follower = rev.CANSparkMax(self.dict['follower_can_id'], rev.CANSparkMax.MotorType.kBrushless)
+            self.follower.follow(self.motor, invert=True)  # now we only have to get one right
+            self.sparks = [self.motor, self.follower]
+        else:
+            self.sparks = [self.motor]
 
         # drive the shooter crank entirely by the absolute encoder mounted to the right motor TODO: clean this
         self.abs_encoder = self.motor.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.abs_encoder.setInverted(False)  # verfied false by GAN on 20240210
-        # crank abs encoder is 4:1 to the arm
-        pos_factor = constants.k_lower_crank_abs_encoder_position_conversion_factor  # 2pi/4
-        self.abs_encoder.setPositionConversionFactor(pos_factor)  # radians, with pulley ratio taken into account
+        self.abs_encoder.setInverted(True)  # needs to be inverted - clockwise on the right arm cranks the shooter down
+        # crank abs encoder is 1:1 to the arm
+        pos_factor = self.dict['encoder_position_conversion_factor']  # 2pi
+        self.abs_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.abs_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        self.abs_encoder.setZeroOffset(pos_factor * 0.576)  # verified .576 by GAN on 20240210
+        self.abs_encoder.setZeroOffset(
+            pos_factor * self.dict['encoder_zero_offset'])  # TODO - get quick recal procedure
         initial_position = [self.abs_encoder.getPosition() for i in range(5)]
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
         boot_message += f'set to {self.abs_encoder.getPosition() * 180 / math.pi:.1f} degrees'
@@ -67,14 +74,20 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # configure our PID controller
         self.controller = self.motor.getPIDController()
         self.controller.setFeedbackDevice(self.abs_encoder)
-        self.controller.setP(constants.k_crank_kP)  # P is pretty much all we need in the controller!
+        self.controller.setP(self.dict['k_kP'])  # P is pretty much all we need in the controller!
+        self.controller.setPositionPIDWrappingEnabled(enable=True)
+        self.controller.setPositionPIDWrappingMaxInput(math.pi)
+        self.controller.setPositionPIDWrappingMinInput(-math.pi)
 
         # use the encoder for positioning in the sim
         self.sim_encoder = self.motor.getEncoder()
 
         # update controllers from constants file and optionally burn flash
         self.configure_motors()
-        self.disable()
+
+        self.goal = self.get_angle()
+        self.setGoal(self.goal)  # do we want to do this?
+        self.enable()
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
@@ -82,18 +95,19 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # Add the feedforward to the PID output to get the motor output
         # TODO - check if the feedforward is correct in units for the sparkmax - documentation says 32, not 12
-        self.controller.setReference(setpoint.position, rev.CANSparkMax.ControlType.kPosition, 0, arbFeedforward=feedforward)
+        self.controller.setReference(setpoint.position, rev.CANSparkMax.ControlType.kPosition, 0,
+                                     arbFeedforward=feedforward)
+        self.goal = setpoint.position
 
         if wpilib.RobotBase.isSimulation():
             self.sim_encoder.setPosition(setpoint.position)
 
-
     def setArmGoalCommand(self, kArmOffsetRads: float) -> commands2.Command:
         return commands2.cmd.runOnce(lambda: self.setGoal(kArmOffsetRads), self)
 
-    # ------------   2429 Additions to the template  ------------
+        # ------------   2429 Additions to the template  ------------
 
-    def enable_arm(self):   # built-in function of the subsystem - turns on continuous motion profiling
+    def enable_arm(self):  # built-in function of the subsystem - turns on continuous motion profiling
         self.enable()
 
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
@@ -104,14 +118,17 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         goal = current_angle + rads
         message = f'setting {self.getName()} from {current_angle:.1f} to {goal:.1f}'
         pc = commands2.PrintCommand(message)
+        cmd = commands2.cmd.InstantCommand()
         return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
 
-    def move_degrees(self, degrees: float) -> commands2.Command:  # way to bump up and down for testing
+    def move_degrees(self, degrees: float) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
         goal = current_angle + degrees * math.pi / 180
-        message = f'setting {self.getName()} from {current_angle*180/math.pi:.1f} to {goal*180/math.pi:.1f}'
-        pc = commands2.PrintCommand(message)
-        return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
+        message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.1f} to {goal * 180 / math.pi:.1f}'
+        print(message)
+        self.setGoal(goal)
+        # pc = commands2.PrintCommand(message)
+        # return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
 
     def configure_motors(self):
         # move motor configuration out of __init__
@@ -145,10 +162,25 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         for spark in self.sparks:
             spark.setIdleMode(brake_mode)
 
+    def set_next_position(self, direction='up'):
+        tolerance = 0.1
+        angle = self.get_angle()
+        if direction == 'up':
+            allowed_positions = [value for value in self.positions.values() if value > angle + tolerance]
+            temp_setpoint = sorted(allowed_positions)[0] if len(allowed_positions) > 0 else angle
+        else:
+            allowed_positions = [value for value in self.positions.values() if value < angle - tolerance]
+            temp_setpoint = sorted(allowed_positions)[-1] if len(allowed_positions) > 0 else angle
+
+        self.setGoal(temp_setpoint)
 
     def get_angle(self):  # getter for the relevant angles
         if wpilib.RobotBase.isReal():
-            return self.abs_encoder.getPosition()
+            # keep angle between -pi/2 and 3pi/2  - is there another way to do this?
+            arm_angle = self.abs_encoder.getPosition()
+            if arm_angle > 1.0 * math.pi:
+                arm_angle = arm_angle - 2 * math.pi
+            return arm_angle
         else:
             return self.angle
 
@@ -160,9 +192,14 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_sparkmax_angle', self.angle)
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle*180/math.pi)
-            wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
-                                           self.follower.getAppliedOutput()])
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_rads', self.angle)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle * 180 / math.pi)
+            if self.dict['k_motor_count'] > 1:
+                wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
+                                                                              self.follower.getAppliedOutput()])
+            else:
+                wpilib.SmartDashboard.putNumber(f'{self.getName()}_power', self.motor.getAppliedOutput())
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_moving', self.is_moving)
+

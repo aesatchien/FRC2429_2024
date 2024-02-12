@@ -3,29 +3,21 @@ import wpilib
 import commands2
 from commands2.button import JoystickButton, POVButton
 import time
-import enum
 import constants
 
-from subsystems.drivetrain import Drivetrain
 from subsystems.vision import Vision
 from subsystems.led import Led
 from subsystems.shooter import Shooter
 from subsystems.intake import Intake
-from subsystems.crank_arm import CrankArm
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 #from subsystems.shooter_arm import ShooterCrankArm
 from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
 
-from misc.axis_button import AxisButton
-from commands.drive_by_joystick import DriveByJoystick
-from commands.drive_velocity_stick import DriveByJoystickVelocity
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
 from commands.lower_crank_coast import CrankArmCoast
-from commands.crank_arm_toggle import CrankArmToggle
-from commands.shooter_arm_toggle import ShooterArmToggle
 
 
 # from autonomous.drive_wait import DriveWait

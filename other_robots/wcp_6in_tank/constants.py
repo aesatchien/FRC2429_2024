@@ -63,8 +63,6 @@ k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
 
 # ------------------- Top CRANK -------------------
-k_top_crank_motor_left = 9
-k_top_crank_motor_right = 8  # CAN ID
 k_top_crank_gear_ratio = 5 * 5 * 4 * 1  # 554 (maxplanetary) * 1 (pulley) = 100
 k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter crank is 1:1 with thru-bore encoder
 # k_top_crank_encoder_conversion_factor = 360. / k_top_crank_gear_ratio  # motor revs to degrees
@@ -72,46 +70,51 @@ kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_abs_encoder_position_conversi
 
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
-k_shooter_arm_motor_count = 2  #
-k_shooter_arm_kArmOffsetRads = -1.5  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-k_shooter_arm_MaxVelocityRadPerSecond = 1
-k_shooter_arm_MaxAccelerationRadPerSecSquared = 0.5
-k_shooter_arm_kSVolts = 0.1  # not estimated by recalc, so we have to make something up
-k_shooter_arm_kGVolts = 0.71 / k_shooter_arm_motor_count  # cuts in half with two motors, goes up with mass and distance, down with efficiency
-k_shooter_arm_kVVoltSecondPerRad = 1.95  # stays the same with one or two motors, based on the NEO itself and gear ratio
-k_shooter_arm_kAVoltSecondSquaredPerRad = 0.02 / k_shooter_arm_motor_count # cuts in half with two motors
-k_shooter_arm_kP = 0.8  # if we use radians, then we give this much power per radian off setpoint
-
-# velocity and acceleration targets will be in degrees per second, SmartMotion no good for position slot
-k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_kP, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
+k_shooter_arm_dict = {
+    'name': 'shooter_arm',
+    'max_angle': 120, 'min_angle': -95,
+    'motor_can_id': 8, 'follower_can_id': 9,
+    'encoder_zero_offset': 0.417,  # makes horizontal 0
+    'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
+    'k_motor_count': 2,  #
+    'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
+    'k_MaxVelocityRadPerSecond': 1,
+    'k_MaxAccelerationRadPerSecSquared': 0.5,
+    'k_kSVolts': 0.1,  # not estimated by recalc, so we have to make something up
+    'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
+    'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio
+    'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
+    'k_kP': 0.8  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+}
+# velocity and acceleration targets will be in radians per second, and remember SmartMotion no good for position slot
+k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
                          'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
                          'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':100, 'SM_MaxAccel':100}
 
 
 # ------------------- Lower CRANK -------------------
-k_lower_crank_motor_left = 6  # short one motor for now - this is not used and it will complain
-k_lower_crank_motor_right = 7  # CAN ID
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 4  # 553 (maxplanetary) * 4 (pulley) = 300
-k_lower_crank_abs_encoder_position_conversion_factor = 2 * math.pi / 4  # lower crank arm is 4:1 with thru-bore encoder
-#kFF_lower_crank = 1 / (k_neo_freespeed * k_lower_crank_abs_encoder_position_conversion_factor)
-
-# ToDo: start with small crank change values and increase as necessary
-k_crank_kP = 0.1  # if we use radians, then we give this much power per radian off setpoint
-
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
-k_crank_motor_count = 1
-k_crank_kArmOffsetRads = 1.57  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-k_crank_MaxVelocityRadPerSecond = 0.1
-k_crank_MaxAccelerationRadPerSecSquared = 0.1
-k_crank_kSVolts = 0.1 # not estimated by recalc, so we have to make something up
-k_crank_kGVolts = 0.51 / k_crank_motor_count  # cuts in half with two motors, goes up with mass and distance, down with efficiency
-k_crank_kVVoltSecondPerRad = 5.85  # stays the same with one or two motors, based on the NEO itself and gear ratio
-k_crank_kAVoltSecondSquaredPerRad = 0.02 / k_crank_motor_count  # cuts in half with two motors
-
+k_crank_arm_dict = {
+    'name': 'crank_arm',
+    'max_angle': 120, 'min_angle': 45,
+    'motor_can_id': 7, 'follower_can_id': 6,
+    'encoder_zero_offset': 0.576,  # makes horizontal 0
+    'encoder_position_conversion_factor': 2 * math.pi / 4,  # lower crank is 1:4 with thru-bore encoder,
+    'k_motor_count': 1,  #
+    'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
+    'k_MaxVelocityRadPerSecond': 0.2,
+    'k_MaxAccelerationRadPerSecSquared': 0.2,
+    'k_kSVolts': 0.1,  # not estimated by recalc, so we have to make something up
+    'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
+    'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio
+    'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
+    'k_kP': 0.2  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+}
 # velocity and acceleration targets will be in degrees per second, SmartMotion no good for position slot
-k_PID_dict_pos_lower_crank_arm = {'kP': k_crank_kP, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
+k_PID_dict_pos_lower_crank_arm = {'kP': k_crank_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
                          'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
                          'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':1, 'SM_MaxAccel':1}

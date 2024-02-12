@@ -1,7 +1,6 @@
 import commands2
 from wpilib import SmartDashboard
-import rev
-from subsystems.crank_arm import CrankArm
+from subsystems.old.crank_arm import CrankArm
 
 
 class CrankArmCalibration(commands2.Command):
