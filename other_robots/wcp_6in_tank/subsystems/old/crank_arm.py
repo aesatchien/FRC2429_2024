@@ -87,15 +87,7 @@ class CrankArm(Subsystem):
                                pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=constants.k_lower_crank_motor_right,
                                slot=1, pid_only=False, burn_flash=constants.k_burn_flash)
 
-    def set_crank_arm_angle(self, angle, mode='smartmotion'):
-        if mode == 'smartmotion':
-            # use smartmotion to send you there quickly
-            self.crank_controller.setReference(angle, rev.CANSparkMax.ControlType.kSmartMotion)
-        elif mode == 'position':
-            # just use the position PID -
-            # not a great idea except to hold yourself there - may use this as a lock after smartmotion?
-            self.crank_controller.setReference(value=angle, ctrl=rev.CANSparkMax.ControlType.kPosition, pidSlot=0)
-
+    def set_crank_arm_angle(self, angle, mode='position'):
         self.setpoint = angle
         SmartDashboard.putNumber('crank_arm_setpoint', angle)
         if wpilib.RobotBase.isSimulation():

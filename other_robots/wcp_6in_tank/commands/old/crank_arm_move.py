@@ -21,8 +21,6 @@ class CrankArmMove(commands2.Command):
         self.print_start_message()
         position = self.crank_arm.get_angle()
 
-        # elevator_height = self.container.elevator.get_height()
-        ground_thresh = 200
         crank_arm_positions = list(self.crank_arm.positions.values())
 
         # tell the elevator to go to position
@@ -44,10 +42,10 @@ class CrankArmMove(commands2.Command):
                 # if elevator_height < ground_thresh and self.wrist.is_moving and len(allowed_positions) > 1:
                 #     temp_setpoint = sorted(allowed_positions)[-2]
 
-            self.crank_arm.set_crank_arm_angle(angle=temp_setpoint, mode='smartmotion')
+            self.crank_arm.set_crank_arm_angle(angle=temp_setpoint, mode='position')
             print(f'Setting crank arm from {position:.0f} to {temp_setpoint} - is_moving={self.crank_arm.is_moving}')
         else:
-            self.crank_arm.set_crank_arm_angle(angle=self.setpoint, mode='smartmotion')
+            self.crank_arm.set_crank_arm_angle(angle=self.setpoint, mode='position')
             print(f'Setting crank arm from {position:.0f} to {self.setpoint}')
 
         self.crank_arm.is_moving = True  # try to raise a flag that lets us know we're in motion
@@ -70,4 +68,4 @@ class CrankArmMove(commands2.Command):
     def print_start_message(self):
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
-        SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+        SmartDashboard.putString("alert", f"** Started {self.getName()} on {self.crank_arm.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")

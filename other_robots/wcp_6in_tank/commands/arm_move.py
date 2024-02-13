@@ -18,16 +18,11 @@ class ArmMove(commands2.Command):
         self.addRequirements(self.crank_arm)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
-        position = self.crank_arm.get_angle()
-        goal = position + self.degrees * math.pi / 180
-        self.crank_arm.move_degrees(self.degrees)
-        self.print_start_message()
-        self.crank_arm.is_moving = True  # try to raise a flag that lets us know we're in motion
 
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
-        message = f'setting {self.getName()} from {position * 180 / math.pi:.1f} to {goal * 180 / math.pi:.1f}'
-        print(message)
+        self.print_start_message()
+        self.crank_arm.move_degrees(self.degrees)
+        self.crank_arm.is_moving = True  # try to raise a flag that lets us know we're in motion
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:  # nothing to do, the sparkmax is doing all the work

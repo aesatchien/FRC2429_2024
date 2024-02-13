@@ -121,20 +121,15 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
         self.disable()
 
-    def move_rads(self, rads: float) -> commands2.Command:  # way to bump up and down for testing
-        current_angle = self.get_angle()
-        goal = current_angle + rads
-        message = f'setting {self.getName()} from {current_angle:.1f} to {goal:.1f}'
-        pc = commands2.PrintCommand(message)
-        cmd = commands2.cmd.InstantCommand()
-        return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
-
     def move_degrees(self, degrees: float) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
         goal = current_angle + degrees * math.pi / 180
-        message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.1f} to {goal * 180 / math.pi:.1f}'
+        # clamp the goal between out top and bottom limits
+        goal = self.check_goal(goal)
+        message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.0f} to {goal * 180 / math.pi:.0f}'
         print(message)
         self.setGoal(goal)
+
         # pc = commands2.PrintCommand(message)
         # return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
 
@@ -180,6 +175,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             allowed_positions = [value for value in self.positions.values() if value < angle - tolerance]
             temp_setpoint = sorted(allowed_positions)[-1] if len(allowed_positions) > 0 else angle
 
+        temp_setpoint = self.check_goal(temp_setpoint)
         self.setGoal(temp_setpoint)
 
     def get_angle(self):  # getter for the relevant angles
@@ -194,6 +190,14 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def stop_crank_arm(self):
         pass
+
+    def check_goal(self, goal):
+        if goal > self.max_angle or goal<self.min_angle:
+            max_angle = self.max_angle * 180/math.pi
+            min_angle = self.min_angle * 180/math.pi
+            print(f'WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] : {goal * 180 / math.pi:.0f}')
+            goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
+        return goal
 
     def periodic(self) -> None:
         super().periodic()  # this does the automatic motion profiling in the background
