@@ -132,15 +132,17 @@ class RobotContainer:
         #self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
         #self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
         #self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
-        self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: self.shooter_arm.set_next_position(direction='up'), self.shooter_arm))
-        self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: self.shooter_arm.set_next_position(direction='down'), self.shooter_arm))
-        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=self.shooter_arm, degrees=20))
-        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=self.shooter_arm, degrees=-20))
+
+        test_system = self.crank_arm  # self.self.crank_arm or self.shooter_arm
+        self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
+        self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
+        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=20))
+        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=-20))
         self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
        # bind LED
-        self.buttonX.onTrue(LedToggle(container=self))
+        # self.buttonX.onTrue(LedToggle(container=self))
 
         # bind commands to co-pilot
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))

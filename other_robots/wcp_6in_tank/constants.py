@@ -9,7 +9,7 @@ import math
 
 k_competition_mode = False  # use for compressor and some joystick settings
 k_burn_flash = False  # if we want to burn the settings to the sparkmaxes
-k_enable_soft_limits = False
+k_enable_soft_limits = True
 
 # --------------  OI  ---------------
 # ID for the driver's joystick (template)
@@ -72,9 +72,9 @@ kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_abs_encoder_position_conversi
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'shooter_arm',
-    'max_angle': 120, 'min_angle': -95,
+    'max_angle': 109, 'min_angle': -95,
     'motor_can_id': 8, 'follower_can_id': 9,
-    'encoder_zero_offset': 0.417,  # makes horizontal 0
+    'abs_encoder_zero_offset': 0.417,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -99,10 +99,10 @@ k_lower_crank_gear_ratio = 5 * 5 * 3 * 4  # 553 (maxplanetary) * 4 (pulley) = 30
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
     'name': 'crank_arm',
-    'max_angle': 120, 'min_angle': 45,
+    'max_angle': 109, 'min_angle': 61,
     'motor_can_id': 7, 'follower_can_id': 6,
-    'encoder_zero_offset': 0.576,  # makes horizontal 0
-    'encoder_position_conversion_factor': 2 * math.pi / 4,  # lower crank is 1:4 with thru-bore encoder,
+    'abs_encoder_zero_offset': 0.576,  # meas at arm=90 degrees - set the sparkmax's encoder and still use abs p/m 45 deg
+    'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
     'k_MaxVelocityRadPerSecond': 0.2,

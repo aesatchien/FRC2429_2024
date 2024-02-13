@@ -20,48 +20,48 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     
     # CrankArm should probably have four positions that we need to map out
     positions = {'intake': -90, 'shoot': -55, 'shoot2': -35, 'amp': 50, 'trap': 110}  # todo: set a rest?
-    for key in positions.keys():  # convert to radians
+    for key in positions.keys():  # convert to radians for the subsystem's internal math
         positions[key] *= math.pi / 180
 
 
     def __init__(self) -> None:
-        self.dict = constants.k_shooter_arm_dict
+        self.config = constants.k_shooter_arm_dict  # main difference between crank and shooter arms
         super().__init__(
             wpimath.trajectory.TrapezoidProfile.Constraints(
-                self.dict['k_MaxVelocityRadPerSecond'],
-                self.dict['k_MaxAccelerationRadPerSecSquared'],
+                self.config['k_MaxVelocityRadPerSecond'],
+                self.config['k_MaxAccelerationRadPerSecSquared'],
             ),
-            self.dict['k_kArmOffsetRads'],  # neutral position, usually up (1.57) or down (-1.57)?
+            self.config['k_kArmOffsetRads'],  # neutral position, usually up (1.57) or down (-1.57)?
         )
 
         self.feedforward = wpimath.controller.ArmFeedforward(
-            self.dict['k_kSVolts'],
-            self.dict['k_kGVolts'],
-            self.dict['k_kVVoltSecondPerRad'],
-            self.dict['k_kAVoltSecondSquaredPerRad'],
+            self.config['k_kSVolts'],
+            self.config['k_kGVolts'],
+            self.config['k_kVVoltSecondPerRad'],
+            self.config['k_kAVoltSecondSquaredPerRad'],
         )
 
         # ------------   2429 Additions to the template's __init__  ------------
-        self.setName(self.dict['name'])
+        self.setName(self.config['name'])
         self.counter = 0
-        self.max_angle = self.dict['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
-        self.min_angle = self.dict['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
+        self.max_angle = self.config['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
+        self.min_angle = self.config['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
 
-        # initialize the motors
-        self.motor = rev.CANSparkMax(self.dict['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
-        self.follower = rev.CANSparkMax(self.dict['follower_can_id'], rev.CANSparkMax.MotorType.kBrushless)
+        # initialize the motors and keep a list of them for configuration later
+        self.motor = rev.CANSparkMax(self.config['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
+        self.follower = rev.CANSparkMax(self.config['follower_can_id'], rev.CANSparkMax.MotorType.kBrushless)
         self.follower.follow(self.motor,invert=True)  # now we only have to get one right
         self.sparks = [self.motor, self.follower]
 
-        # drive the shooter crank entirely by the absolute encoder mounted to the right motor TODO: clean this
+        # drive the shooter crank entirely by the ABSOLUTE encoder mounted to the right motor TODO: clean this
         self.abs_encoder = self.motor.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
         self.abs_encoder.setInverted(True)  # needs to be inverted - clockwise on the right arm cranks the shooter down
         # crank abs encoder is 1:1 to the arm
-        pos_factor = self.dict['encoder_position_conversion_factor']  # 2pi
+        pos_factor = self.config['encoder_position_conversion_factor']  # 2pi
         self.abs_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.abs_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        self.abs_encoder.setZeroOffset(pos_factor * self.dict['encoder_zero_offset'])  # TODO - get quick recal procedure
+        self.abs_encoder.setZeroOffset(pos_factor * self.config['abs_encoder_zero_offset'])  # TODO - get quick recal procedure
         initial_position = [self.abs_encoder.getPosition() for i in range(5)]
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
         boot_message += f'set to {self.abs_encoder.getPosition() * 180 / math.pi:.1f} degrees'
@@ -71,7 +71,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # configure our PID controller
         self.controller = self.motor.getPIDController()
         self.controller.setFeedbackDevice(self.abs_encoder)
-        self.controller.setP(self.dict['k_kP'])  # P is pretty much all we need in the controller!
+        self.controller.setP(self.config['k_kP'])  # P is pretty much all we need in the controller!
         self.controller.setPositionPIDWrappingEnabled(enable=True)
         self.controller.setPositionPIDWrappingMaxInput(math.pi)
         self.controller.setPositionPIDWrappingMinInput(-math.pi)
@@ -172,14 +172,15 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.setGoal(temp_setpoint)
 
     def get_angle(self):  # getter for the relevant angles
+        self.angle = self.abs_encoder.getPosition()
         if wpilib.RobotBase.isReal():
+            # TODO - does this affect the subsystem - we wrapped the controller already, so this should just track it
             # keep angle between -pi/2 an 3pi/2  - is there another way to do this?
-            arm_angle = self.abs_encoder.getPosition()
-            if arm_angle > 1.0 * math.pi:
-                arm_angle = arm_angle - 2 * math.pi
-            return arm_angle
-        else:
-            return self.angle
+            if self.angle > 1.5 * math.pi:
+                self.angle = self.angle - 2 * math.pi
+        else:  # figure out if we need to do something else in the sim
+            pass
+        return self.angle
 
     def stop_crank_arm(self):
         pass
