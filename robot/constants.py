@@ -8,7 +8,7 @@ changes.
 
 # top level items
 k_field_centric = True  # True sets the robot driving to the driver's point of view, not the robot's
-k_burn_flash = False  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
+k_burn_flash = True  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_rate_limited = True  # on swerve, use slew limiters to keep acceleration from being too abrupt
 k_debugging_messages = True  # turn these off for competition

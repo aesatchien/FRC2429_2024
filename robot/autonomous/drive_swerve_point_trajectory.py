@@ -1,11 +1,15 @@
 import math
 import commands2
+import wpilib
 from wpilib import SmartDashboard
 from wpilib import Timer
 from commands2 import SwerveControllerCommand
 from wpimath.trajectory import TrajectoryConfig, Trajectory, TrajectoryGenerator
 import wpimath.geometry as geo
 from wpimath.controller import PIDController, ProfiledPIDControllerRadians, HolonomicDriveController
+from pathlib import Path
+import pickle
+from datetime import datetime
 
 from subsystems.swerve import Swerve
 from subsystems.swerve_constants import DriveConstants as dc
@@ -33,9 +37,15 @@ class DriveSwervePointTrajectory(commands2.CommandBase):  # change the name for 
             config=self.trajectory_config
         )
         print(self.trajectory)
+
+        # put in some tools for tracking telemetry
+        self.counter = 0
+        self.telemetry = []
+        self.write_telemetry = True  # save telemetry data
+
         # set up PID controllers for forward, strafe and rotation
-        self.x_controller = PIDController(0.0,0,0)
-        self.y_controller = PIDController(0.0, 0, 0)
+        self.x_controller = PIDController(0.1,0,0)
+        self.y_controller = PIDController(0.1, 0, 0)
         self.theta_controller = ProfiledPIDControllerRadians(Kp=0.3,Ki=0,Kd=0,constraints=ac.kThetaControllerConstraints)
         self.theta_controller.enableContinuousInput(-math.pi, math.pi)
         self.controller = HolonomicDriveController(self.x_controller, self.y_controller, self.theta_controller)
@@ -62,6 +72,8 @@ class DriveSwervePointTrajectory(commands2.CommandBase):  # change the name for 
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
         self.timer.restart()
+        self.counter = 0
+        self.telemetry = []
 
     def execute(self) -> None:
         # NOTE - THIS CAN ALL BE DONE BY THE SwerveControllerCommand - I'm just copying it for now to test it
@@ -75,6 +87,21 @@ class DriveSwervePointTrajectory(commands2.CommandBase):  # change the name for 
 
         self.outputModuleStates(targetModuleStates)
 
+        if self.counter % 5 == 0:  # ten times per second update the telemetry array
+            pose = self.drive.get_pose()
+            telemetry_data = {'TIME': current_time, 'RBT_X': pose.X(), 'RBT_Y': pose.Y(),
+                              'RBT_TH': pose.rotation().radians(),
+                              #'RBT_VEL': self.container.robot_drive.get_average_encoder_rate(),
+                              #'RBT_RVEL': ws_right, 'RBT_LVEL': ws_left,
+                              'TRAJ_X': desiredState.pose.X(), 'TRAJ_Y': desiredState.pose.Y(),
+                              'TRAJ_TH': desiredState.pose.rotation().radians(), 'TRAJ_VEL': desiredState.velocity,
+                              #'RAM_VELX': ramsete.vx, 'RAM_LVEL_SP': left_speed_setpoint,
+                              #'RAM_RVEL_SP': right_speed_setpoint,
+                              #'RAM_OM': ramsete.omega, 'LFF': left_feed_forward, 'RFF': right_feed_forward,
+                              #'LPID': left_output_pid, 'RPID': right_output_pid
+                              }
+            self.telemetry.append(telemetry_data)
+
 
     def isFinished(self) -> bool:
         return self.timer.hasElapsed(self.trajectory.totalTime())
@@ -86,3 +113,17 @@ class DriveSwervePointTrajectory(commands2.CommandBase):  # change the name for 
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
         SmartDashboard.putString(f"alert",
                                  f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        # print(self.telemetry)
+
+        if self.write_telemetry:
+            location = Path.cwd() if wpilib.RobotBase.isSimulation() else Path('/home/lvuser/py/')  # it's not called robot on the robot
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            file_name = timestamp + '_' + self.getName()  + '.pkl'
+            pickle_file = location / 'sim' / 'data' / file_name
+            with open(pickle_file.absolute(), 'wb') as fp:
+                out_dict = {'TIMESTAMP': timestamp, 'DATA': self.telemetry, 'COURSE': 'NONE',
+                            'VELOCITY': 1, 'KP_VEL': 1, 'KD_VEL': 1, 'BETA': 1, 'ZETA': 1}
+                pickle.dump(out_dict, fp)
+            print(f'*** Wrote telemetry data to {file_name} ***')
+        else:
+            print(f'*** Skipping saving of telemetry to disk ***')

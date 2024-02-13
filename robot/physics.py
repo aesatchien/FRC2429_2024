@@ -135,4 +135,6 @@ class PhysicsEngine:
         # TODO: do we need to put in whether our gyro is reversed (changes if mounted upside down) ?
         # below should account for resetting the yaw externally when we reset heading - the yaw is NOT the pose
         # really confused about yaw vs angle
+        # yaw has the wrong sign, so just never use it except to update the actual navx in the sim
         self.navx_yaw.set(self.navx_yaw.get() - math.degrees(speeds.omega * tm_diff))
+

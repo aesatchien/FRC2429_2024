@@ -57,6 +57,9 @@ class DriveByJoystickSwerve(commands2.Command):
         desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
         desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
 
+        if wpilib.RobotBase.isSimulation():
+            SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
+
         correct_like_1706 = False  # this is what 1706 does, but Rev put all that in the swerve module's drive
         if correct_like_1706:
             desired_translation = Translation2d(desired_fwd, desired_strafe)

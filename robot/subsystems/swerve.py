@@ -102,7 +102,7 @@ class Swerve (SubsystemBase):
                 wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
 
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
-            wpilib.SmartDashboard.putNumber('_navx_yaw', self.navx.getYaw())
+            wpilib.SmartDashboard.putNumber('_navx_yaw', self.get_yaw())
 
             if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
                 wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
@@ -184,12 +184,11 @@ class Swerve (SubsystemBase):
         self.time_since_drive = self.keep_angle_timer.get() - self.last_drive_time
 
         if self.time_since_rotation < 0.5:  # (update keep_angle until 0.5s after rotate command stops to allow rotate to finish)
-            self.keep_angle = self.get_yaw()  # todo: double check SIGN (and units are in degrees)
+            self.keep_angle = self.get_angle()  # todo: double check SIGN (and units are in degrees)
         elif math.fabs(rot) < dc.k_inner_deadband and self.time_since_drive < 0.25:  # stop keep_angle .25s after you stop driving
             # output = self.keep_angle_pid.calculate(-self.get_angle(), self.keep_angle)  # 2023
             # TODO: figure out if we want YAW or ANGLE, and WHY NOT BE CONSISTENT WITH YAW AND ANGLE?
-            output = self.keep_angle_pid.calculate(self.get_yaw(), self.keep_angle)  # 2024 sim, can we just use YAW always?
-            output = self.keep_angle_pid.calculate(-self.get_yaw(), self.keep_angle)  # 2024 real, can we just use YAW always?
+            output = self.keep_angle_pid.calculate(self.get_angle(), self.keep_angle)  # 2024 real, can we just use YAW always?
             output = output if math.fabs(output) < 0.2 else 0.2 * math.copysign(1, output)  # clamp at 0.2
 
         if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
@@ -249,15 +248,16 @@ class Swerve (SubsystemBase):
         # note lots of the calls want tuples, so _could_ convert if we really want to
         return [m.getPosition() for m in self.swerve_modules]
 
-    def get_angle(self):  # if necessary reverse the heading for swerve math
-        return -self.gyro.getAngle() if dc.kGyroReversed else self.gyro.getAngle()
-
     def get_raw_angle(self):  # never reversed value for using PIDs on the heading
         return self.gyro.getAngle()
 
+    def get_angle(self):  # if necessary reverse the heading for swerve math
+        return -self.gyro.getAngle() if dc.kGyroReversed else self.gyro.getAngle()
+
     def get_yaw(self):  # helpful for determining nearest heading parallel to the wall
-        return self.gyro.getYaw()
-        # return self.gyro.getYaw() if dc.kGyroReversed else -self.gyro.getYaw()  #2024 possible update
+        # but you should probably never use this - just use get_angle to be consistent
+        # return self.gyro.getYaw()
+        return -self.gyro.getYaw() if dc.kGyroReversed else self.gyro.getYaw()  #2024 possible update
 
     def get_pitch(self):  # need to calibrate the navx, apparently
         return self.gyro.getPitch() - 4.75
