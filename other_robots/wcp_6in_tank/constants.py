@@ -8,8 +8,8 @@ changes.
 import math
 
 k_competition_mode = False  # use for compressor and some joystick settings
-k_burn_flash = False  # if we want to burn the settings to the sparkmaxes
-k_enable_soft_limits = True
+k_burn_flash = True  # if we want to burn the settings to the sparkmaxes
+k_enable_soft_limits = False
 
 # --------------  OI  ---------------
 # ID for the driver's joystick (template)
@@ -74,7 +74,7 @@ k_shooter_arm_dict = {
     'name': 'shooter_arm',
     'max_angle': 109, 'min_angle': -95,
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset': 0.417,  # makes horizontal 0
+    'abs_encoder_zero_offset':  0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -101,17 +101,17 @@ k_crank_arm_dict = {
     'name': 'crank_arm',
     'max_angle': 109, 'min_angle': 61,
     'motor_can_id': 7, 'follower_can_id': 6,
-    'abs_encoder_zero_offset': 0.576,  # meas at arm=90 degrees - set the sparkmax's encoder and still use abs p/m 45 deg
+    'abs_encoder_zero_offset': 0.515,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
     'k_MaxVelocityRadPerSecond': 0.2,
     'k_MaxAccelerationRadPerSecSquared': 0.2,
-    'k_kSVolts': 0.1,  # not estimated by recalc, so we have to make something up
+    'k_kSVolts': 0.01,  # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio
-    'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
-    'k_kP': 0.2  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+    'k_kAVoltSecondSquaredPerRad': 0.02 / 1, # cuts in half with two motors
+    'k_kP': 0.1  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
 }
 # velocity and acceleration targets will be in degrees per second, SmartMotion no good for position slot
 k_PID_dict_pos_lower_crank_arm = {'kP': k_crank_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,

@@ -43,10 +43,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # ------------   2429 Additions to the template's __init__  ------------
         self.setName(self.config['name'])
         self.counter = 0
-        self.max_angle = self.config[
-                             'max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
-        self.min_angle = self.config[
-                             'min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
+        self.max_angle = self.config['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
+        self.min_angle = self.config['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
 
         # initialize the motors and keep a list of them for configuration later
@@ -95,7 +93,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         self.goal = self.get_angle()
         self.setGoal(self.goal)  # do we want to do this?
-        self.enable()
+        self.enable()  # enable if using, disable if testing angles
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
@@ -135,7 +133,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def configure_motors(self):
         # move motor configuration out of __init__
-        self.motor.setInverted(True)  # right motor CW moves crank arm down
+        self.motor.setInverted(False)  # current motor (facing left) CW moves crank arm positive
 
         for spark in self.sparks:
             spark.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)

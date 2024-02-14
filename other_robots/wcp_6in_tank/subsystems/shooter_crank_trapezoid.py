@@ -62,7 +62,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.abs_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.abs_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
         self.abs_encoder.setZeroOffset(pos_factor * self.config['abs_encoder_zero_offset'])  # TODO - get quick recal procedure
-        initial_position = [self.abs_encoder.getPosition() for i in range(5)]
+        initial_position = sum([self.abs_encoder.getPosition() for i in range(5)]) / 5
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
         boot_message += f'set to {self.abs_encoder.getPosition() * 180 / math.pi:.1f} degrees'
         print(boot_message)
@@ -169,9 +169,10 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def get_angle(self):  # getter for the relevant angles
         self.angle = self.abs_encoder.getPosition()
         if wpilib.RobotBase.isReal():
+            pass
             # TODO - does this affect the subsystem - we wrapped the controller already, so this should just track it
             # keep angle between -pi/2 an 3pi/2  - is there another way to do this?
-            if self.angle > 1.5 * math.pi:
+            if self.angle > 1.25 * math.pi:
                 self.angle = self.angle - 2 * math.pi
         else:  # figure out if we need to do something else in the sim
             pass

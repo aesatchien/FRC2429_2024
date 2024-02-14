@@ -133,11 +133,11 @@ class RobotContainer:
         #self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
         #self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
 
-        test_system = self.crank_arm  # self.self.crank_arm or self.shooter_arm
+        test_system = self.shooter_arm  # self.self.crank_arm or self.shooter_arm
         self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
-        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=20))
-        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=-20))
+        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=10))
+        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=-10))
         self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
