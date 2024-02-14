@@ -10,6 +10,7 @@ from wpimath.controller import PIDController, ProfiledPIDControllerRadians, Holo
 from pathlib import Path
 import pickle
 from datetime import datetime
+import pathplannerlib
 
 from subsystems.swerve import Swerve
 from subsystems.swerve_constants import DriveConstants as dc
@@ -36,7 +37,7 @@ class DriveSwervePointTrajectory(commands2.Command):  # change the name for your
         self.trajectory = TrajectoryGenerator.generateTrajectory(
             start=geo.Pose2d(x, y, geo.Rotation2d(0)),
             interiorWaypoints=self.pointlist,
-            end=geo.Pose2d(x, y+2, geo.Rotation2d(0)),
+            end=geo.Pose2d(x, y+2, geo.Rotation2d(3.14)),
             config=self.trajectory_config
         )
         print(self.trajectory)
@@ -47,9 +48,9 @@ class DriveSwervePointTrajectory(commands2.Command):  # change the name for your
         self.write_telemetry = True  # save telemetry data
 
         # set up PID controllers for forward, strafe and rotation
-        self.x_controller = PIDController(0,0,0)
-        self.y_controller = PIDController(0, 0, 0)
-        self.theta_controller = ProfiledPIDControllerRadians(Kp=0,Ki=0,Kd=0,constraints=ac.kThetaControllerConstraints)
+        self.x_controller = PIDController(1,0,0)
+        self.y_controller = PIDController(1, 0, 0)
+        self.theta_controller = ProfiledPIDControllerRadians(Kp=1,Ki=0,Kd=0,constraints=ac.kThetaControllerConstraints)
         self.theta_controller.enableContinuousInput(-math.pi, math.pi)
         self.controller = HolonomicDriveController(self.x_controller, self.y_controller, self.theta_controller)
         self.timer = Timer()

@@ -5,7 +5,7 @@ from subsystems.swerve import Swerve
 from subsystems.swerve_constants import DriveConstants as dc
 
 
-class DriveSwerveAutoVelocity(commands2.CommandBase):  # change the name for your command
+class DriveSwerveAutoVelocity(commands2.Command):  # change the name for your command
 
     def __init__(self, container, drive: Swerve, velocity, direction='forwards', decide_by_turret=False) -> None:
         super().__init__()
