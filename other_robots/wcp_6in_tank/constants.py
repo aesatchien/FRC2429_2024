@@ -88,9 +88,9 @@ k_shooter_arm_dict = {
 }
 # velocity and acceleration targets will be in radians per second, and remember SmartMotion no good for position slot
 k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
-                         'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':1, 'SM_MaxAccel':1}
+                         'kMaxOutput': 0.35, 'kMinOutput': -0.35, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,
-                         'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':100, 'SM_MaxAccel':100}
+                         'kMaxOutput': 0.35, 'kMinOutput': -0.35, 'SM_MaxVel':100, 'SM_MaxAccel':100}
 
 
 # ------------------- Lower CRANK -------------------
@@ -111,13 +111,13 @@ k_crank_arm_dict = {
     'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio
     'k_kAVoltSecondSquaredPerRad': 0.02 / 1, # cuts in half with two motors
-    'k_kP': 0.1  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+    'k_kP': 0.00  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
 }
 # velocity and acceleration targets will be in degrees per second, SmartMotion no good for position slot
 k_PID_dict_pos_lower_crank_arm = {'kP': k_crank_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
-                         'kMaxOutput': 0.5, 'kMinOutput': -0.5, 'SM_MaxVel':1, 'SM_MaxAccel':1}
+                         'kMaxOutput': 0.051, 'kMinOutput': -0.01, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
-                         'kMaxOutput': 0.25, 'kMinOutput': -0.25, 'SM_MaxVel':1, 'SM_MaxAccel':1}
+                         'kMaxOutput': 0.05, 'kMinOutput': -0.05, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 
 # ------------------- Intake -------------------
 k_intake_neo_port = 12  # CAN ID

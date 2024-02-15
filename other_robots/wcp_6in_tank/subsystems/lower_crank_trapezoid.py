@@ -79,6 +79,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # configure our PID controller
         self.controller = self.motor.getPIDController()
+        self.controller.setFeedbackDevice(self.spark_encoder)
         # self.controller.setFeedbackDevice(self.abs_encoder)  # do not do this
         self.controller.setP(self.config['k_kP'])  # P is pretty much all we need in the controller!
         self.controller.setPositionPIDWrappingEnabled(enable=True)
@@ -205,6 +206,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_spark_pos', self.spark_encoder.getPosition())
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rads', self.angle)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle * 180 / math.pi)

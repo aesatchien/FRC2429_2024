@@ -187,7 +187,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             min_angle = self.min_angle * 180/math.pi
             clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
             message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
-            message += f': with {goal * 180 / math.pi:.0f} **  setting to -> {clamped_goal:0.f}'
+            message += f'with {goal * 180 / math.pi:.0f} **  setting to -> {clamped_goal:0.f}'
             print(message)
             goal = clamped_goal
         return goal
