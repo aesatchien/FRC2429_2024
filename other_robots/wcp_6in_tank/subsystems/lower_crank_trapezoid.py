@@ -190,11 +190,14 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         pass
 
     def check_goal(self, goal):
-        if goal > self.max_angle or goal<self.min_angle:
+        if goal > self.max_angle or goal < self.min_angle:
             max_angle = self.max_angle * 180/math.pi
             min_angle = self.min_angle * 180/math.pi
-            print(f'WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] : {goal * 180 / math.pi:.0f}')
-            goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
+            clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
+            message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
+            message += f'with {goal * 180 / math.pi:.0f} --> setting to {clamped_goal * 180 / math.pi:.0f} **'
+            print(message)
+            goal = clamped_goal
         return goal
 
     def periodic(self) -> None:

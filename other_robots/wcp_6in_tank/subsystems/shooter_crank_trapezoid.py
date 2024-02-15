@@ -171,7 +171,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         if wpilib.RobotBase.isReal():
             pass
             # TODO - does this affect the subsystem - we wrapped the controller already, so this should just track it
-            # keep angle between -pi/2 an 3pi/2  - is there another way to do this?
+            # keep angle between -pi/2 an 3pi/2  - is there another way to do this?  Should this exactly match the PID wrapper?
             if self.angle > 1.25 * math.pi:
                 self.angle = self.angle - 2 * math.pi
         else:  # figure out if we need to do something else in the sim
@@ -185,8 +185,11 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         if goal > self.max_angle or goal < self.min_angle:
             max_angle = self.max_angle * 180/math.pi
             min_angle = self.min_angle * 180/math.pi
-            print(f'WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] : {goal * 180 / math.pi:.0f}')
-            goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
+            clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
+            message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
+            message += f': with {goal * 180 / math.pi:.0f} **  setting to -> {clamped_goal:0.f}'
+            print(message)
+            goal = clamped_goal
         return goal
 
     def periodic(self) -> None:
