@@ -12,16 +12,18 @@ import math
 import wpilib
 import wpilib.simulation as simlib
 from pyfrc.physics.core import PhysicsInterface
-from wpimath.kinematics import SwerveDrive4Kinematics, SwerveModuleState
+from wpimath.kinematics import SwerveDrive4Kinematics, SwerveModuleState, SwerveModulePosition
 import wpimath.geometry as geo
 from pyfrc.physics.units import units
 
 from subsystems.swerve_constants import DriveConstants as dc
 import constants
 
+from robot import MyRobot
+
 import typing
 if typing.TYPE_CHECKING:  # not sure how dropbears are getting their classes to work - this will be offseason research
-    from robot import MyRobot
+    pass
 
 
 class PhysicsEngine:
@@ -29,13 +31,14 @@ class PhysicsEngine:
     Simulates our swerve drive - still clunky, we should be able to get our turn motors not from the dash
     """
 
-    def __init__(self, physics_controller: PhysicsInterface, robot: "MyRobot"):
+    def __init__(self, physics_controller: PhysicsInterface, robot: MyRobot):
         """
         :param physics_controller: `pyfrc.physics.core.Physics` object
                                    to communicate simulation effects to
         :param robot: your robot object
         """
         self.physics_controller = physics_controller  # must have for simulation
+        self.robot = robot
 
         self.kinematics: SwerveDrive4Kinematics = dc.kDriveKinematics  # our swerve drive kinematics
 
@@ -72,6 +75,8 @@ class PhysicsEngine:
                                                  'velocity': velocity, 'output': output}})
         for key, value in self.spark_dict.items():  # see if these make sense
             print(f'{key}: {value}')
+
+        self.distances = [0, 0, 0, 0]
 
         # sensors
 
@@ -118,12 +123,22 @@ class PhysicsEngine:
 
         # using our own kinematics to update the chassis speeds
         speeds = self.kinematics.toChassisSpeeds((module_states))
+
         # update the sim's robot
         self.physics_controller.drive(speeds, tm_diff)
 
         # send our poses to the dashboard so we can use it with our trackers
         pose = self.physics_controller.get_pose()
         self.x, self.y, self.theta  = pose.X(), pose.Y(), pose.rotation().degrees()
+
+        # attempt to update the real robot's odometry
+        self.distances = [pos + tm_diff * self.spark_dict[drive]['velocity'].value for pos, drive in zip(self.distances, self.spark_drives)]
+        [self.spark_dict[drive]['position'].set(self.spark_dict[drive]['position'].value + tm_diff * self.spark_dict[drive]['velocity'].value ) for drive in self.spark_drives]
+
+        # TODO - why does this not take care of itself if I just update the simmed SPARK's position?
+        swerve_positions = [SwerveModulePosition(distance=dist, angle=m.angle) for m, dist in zip(module_states, self.distances)]
+        self.robot.container.drive.odometry.update(pose.rotation(), swerve_positions)
+
         wpilib.SmartDashboard.putNumberArray('sim_pose', [self.x, self.y, self.theta])
         wpilib.SmartDashboard.putNumberArray('drive_pose', [self.x, self.y, self.theta])  # need this for 2429 python dashboard to update
 

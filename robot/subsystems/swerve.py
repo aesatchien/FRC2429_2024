@@ -1,21 +1,27 @@
 import math
 import typing
+
+import commands2
 import wpilib
 
-from commands2 import SubsystemBase
+from commands2 import Subsystem
 from wpimath.filter import SlewRateLimiter
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.kinematics import (ChassisSpeeds, SwerveModuleState, SwerveDrive4Kinematics, SwerveDrive4Odometry,)
 from wpimath.controller import PIDController
 import navx
 import rev
+import pathplannerlib
+from pathplannerlib.path import PathPlannerTrajectory
 
 import constants
 from .swervemodule_2429 import SwerveModule
 from .swerve_constants import DriveConstants as dc
 
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
 
-class Swerve (SubsystemBase):
+class Swerve (Subsystem):
     def __init__(self) -> None:
         super().__init__()
 
@@ -79,42 +85,22 @@ class Swerve (SubsystemBase):
             dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
             initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
 
-    def periodic(self) -> None:
-
-        self.counter += 1
-        # Update the odometry in the periodic block -
-        # TODO - figure out if the odometry and the swerve use the same angle conventions - seems backwards
-        # or I faked it incorrectly in the sim
-        if wpilib.RobotBase.isReal():
-            self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
-        else:
-            pass
-            # get pose from simulation's post to NT
-            # pose = wpilib.SmartDashboard.getNumberArray('drive_pose', [0,0,0])
-            # self.odometry.resetPosition(Rotation2d.fromDegrees(self.get_angle()), Pose2d(pose[0], pose[1], pose[2]))
-
-        if self.counter % 10 == 0:
-            pose = self.get_pose()  # self.odometry.getPose()
-            if wpilib.RobotBase.isReal():  # update the NT with odometry for the dashboard - sim will do its own
-                wpilib.SmartDashboard.putNumberArray('drive_pose', [pose.X(), pose.Y(), pose.rotation().degrees()])
-                wpilib.SmartDashboard.putNumber('drive_x', pose.X())
-                wpilib.SmartDashboard.putNumber('drive_y', pose.Y())
-                wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
-
-            wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
-            wpilib.SmartDashboard.putNumber('_navx_yaw', self.get_yaw())
-
-            if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
-                wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
-                # wpilib.SmartDashboard.putNumber('keep_angle_output', output)
-
-            if constants.k_debugging_messages:  # this is just a bit much, so
-                angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]
-                absolutes = [m.get_turn_encoder() for m in self.swerve_modules]
-                wpilib.SmartDashboard.putNumberArray(f'_angles', angles)
-                wpilib.SmartDashboard.putNumberArray(f'_analog_radians', absolutes)
-                ypr = [self.navx.getYaw(), self.get_pitch(), self.navx.getRoll(), self.navx.getRotation2d().degrees()]
-                wpilib.SmartDashboard.putNumberArray('_navx_YPR', ypr)
+        # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
+        AutoBuilder.configureHolonomic(
+            pose_supplier=self.get_pose,  # Robot pose supplier
+            reset_pose=self.resetOdometry,  # Method to reset odometry (will be called if your auto has a starting pose)
+            robot_relative_speeds_supplier=self.get_relative_speeds,  # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            robot_relative_output=self.drive_robot_relative,  # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            config=HolonomicPathFollowerConfig(  # HolonomicPathFollowerConfig, this should likely live in your Constants class
+                PIDConstants(5.0, 0.0, 0.0),  # Translation PID constants
+                PIDConstants(8.0, 0.0, 0.0),  # Rotation PID constants
+                3,  # Max module speed, in m/s
+                0.41,  # Drive base radius in meters. Distance from robot center to furthest module.
+                ReplanningConfig()  # Default path replanning config. See the API for the options here
+            ),
+            should_flip_path=self.flip_path,
+            drive_subsystem=self  # Reference to this subsystem to set requirements
+        )
 
     def get_pose(self, report=False) -> Pose2d:
         # return the pose of the robot  TODO: update the dashboard here?
@@ -172,6 +158,47 @@ class Swerve (SubsystemBase):
 
         # safety
         #self.drivebase.feed()
+
+    #  -------------  THINGS PATHPLANNER NEEDS  - added for pathplanner 20230218 CJH
+    def get_relative_speeds(self):
+        # added for pathplanner 20230218 CJH
+        return dc.kDriveKinematics.toChassisSpeeds(self.get_module_states())
+
+    def drive_robot_relative(self, chassis_speeds):
+        # required for the pathplanner lib's pathfollowing based on chassis speeds
+        desired_states = dc.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
+        self.setModuleStates(desired_states)
+
+    def flip_path(self):  # pathplanner needs a function to see if it should mirror a path
+        if wpilib.RobotBase.isReal():
+            if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue:
+                return False
+            else:
+                return True
+        else:
+            # TODO - figure out how to set us to blue by default
+            return False
+
+
+    def follow_pathplanner_trajectory_command(self, trajectory:PathPlannerTrajectory, is_first_path:bool):
+        #from pathplannerlib.path import PathPlannerPath
+        #from pathplannerlib.commands import FollowPathWithEvents, FollowPathHolonomic
+        #from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
+
+        # copy of pathplannerlib's method for returning a swervecommand, with an optional odometry reset
+        # using the first pose of the trajectory
+        if is_first_path:
+            reset_cmd = commands2.InstantCommand(self.resetOdometry(trajectory.getInitialTargetHolonomicPose()))
+        else:
+            reset_cmd = commands2.InstantCommand()
+
+        # useful stuff controller.PPHolonomicDriveController, controller.PIDController, auto.FollowPathHolonomic
+        swerve_controller_cmd = None
+
+        cmd = commands2.SequentialCommandGroup(reset_cmd, swerve_controller_cmd)
+
+        return cmd
+    # -------------- END PATHPLANNER STUFF
 
     def perform_keep_angle(self, xSpeed, ySpeed, rot):  # update rotation if we are drifting when trying to drive straight
         output = rot  # by default we will return rot unless it needs to be changed
@@ -248,6 +275,11 @@ class Swerve (SubsystemBase):
         # note lots of the calls want tuples, so _could_ convert if we really want to
         return [m.getPosition() for m in self.swerve_modules]
 
+    def get_module_states(self):
+        """ CJH-added helper function to clean up some calls above"""
+        # note lots of the calls want tuples, so _could_ convert if we really want to
+        return [m.getState() for m in self.swerve_modules]
+
     def get_raw_angle(self):  # never reversed value for using PIDs on the heading
         return self.gyro.getAngle()
 
@@ -266,3 +298,37 @@ class Swerve (SubsystemBase):
         self.gyro.reset()
         self.keep_angle = 0
 
+    def periodic(self) -> None:
+
+        self.counter += 1
+        # Update the odometry in the periodic block -
+        if wpilib.RobotBase.isReal():
+            self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+        else:
+            # sim is not updating the odometry right yet, not sure why since all the sparks should be set in the sim
+            # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+            pose = self.get_pose()
+            wpilib.SmartDashboard.putNumberArray('real_robot_pose', [pose.x, pose.y, pose.rotation().degrees()])
+
+        if self.counter % 10 == 0:
+            pose = self.get_pose()  # self.odometry.getPose()
+            if wpilib.RobotBase.isReal():  # update the NT with odometry for the dashboard - sim will do its own
+                wpilib.SmartDashboard.putNumberArray('drive_pose', [pose.X(), pose.Y(), pose.rotation().degrees()])
+                wpilib.SmartDashboard.putNumber('drive_x', pose.X())
+                wpilib.SmartDashboard.putNumber('drive_y', pose.Y())
+                wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
+
+            wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
+            wpilib.SmartDashboard.putNumber('_navx_yaw', self.get_yaw())
+
+            if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
+                wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
+                # wpilib.SmartDashboard.putNumber('keep_angle_output', output)
+
+            if constants.k_debugging_messages:  # this is just a bit much, so
+                angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]
+                absolutes = [m.get_turn_encoder() for m in self.swerve_modules]
+                wpilib.SmartDashboard.putNumberArray(f'_angles', angles)
+                wpilib.SmartDashboard.putNumberArray(f'_analog_radians', absolutes)
+                ypr = [self.navx.getYaw(), self.get_pitch(), self.navx.getRoll(), self.navx.getRotation2d().degrees()]
+                wpilib.SmartDashboard.putNumberArray('_navx_YPR', ypr)

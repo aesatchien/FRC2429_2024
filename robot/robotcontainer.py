@@ -6,6 +6,10 @@ import commands2
 from commands2.button import JoystickButton, POVButton
 from commands2.button import CommandXboxController
 
+# pathplanner
+from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.auto import AutoBuilder
+
 import constants  # all of the constants except for swerve
 
 # subsystems
@@ -16,6 +20,7 @@ from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
 from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
 from autonomous.drive_swerve_point_trajectory import DriveSwervePointTrajectory
+
 
 
 class RobotContainer:
@@ -42,6 +47,8 @@ class RobotContainer:
         # swerve driving
         self.drive.setDefaultCommand(DriveByJoystickSwerve(container=self, swerve=self.drive,
                             field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+
+
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
@@ -91,8 +98,19 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
+
+        self.pathplanner_names_chooser = wpilib.SendableChooser()
+        # import os
+
         #self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
         #self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
 
     def get_autonomous_command(self):
-        return self.autonomous_chooser.getSelected()
+
+        # return self.autonomous_chooser.getSelected()
+
+        # Load the path you want to follow using its name in the GUI
+        path = PathPlannerPath.fromPathFile('circle test')
+        # Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path)
+

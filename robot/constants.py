@@ -19,5 +19,5 @@ k_slowmode_multiplier = 0.2  # cut max velocity of the robot for fine movement c
 k_driver_controller_port = 0
 
 # --------------  SIMULATION AND FIELD INITIALIZATION  ---------------
-k_start_x = 2.1  # eventually this will have to be set by the autonomous choices
-k_start_y = 4.7
+k_start_x = 2.2  # eventually this will have to be set by the autonomous choices
+k_start_y = 5.85

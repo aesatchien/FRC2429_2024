@@ -1,7 +1,8 @@
 import time
 import rev
+from typing import Union
 
-def configure_sparkmax(sparkmax: rev.CANSparkMax, pid_controller : rev.SparkMaxPIDController, pid_dict : dict,
+def configure_sparkmax(sparkmax: Union[rev.CANSparkMax, rev.CANSparkFlex], pid_controller : rev.SparkMaxPIDController, pid_dict : dict,
                        can_id=0, slot=0, pid_only=False, burn_flash=False):
     """Set the PIDs, etc for the controllers, slot 0 is often position and slot 1 is often velocity
     Expects a sparkmax and a pid controller, as well as a dictionary with values - looks like this (mm in this case):

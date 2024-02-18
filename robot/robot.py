@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
 import typing
+
+import hal
 import wpilib
 import commands2
+from wpilib.simulation import DriverStationSim
 
 import robotcontainer
 from robotcontainer import RobotContainer
@@ -34,18 +37,18 @@ class MyRobot(commands2.TimedCommandRobot):
     def disabledPeriodic(self) -> None:
         """This function is called periodically when disabled"""
 
-    # def autonomousInit(self) -> None:
-    #     """This autonomous runs the autonomous command selected by your RobotContainer class."""
-    #
-    #     self.container.set_start_time()  # putting this after the scheduler is bad
-    #
-    #     self.autonomousCommand = self.container.get_autonomous_command()
-    #
-    #     if self.autonomousCommand:
-    #         self.autonomousCommand.schedule()
-    #
-    # def autonomousPeriodic(self) -> None:
-    #     """This function is called periodically during autonomous"""
+    def autonomousInit(self) -> None:
+        """This autonomous runs the autonomous command selected by your RobotContainer class."""
+
+        self.container.set_start_time()  # putting this after the scheduler is bad
+
+        self.autonomousCommand = self.container.get_autonomous_command()
+
+        if self.autonomousCommand:
+            self.autonomousCommand.schedule()
+
+    def autonomousPeriodic(self) -> None:
+        """This function is called periodically during autonomous"""
 
     def teleopInit(self) -> None:
 
@@ -64,4 +67,11 @@ class MyRobot(commands2.TimedCommandRobot):
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode
         commands2.CommandScheduler.getInstance().cancelAll()
+
+    def simulationInit(self):
+        # make us blue for the pathplanner  ... does not seem to work
+        hal.initialize(500)
+        DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
+        DriverStationSim.notifyNewData()
+
 

@@ -24,8 +24,9 @@ class SwerveModule:
         self.drivingSparkMax = CANSparkFlex(drivingCANId, CANSparkFlex.MotorType.kBrushless)
         self.turningSparkMax = CANSparkMax(turningCANId, CANSparkMax.MotorType.kBrushless)
         if wpilib.RobotBase.isSimulation():  # check in sim to see if we are reacting to inputs
-            self.dummy_motor_driving = wpilib.PWMSparkMax(drivingCANId-16)
-            self.dummy_motor_turning = wpilib.PWMSparkMax(turningCANId-16)
+            pass
+            # self.dummy_motor_driving = wpilib.PWMSparkMax(drivingCANId-16)
+            # self.dummy_motor_turning = wpilib.PWMSparkMax(turningCANId-16)
 
         #  ---------------- DRIVING  SPARKMAX  ------------------
         # Factory reset, so we get the SPARKS MAX to a known state before configuring them
@@ -134,8 +135,6 @@ class SwerveModule:
 
         # CJH added for debugging and tuning
         if wpilib.RobotBase.isSimulation():
-            self.dummy_motor_driving.set(optimizedDesiredState.speed / 10)
-            self.dummy_motor_turning.set(optimizedDesiredState.angle.radians()/10)
 
             if constants.k_debugging_messages:  # only do this when debugging - it's pretty intensive
                 wpilib.SmartDashboard.putNumberArray(f'{self.label}_target_vel_angle',
