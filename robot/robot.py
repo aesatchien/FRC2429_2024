@@ -68,10 +68,10 @@ class MyRobot(commands2.TimedCommandRobot):
         # Cancels all running commands at the start of test mode
         commands2.CommandScheduler.getInstance().cancelAll()
 
-    def simulationInit(self):
+        #def simulationInit(self):
         # make us blue for the pathplanner  ... does not seem to work
-        hal.initialize(500)
-        DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
-        DriverStationSim.notifyNewData()
+        # hal.initialize(500)
+        # DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
+        # DriverStationSim.notifyNewData()
 
 
