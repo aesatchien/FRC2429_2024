@@ -119,6 +119,9 @@ k_PID_dict_pos_lower_crank_arm = {'kP': k_crank_arm_dict['k_kP'], 'kI': 0, 'kD':
 k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': 0, 'kArbFF':0,
                          'kMaxOutput': 0.05, 'kMinOutput': -0.05, 'SM_MaxVel':1, 'SM_MaxAccel':1}
 
+# ------------------- Indexer -------------------
+k_indexer_neo_port = 5
+
 # ------------------- Intake -------------------
 k_intake_neo_port = 12  # CAN ID
 

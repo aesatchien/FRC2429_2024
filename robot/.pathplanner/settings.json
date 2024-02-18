@@ -1,8 +1,10 @@
 {
-  "robotWidth": 0.9,
-  "robotLength": 0.9,
+  "robotWidth": 0.7112,
+  "robotLength": 0.71,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Cory"
+  ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

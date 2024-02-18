@@ -12,12 +12,14 @@ from subsystems.intake import Intake
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 #from subsystems.shooter_arm import ShooterCrankArm
 from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
+from subsystems.indexer import Indexer
 
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
 from commands.lower_crank_coast import CrankArmCoast
+from commands.indexer_by_joystick import IndexerByJoystick
 
 
 # from autonomous.drive_wait import DriveWait
@@ -44,6 +46,7 @@ class RobotContainer:
         self.intake = Intake()
         self.crank_arm = LowerCrankArmTrapezoidal()  # CrankArm()
         self.shooter_arm = ShooterCrankArmTrapezoidal()
+        self.indexer = Indexer()
 
         self.game_piece_mode = 'cube'  # TODO: change to empty and full? orange vs white?
 
@@ -55,8 +58,7 @@ class RobotContainer:
       #  if wpilib.RobotBase.isSimulation():
       #  if False:
 
-        #    self.drive.setDefaultCommand(DriveByJoystick(self, self.drive,lambda: -self.driver_controller.getRawAxis(1),
-         #   lambda: self.driver_controller.getRawAxis(4),))
+        self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
     #    else:
         #self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
 
