@@ -78,6 +78,10 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # use the encoder for positioning in the sim
         self.sim_encoder = self.motor.getEncoder()
+        self.sim_encoder.setPositionConversionFactor(pos_factor)  # radians,
+        self.sim_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
+        initial_position = initial_position if wpilib.RobotBase.isReal() else math.radians(-85)
+        self.sim_encoder.setPosition(initial_position)
 
         # update controllers from constants file and optionally burn flash
         self.configure_motors()
@@ -110,13 +114,14 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
         self.disable()
 
-    def move_degrees(self, degrees: float) -> None:  # way to bump up and down for testing
+    def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
         goal = current_angle + degrees * math.pi / 180
         # clamp the goal between out top and bottom limits
         goal = self.check_goal(goal)
         message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.0f} to {goal * 180 / math.pi:.0f}'
-        print(message)
+        if not silent:
+            print(message)
         self.setGoal(goal)
         #pc = commands2.PrintCommand(message)
         #return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
@@ -175,7 +180,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             if self.angle > 1.25 * math.pi:
                 self.angle = self.angle - 2 * math.pi
         else:  # figure out if we need to do something else in the sim
-            pass
+            self.angle = self.sim_encoder.getPosition()
         return self.angle
 
     def stop_crank_arm(self):
@@ -187,7 +192,7 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             min_angle = self.min_angle * 180/math.pi
             clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
             message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
-            message += f'with {goal * 180 / math.pi:.0f} **  setting to -> {clamped_goal:0.f}'
+            message += f'with {goal * 180 / math.pi:.0f} **  setting to -> {math.degrees(clamped_goal):.0f}'
             print(message)
             goal = clamped_goal
         return goal
@@ -204,3 +209,5 @@ class ShooterCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
                                            self.follower.getAppliedOutput()])
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_moving', self.is_moving)
+
+
