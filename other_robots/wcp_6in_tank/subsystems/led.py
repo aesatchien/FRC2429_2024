@@ -90,7 +90,7 @@ class Led(commands2.Subsystem):
                         led.setRGB(255, 0, 0)
 
                     elif self.indicator == Led.Indicator.VISION_TARGET_SUCCESS:
-                        # flashing blue
+                        # flashing orange
                         freq = 1  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
 
@@ -100,8 +100,8 @@ class Led(commands2.Subsystem):
                             led.setRGB(0, 0, 255)
 
                     elif self.indicator == Led.Indicator.AUTO_STRAFE_COMPLETE:
-                        # solid blue
-                        led.setRGB(0, 0, 255)
+                        # solid orange
+                        led.setRGB(255, 40, 0)
 
                     elif self.indicator == Led.Indicator.RAINBOW: # Haochen emote
                         # rainbow
@@ -112,7 +112,7 @@ class Led(commands2.Subsystem):
                         led.setHSV(math.floor(hue), 255, 255)
 
                     elif self.indicator == Led.Indicator.RSL: # Haochen emote
-                        # flashing blue
+                        # flashing orange
                         freq = 2  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
 
