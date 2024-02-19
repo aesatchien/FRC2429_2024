@@ -61,8 +61,8 @@ class RobotContainer:
 
         arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
-        self.shooter_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.shooter_arm, controller=self.driver_controller, degrees=arm_degrees))
-        self.crank_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.crank_arm, controller=self.driver_controller, degrees=arm_degrees))
+        #self.shooter_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.shooter_arm, controller=self.driver_controller, degrees=arm_degrees))
+        #self.crank_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.crank_arm, controller=self.driver_controller, degrees=arm_degrees))
     #    else:
         #self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
 
@@ -143,11 +143,11 @@ class RobotContainer:
         test_system2 = self.shooter_arm
         #self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         #self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
-        self.buttonRight.onTrue(ArmMove(container=self, arm=test_system, degrees=5))
-        self.buttonLeft.onTrue(ArmMove(container=self, arm=test_system, degrees=-5))
-        self.buttonUp.onTrue(ArmMove(container=self, arm=test_system2, degrees=15))
-        self.buttonDown.onTrue(ArmMove(container=self, arm=test_system2, degrees=-15))
-        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        self.buttonRight.onTrue(ArmMove(container=self, arm=test_system, degrees=5, direction='up'))
+        self.buttonLeft.onTrue(ArmMove(container=self, arm=test_system, degrees=-5, direction='down'))
+        self.buttonUp.onTrue(ArmMove(container=self, arm=test_system2, degrees=15, direction='up'))
+        self.buttonDown.onTrue(ArmMove(container=self, arm=test_system2, degrees=-15, direction='down'))
+        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm, ))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
        # bind LED

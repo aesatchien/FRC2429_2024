@@ -104,8 +104,11 @@ class PhysicsEngine:
         # Create a Mechanism2d display of an Arm
         self.mech2d = wpilib.Mechanism2d(60, 60)
         self.armBase = self.mech2d.getRoot("ArmBase", 30, 30)
+        self.chassisBase = self.mech2d.getRoot("chassisBase", 5, 23)
+        self.chassis = self.chassisBase.appendLigament(
+            "chassis", 28, 0, 12, wpilib.Color8Bit(wpilib.Color.kGray))
         self.crank_arm_mech = self.armBase.appendLigament(
-            "Crank Arm Tower", 22, 90, 12, wpilib.Color8Bit(wpilib.Color.kGreen)
+            "Crank Arm Tower", 22, 90, 12, wpilib.Color8Bit(wpilib.Color.kDodgerBlue)
         )
         self.shooter_arm_mech = self.crank_arm_mech.appendLigament(
             "Shooter Arm", 19, 175, 20, wpilib.Color8Bit(wpilib.Color.kYellow)

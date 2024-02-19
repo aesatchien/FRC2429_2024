@@ -9,12 +9,13 @@ import math
 
 class ArmMove(commands2.Command):
 
-    def __init__(self, container, arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=0, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=0, direction=None, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_Move')
         self.container = container
         self.arm = arm  # should work with either type of arm ?
         self.degrees = degrees
+        self.direction = direction
         self.wait_to_finish = wait_to_finish  # determine how long we wait to end
 
         self.addRequirements(self.arm)  # commandsv2 version of requirements
@@ -23,7 +24,11 @@ class ArmMove(commands2.Command):
 
         self.start_time = round(self.container.get_enabled_time(), 2)
         self.print_start_message()
-        self.arm.move_degrees(self.degrees)
+        if self.direction is None:
+            self.arm.move_degrees(self.degrees)
+        else:
+            self.arm.set_next_position(direction=self.direction)
+
         self.arm.is_moving = True  # try to raise a flag that lets us know we're in motion
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
