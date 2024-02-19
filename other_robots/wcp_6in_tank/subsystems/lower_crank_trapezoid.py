@@ -120,13 +120,14 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
         self.disable()
 
-    def move_degrees(self, degrees: float) -> None:  # way to bump up and down for testing
+    def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
         goal = current_angle + degrees * math.pi / 180
         # clamp the goal between out top and bottom limits
         goal = self.check_goal(goal)
         message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.0f} to {goal * 180 / math.pi:.0f}'
-        print(message)
+        if not silent:
+            print(message)
         self.setGoal(goal)
 
         # pc = commands2.PrintCommand(message)
@@ -196,7 +197,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             min_angle = self.min_angle * 180/math.pi
             clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
             message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
-            message += f'with {goal * 180 / math.pi:.0f} --> setting to {clamped_goal * 180 / math.pi:.0f} **'
+            message += f'with {goal * 180 / math.pi:.0f} --> setting to {math.degrees(clamped_goal):.0f} **'
             print(message)
             goal = clamped_goal
         return goal

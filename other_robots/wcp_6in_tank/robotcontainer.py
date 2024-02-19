@@ -18,7 +18,8 @@ from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
-from commands.lower_crank_coast import CrankArmCoast
+from commands.arm_joystick_control import ArmJoystickControl
+from commands.arm_coast import CrankArmCoast
 from commands.indexer_by_joystick import IndexerByJoystick
 
 
@@ -58,7 +59,10 @@ class RobotContainer:
       #  if wpilib.RobotBase.isSimulation():
       #  if False:
 
+        arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
+        self.shooter_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.shooter_arm, controller=self.driver_controller, degrees=arm_degrees))
+        self.crank_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.crank_arm, controller=self.driver_controller, degrees=arm_degrees))
     #    else:
         #self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
 
@@ -139,10 +143,10 @@ class RobotContainer:
         test_system2 = self.shooter_arm
         #self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         #self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
-        self.buttonRight.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=5))
-        self.buttonLeft.onTrue(ArmMove(container=self, crank_arm=test_system, degrees=-5))
-        self.buttonUp.onTrue(ArmMove(container=self, crank_arm=test_system2, degrees=15))
-        self.buttonDown.onTrue(ArmMove(container=self, crank_arm=test_system2, degrees=-15))
+        self.buttonRight.onTrue(ArmMove(container=self, arm=test_system, degrees=5))
+        self.buttonLeft.onTrue(ArmMove(container=self, arm=test_system, degrees=-5))
+        self.buttonUp.onTrue(ArmMove(container=self, arm=test_system2, degrees=15))
+        self.buttonDown.onTrue(ArmMove(container=self, arm=test_system2, degrees=-15))
         self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 

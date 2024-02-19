@@ -72,7 +72,7 @@ kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_abs_encoder_position_conversi
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'shooter_arm',
-    'max_angle': 109, 'min_angle': -95,
+    'max_angle': 109, 'min_angle': -85,
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
@@ -99,8 +99,9 @@ k_lower_crank_gear_ratio = 5 * 5 * 3 * 4  # 553 (maxplanetary) * 4 (pulley) = 30
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
     'name': 'crank_arm',
-    'max_angle': 109, 'min_angle': 61,
+    'max_angle': 120, 'min_angle': 60,
     'motor_can_id': 7, 'follower_can_id': 6,
+    'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
     'abs_encoder_zero_offset': 0.515,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #

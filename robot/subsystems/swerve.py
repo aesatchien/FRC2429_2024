@@ -92,9 +92,9 @@ class Swerve (Subsystem):
             robot_relative_speeds_supplier=self.get_relative_speeds,  # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             robot_relative_output=self.drive_robot_relative,  # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             config=HolonomicPathFollowerConfig(  # HolonomicPathFollowerConfig, this should likely live in your Constants class
-                PIDConstants(5.0, 0.0, 0.0),  # Translation PID constants
-                PIDConstants(8.0, 0.0, 0.0),  # Rotation PID constants
-                3,  # Max module speed, in m/s
+                PIDConstants(6.0, 0.0, 0.0),  # Translation PID constants
+                PIDConstants(4.0, 0.0, 0.0),  # Rotation PID constants
+                3.5,  # Max module speed, in m/s
                 0.41,  # Drive base radius in meters. Distance from robot center to furthest module.
                 ReplanningConfig()  # Default path replanning config. See the API for the options here
             ),
