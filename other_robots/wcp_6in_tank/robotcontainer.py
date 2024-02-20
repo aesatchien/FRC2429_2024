@@ -13,6 +13,7 @@ from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 #from subsystems.shooter_arm import ShooterCrankArm
 from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
 from subsystems.indexer import Indexer
+from subsystems.climber import Climber
 
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
@@ -21,7 +22,7 @@ from commands.arm_move import ArmMove
 from commands.arm_joystick_control import ArmJoystickControl
 from commands.arm_coast import CrankArmCoast
 from commands.indexer_by_joystick import IndexerByJoystick
-
+from commands.climber_toggle import ClimberToggle
 
 # from autonomous.drive_wait import DriveWait
 # from autonomous.drive_move import DriveMove
@@ -48,6 +49,7 @@ class RobotContainer:
         self.crank_arm = LowerCrankArmTrapezoidal()  # CrankArm()
         self.shooter_arm = ShooterCrankArmTrapezoidal()
         self.indexer = Indexer()
+        self.climber = Climber()
 
         self.game_piece_mode = 'cube'  # TODO: change to empty and full? orange vs white?
 
@@ -157,8 +159,12 @@ class RobotContainer:
         self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm, ))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
-       # bind LED
-       #  self.buttonA.onTrue(LedToggle(container=self))
+        # bind LED
+        #  self.buttonA.onTrue(LedToggle(container=self))
+
+        #bind climber
+        # self.buttonRight.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
+        # self.buttonLeft.onTrue(ClimberToggle(container=self, climber=self.climber, force='off'))
 
         # bind commands to co-pilot
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))
