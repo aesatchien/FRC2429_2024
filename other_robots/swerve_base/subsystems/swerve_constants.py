@@ -170,3 +170,8 @@ class AutoConstants:
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared
     )
 
+    # Baseline values for a RAMSETE follower in units of meters
+    # and seconds. These are recommended, but may be changes if wished. These values were taken from the 2022 constants file.
+    k_ramsete_b = 2
+    k_ramsete_zeta = 0.9
+

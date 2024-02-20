@@ -32,6 +32,7 @@ class DriveSwervePointTrajectory(commands2.Command):  # change the name for your
         self.acceleration = ac.kMaxAccelerationMetersPerSecondSquared if acceleration is None else acceleration
         # configure and create a trajectory - note this is overloaded with many ways to call
         self.trajectory_config = TrajectoryConfig(self.velocity, self.acceleration)
+        #define placement (meters) of swerve modules on the robot
         self.trajectory_config.setKinematics(dc.kDriveKinematics)
         self.trajectory = TrajectoryGenerator.generateTrajectory(
             start=geo.Pose2d(x, y, geo.Rotation2d(0)),
