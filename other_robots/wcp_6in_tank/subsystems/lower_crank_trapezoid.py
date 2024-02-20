@@ -94,6 +94,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         self.goal = self.get_angle()
         self.setGoal(self.goal)  # do we want to do this?
+        self.at_goal = True
         self.enable()  # enable if using, disable if testing angles
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
@@ -104,7 +105,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # TODO - check if the feedforward is correct in units for the sparkmax - documentation says 32, not 12
         self.controller.setReference(setpoint.position, rev.CANSparkMax.ControlType.kPosition, 0,
                                      arbFeedforward=feedforward)
-        self.goal = setpoint.position
+        # self.goal = setpoint.position  # don't want this - unless we want to plot the trapezoid
 
         if wpilib.RobotBase.isSimulation():
             self.sim_encoder.setPosition(setpoint.position)
@@ -128,6 +129,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.0f} to {goal * 180 / math.pi:.0f}'
         if not silent:
             print(message)
+        self.goal = goal  # our goal, not wpilibs
         self.setGoal(goal)
 
         # pc = commands2.PrintCommand(message)
@@ -193,11 +195,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def check_goal(self, goal):
         if goal > self.max_angle or goal < self.min_angle:
-            max_angle = self.max_angle * 180/math.pi
-            min_angle = self.min_angle * 180/math.pi
+            max_degrees = math.degrees(self.max_angle)
+            min_degrees = math.degrees(self.min_angle)
             clamped_goal = constants.clamp(goal, bottom=self.min_angle, top=self.max_angle)
-            message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_angle:.0f},{min_angle:.0f}] '
-            message += f'with {goal * 180 / math.pi:.0f} --> setting to {math.degrees(clamped_goal):.0f} **'
+            message = f'** WARNING: ATTEMPT TO EXCEED {self.getName().upper()} LIMITS [{max_degrees:.0f},{min_degrees:.0f}] '
+            message += f'with {math.degrees(goal):.0f} --> setting to {math.degrees(clamped_goal):.0f} **'
             print(message)
             goal = clamped_goal
         return goal
@@ -207,10 +209,12 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
+            self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # maybe we want to call this an error
+            wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_spark_pos', self.spark_encoder.getPosition())
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rads', self.angle)
-            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', self.angle * 180 / math.pi)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_degrees', math.degrees(self.angle))
             if self.config['k_motor_count'] > 1:
                 wpilib.SmartDashboard.putNumberArray(f'{self.getName()}_powers', [self.motor.getAppliedOutput(),
                                                                               self.follower.getAppliedOutput()])
@@ -218,4 +222,5 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
                 wpilib.SmartDashboard.putNumber(f'{self.getName()}_power', self.motor.getAppliedOutput())
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_moving', self.is_moving)
+
 

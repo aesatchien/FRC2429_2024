@@ -3,12 +3,12 @@ from wpilib import SmartDashboard
 from typing import Union
 
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
-from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
+from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 
 class CrankArmCoast(commands2.Command):  # change the name for your command
 
-    def __init__(self, container, crank_arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal]) -> None:
+    def __init__(self, container, crank_arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal]) -> None:
         super().__init__()
         self.setName(f'{crank_arm.getName()} Coast')  # change this to something appropriate for this command
         self.container = container

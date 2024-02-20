@@ -11,7 +11,7 @@ from subsystems.shooter import Shooter
 from subsystems.intake import Intake
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 #from subsystems.shooter_arm import ShooterCrankArm
-from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
+from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.indexer import Indexer
 from subsystems.climber import Climber
 
@@ -47,7 +47,7 @@ class RobotContainer:
         self.shooter = Shooter()
         self.intake = Intake()
         self.crank_arm = LowerCrankArmTrapezoidal()  # CrankArm()
-        self.shooter_arm = ShooterCrankArmTrapezoidal()
+        self.shooter_arm = UpperCrankArmTrapezoidal()
         self.indexer = Indexer()
         self.climber = Climber()
 
@@ -125,21 +125,14 @@ class RobotContainer:
 
         # bind commands to driver
 
-        # bind shooter
-        self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=2500, force='on'))
+        # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
+        self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         # bind intake
         #elf.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind crank arms for testing
-        #self.buttonUp.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=1.5, force='on'))  # ToDo find out how to have it increment to the next position
-        #self.buttonDown.whileTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, power=-1.0, force='on'))
-        #self.buttonRight.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=2.0, force='on'))  # ToDo find out how to have it increment to the next position
-        #self.buttonLeft.whileTrue(ShooterArmToggle(container=self, shooter_arm=self.shooter_arm, power=-1.5, force='on'))
-        #self.buttonX.onTrue(CrankArmToggle(container=self, crank_arm=self.crank_arm, force='off'))
-        #self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
-        #self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
 
         #self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         #self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
@@ -156,7 +149,7 @@ class RobotContainer:
             self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction))
             self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
 
-        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm, ))
+        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
         # bind LED

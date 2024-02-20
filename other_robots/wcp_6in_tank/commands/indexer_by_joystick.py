@@ -32,8 +32,8 @@ class IndexerByJoystick(commands2.Command):
         joystick = -1 * self.controller.getRightY()
         self.indexer.set_indexer(joystick)
 
-        if wpilib.RobotBase.isSimulation():
-            SmartDashboard.putNumber('joystick', joystick)
+        # if wpilib.RobotBase.isSimulation():
+        #     SmartDashboard.putNumber('joystick', joystick)
 
     def isFinished(self) -> bool:
         return False

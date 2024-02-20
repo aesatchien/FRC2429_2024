@@ -71,7 +71,7 @@ kFF_top_crank = 1 / (k_neo_freespeed * k_top_crank_abs_encoder_position_conversi
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
-    'name': 'shooter_arm',
+    'name': 'upper_arm',
     'max_angle': 109, 'min_angle': -85,
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.372,  # 0.45, # 0.420,  # makes horizontal 0
@@ -107,7 +107,7 @@ k_crank_arm_dict = {
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
     'k_MaxVelocityRadPerSecond': 0.5,
-    'k_MaxAccelerationRadPerSecSquared': 0.3,
+    'k_MaxAccelerationRadPerSecSquared': 0.2,
     'k_kSVolts': 0.01,  # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio

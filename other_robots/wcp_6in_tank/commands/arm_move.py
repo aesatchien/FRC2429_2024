@@ -3,13 +3,13 @@
 import commands2
 from wpilib import SmartDashboard
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
-from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
+from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from typing import Union
 import math
 
 class ArmMove(commands2.Command):
 
-    def __init__(self, container, arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_Move')
         self.container = container

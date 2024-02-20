@@ -6,12 +6,12 @@ import commands2
 import wpilib
 from wpilib import SmartDashboard
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
-from subsystems.shooter_crank_trapezoid import ShooterCrankArmTrapezoidal
+from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 import typing
 
 class ArmJoystickControl(commands2.Command):
 
-    def __init__(self, container, arm: typing.Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=1, controller:wpilib.XboxController=None, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: typing.Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=1, controller:wpilib.XboxController=None, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_JoystickControl')
         self.container = container
