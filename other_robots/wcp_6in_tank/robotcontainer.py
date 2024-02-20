@@ -163,8 +163,8 @@ class RobotContainer:
         #  self.buttonA.onTrue(LedToggle(container=self))
 
         #bind climber
-        # self.buttonRight.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
-        # self.buttonLeft.onTrue(ClimberToggle(container=self, climber=self.climber, force='off'))
+        # self.buttonX.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
+        # self.buttonY.onTrue(ClimberToggle(container=self, climber=self.climber, force='off'))
 
         # bind commands to co-pilot
         # self.co_buttonA.whenPressed(commands2.PrintCommand("Testing Button A"))
