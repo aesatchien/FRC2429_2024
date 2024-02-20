@@ -9,7 +9,7 @@ import math
 
 class ArmMove(commands2.Command):
 
-    def __init__(self, container, arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=0, direction=None, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: Union[ShooterCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_Move')
         self.container = container

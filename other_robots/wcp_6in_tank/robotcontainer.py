@@ -139,14 +139,21 @@ class RobotContainer:
         #self.buttonUp.onTrue(self.crank_arm.move_degrees(degrees=10))
         #self.buttonDown.onTrue(self.crank_arm.move_degrees(degrees=-10))
 
-        test_system = self.crank_arm  # self.self.crank_arm or self.shooter_arm
-        test_system2 = self.shooter_arm
         #self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         #self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
-        self.buttonRight.onTrue(ArmMove(container=self, arm=test_system, degrees=5, direction='up'))
-        self.buttonLeft.onTrue(ArmMove(container=self, arm=test_system, degrees=-5, direction='down'))
-        self.buttonUp.onTrue(ArmMove(container=self, arm=test_system2, degrees=15, direction='up'))
-        self.buttonDown.onTrue(ArmMove(container=self, arm=test_system2, degrees=-15, direction='down'))
+        setpoints = False
+        if setpoints:
+            self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
+            self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
+            self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=15, direction='up'))
+            self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-15, direction='down'))
+        else:
+            direction = None
+            self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=direction))
+            self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=direction))
+            self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction))
+            self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+
         self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm, ))
         self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
