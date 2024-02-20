@@ -123,6 +123,10 @@ k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':
 # ------------------- Indexer -------------------
 k_indexer_neo_port = 5
 
+# ------------------- Indexer -------------------
+k_follower_winch_neo_port =4
+k_left_winch_neo_port = 3
+
 # ------------------- Intake -------------------
 k_intake_neo_port = 12  # CAN ID
 
