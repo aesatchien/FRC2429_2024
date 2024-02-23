@@ -18,6 +18,11 @@ k_slowmode_multiplier = 0.2  # cut max velocity of the robot for fine movement c
 # ID for the driver's joystick (template)
 k_driver_controller_port = 0
 
+
+# ------------------- Intake -------------------
+k_intake_neo_port = 5  # CAN ID
+
+
 # --------------  SIMULATION AND FIELD INITIALIZATION  ---------------
 k_start_x = 2.2  # eventually this will have to be set by the autonomous choices
 k_start_y = 5.85
