@@ -33,6 +33,11 @@ k_slowmode_multiplier  = 0.3
 k_controller_elevator_axis = 1
 k_controller_turret_axis = 4
 
+
+# ------------------- Intake -------------------
+k_intake_neo_port = 5  # CAN ID
+
+
 # --------------  SIMULATION AND FIELD INITIALIZATION  ---------------
 k_start_x = 2.2  # eventually this will have to be set by the autonomous choices
 k_start_y = 5.85
