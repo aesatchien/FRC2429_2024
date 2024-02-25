@@ -18,7 +18,7 @@ class IndexerByJoystick(commands2.Command):
         self.setName('indexer_by_joystick')
         self.indexer = indexer
         self.container = container
-        self.controller: typing.Optional[CommandXboxController] = self.container.driver_controller
+        self.controller: typing.Optional[CommandXboxController] = self.container.driver_command_controller
         self.addRequirements(self.indexer)
 
     def initialize(self) -> None:

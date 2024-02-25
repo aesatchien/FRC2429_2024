@@ -15,11 +15,12 @@ k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the ba
 k_rate_limited = True  # on swerve, use slew limiters to keep acceleration from being too abrupt
 k_debugging_messages = True  # turn these off for competition
 k_slowmode_multiplier = 0.2  # cut max velocity of the robot for fine movement control
+k_enable_soft_limits = False
 
 # --------------  OI  ---------------
 # ID for the driver's joystick (template)
 k_driver_controller_port = 0
-k_co_driver_controller_port = 1
+k_co_pilot_controller_port = 1
 k_controller_thrust_axis = 1
 k_controller_twist_axis = 4
 k_arcade_thrust_scale = 0.7  # used in drive by joystick arcade mode

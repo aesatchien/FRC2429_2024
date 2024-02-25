@@ -13,7 +13,7 @@ def configure_sparkmax(sparkmax: Union[rev.CANSparkMax, rev.CANSparkFlex], pid_c
     error_dict.update({f'kP_ID{can_id}_S{slot}': pid_controller.setP(pid_dict['kP'], slot)})
     error_dict.update({f'kI_ID{can_id}_S{slot}': pid_controller.setI(pid_dict['kI'], slot)})
     error_dict.update({f'kD_ID{can_id}_S{slot}': pid_controller.setD(pid_dict['kD'], slot)})
-    error_dict.update({f'kFF_ID{can_id}_S{slot}': pid_controller.setFF(pid_dict['kFF'], slot)})
+    # error_dict.update({f'kFF_ID{can_id}_S{slot}': pid_controller.setFF(pid_dict['kFF'], slot)})
     error_dict.update({f'kIZ_ID{can_id}_S{slot}': pid_controller.setIZone(pid_dict['kIz'], slot)})
     error_dict.update({f'MinMax_ID{can_id}_S{slot}': pid_controller.setOutputRange(pid_dict['kMinOutput'], pid_dict['kMaxOutput'], slot)})
     error_dict.update({f'Accel_ID{can_id}_S{slot}': pid_controller.setSmartMotionMaxVelocity(pid_dict['SM_MaxVel'], slot)})
