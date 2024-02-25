@@ -154,7 +154,7 @@ class RobotContainer:
         self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
         # bind intake
-        # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+        self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind LED
         #  self.co_trigger_a.onTrue(LedToggle(container=self))

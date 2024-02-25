@@ -17,6 +17,7 @@ from subsystems.climber import Climber
 
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
+from commands.intake_toggle import IntakeToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
 from commands.arm_joystick_control import ArmJoystickControl
@@ -130,7 +131,7 @@ class RobotContainer:
         self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         # bind intake
-        #elf.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+        self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind crank arms for testing
 
