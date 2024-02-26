@@ -47,8 +47,8 @@ class SwerveModule:
         # Saves p,i,d, ff, min/max, smart motion etc - do we need more than one slot used?  might as well always be
         configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=0,
                                burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
-        configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=1,
-                               burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
+        # configure_sparkmax(sparkmax=self.drivingSparkMax, pid_controller=self.drivingPIDController, can_id=drivingCANId, slot=1,
+        #                        burn_flash=constants.k_burn_flash, pid_dict=ModuleConstants.k_PID_dict_vel, pid_only=False)
 
         #  ---------------- TURNING SPARKMAX  ------------------
         self.turningSparkMax.restoreFactoryDefaults()
@@ -131,6 +131,8 @@ class SwerveModule:
         # calculate the PID value for the turning motor  - use the roborio instead of the sparkmax
         # self.turningPIDController.setReference(optimizedDesiredState.angle.radians(), CANSparkMax.ControlType.kPosition)
         self.turning_output = self.turning_PID_controller.calculate(self.get_turn_encoder(), optimizedDesiredState.angle.radians())
+        # clean up the turning Spark LEDs by cleaning out the noise - 20240226 CJH
+        self.turning_output = 0 if math.fabs(self.turning_output) < 0.01 else self.turning_output
         self.turningSparkMax.set(self.turning_output)
 
         # CJH added for debugging and tuning

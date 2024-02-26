@@ -105,6 +105,7 @@ class ModuleConstants:
     kDrivingI = 0
     kDrivingD = 0
     kDrivingFF = 1 / kDriveWheelFreeSpeedRps  # CJH tested 3/19/2023, works ok  - 0.2235
+    print(f'kdrivingFF: {kDrivingFF}')
     kDrivingMinOutput = -0.96
     kDrivingMaxOutput = 0.96
     k_smartmotion_max_velocity = 3  # m/s
