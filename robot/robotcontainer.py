@@ -3,15 +3,13 @@
 import time, enum
 import wpilib
 import commands2
-from commands2.button import JoystickButton, POVButton
 from commands2.button import CommandXboxController
 
 # pathplanner
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.auto import AutoBuilder
 
-from commands2.button import JoystickButton, POVButton
-import constants  # all of the constants except for swerve
+import constants  # all the constants except for swerve
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -55,29 +53,34 @@ class RobotContainer:
 
         # The robot's subsystems
         self.drive = Swerve()
-        self.intake = Intake()
-        self.led = Led()
-        self.crank_arm = LowerCrankArmTrapezoidal()
-        self.shooter_arm = UpperCrankArmTrapezoidal()
-        self.indexer = Indexer()
-        self.shooter = Shooter()
-        self.climber = Climber()
 
-        arm_mode = 'intake'
+        if not constants.k_swerve_only:
+            self.intake = Intake()
+            self.led = Led()
+            self.crank_arm = LowerCrankArmTrapezoidal()
+            self.shooter_arm = UpperCrankArmTrapezoidal()
+            self.indexer = Indexer()
+            self.shooter = Shooter()
+            self.climber = Climber()
 
-        self.configure_joysticks()
-        self.bind_buttons()
+        # set up driving
+        self.configure_driver_joystick()
         self.configure_swerve_bindings()
-
-        self.initialize_dashboard()
-
         # swerve driving
         self.drive.setDefaultCommand(DriveByJoystickSwerve(container=self, swerve=self.drive,
                             field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
 
+        # optionally skip the copilot and non-drivetrain subsystems for debugging
+        if not constants.k_swerve_only:  # only test the swerve - no other subsystems
+            self.configure_copilot_joystick()
+            self.bind_driver_buttons()
+            self.bind_copilot_buttons()
+
+        self.initialize_dashboard()
+
+        arm_mode = 'intake'
         # arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
-        #
         # self.led.setDefaultCommand(LedLoop(container=self))
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
@@ -86,12 +89,7 @@ class RobotContainer:
     def get_enabled_time(self):  # call when we want to know the start/elapsed time for status and debug messages
         return time.time() - self.start_time
 
-    def configure_joysticks(self):
-        """
-        Use this method to define your button->command mappings. Buttons can be created by
-        instantiating a :GenericHID or one of its subclasses (Joystick or XboxController),
-        and then passing it to a JoystickButton.
-        """
+    def configure_driver_joystick(self):
         # The driver's controller
         self.driver_command_controller = CommandXboxController(constants.k_driver_controller_port)  # 2024 way
         self.trigger_a = self.driver_command_controller.a()  # 2024 way
@@ -99,22 +97,7 @@ class RobotContainer:
         self.trigger_y = self.driver_command_controller.y()
         self.trigger_rb = self.driver_command_controller.rightBumper()
 
-        self.driver_controller = wpilib.XboxController(constants.k_driver_controller_port)  # 2023 way
-        # self.buttonA = JoystickButton(self.driver_controller, 1)
-        # self.buttonB = JoystickButton(self.driver_controller, 2)
-        # self.buttonX = JoystickButton(self.driver_controller, 3)
-        # self.buttonY = JoystickButton(self.driver_controller, 4)
-        # self.buttonLB = JoystickButton(self.driver_controller, 5)
-        # self.buttonRB = JoystickButton(self.driver_controller, 6)
-        # self.buttonBack = JoystickButton(self.driver_controller, 7)
-        # self.buttonStart = JoystickButton(self.driver_controller, 8)
-        # self.buttonUp = POVButton(self.driver_controller, 0)
-        # self.buttonDown = POVButton(self.driver_controller, 180)
-        # self.buttonLeft = POVButton(self.driver_controller, 270)
-        # self.buttonRight = POVButton(self.driver_controller, 90)
-        #self.buttonLeftAxis = AxisButton(self.driver_controller, 2)
-        #self.buttonRightAxis = AxisButton(self.driver_controller, 3)
-
+    def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
         self.co_trigger_a = self.co_pilot_command_controller.a()  # 2024 way
         self.co_trigger_b = self.co_pilot_command_controller.b()
@@ -131,10 +114,13 @@ class RobotContainer:
         direction = 'forwards', decide_by_turret = False).withTimeout(0.5))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
-        self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake,  ))
 
-    def bind_buttons(self):
-        pass
+
+    def bind_driver_buttons(self):
+        # bind driver buttons not related to swerve
+        self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake))
+
+    def bind_copilot_buttons(self):
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
@@ -175,7 +161,6 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
         # wpilib.SmartDashboard.putData('_CMD_arm_up', ArmCycle(container=self, upper_crank= self.shooter_arm, lower_crank = self.crank_arm))
-
 
         self.pathplanner_names_chooser = wpilib.SendableChooser()
         # import os

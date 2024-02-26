@@ -101,7 +101,7 @@ class PhysicsEngine:
 
         wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
 
-        self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
+        # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """

@@ -21,13 +21,11 @@ class DriveByJoystickSwerve(commands2.Command):
         self.swerve = swerve
         self.field_oriented = field_oriented
         self.rate_limited = rate_limited
-        # probably some better way to do this
-        # chose 5 because that'll cause it to return true after 0.1 seconds like in robotcontainer
-        self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.addRequirements(*[self.swerve])
         # can't import container and don't want to pass lambdas just yet
         self.controller: typing.Optional[CommandXboxController] = self.container.driver_command_controller
         self.slow_mode_trigger = self.controller.leftBumper()
+        self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
@@ -36,23 +34,22 @@ class DriveByJoystickSwerve(commands2.Command):
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
     def execute(self) -> None:
-
-        # setting a slow mode here - not sure if it's the best way - may want a debouncer on it
+        # setting a slow mode here - not sure if it's the best way
         if self.debouncer.calculate(self.slow_mode_trigger.getAsBoolean()):  # holding down button 5 - LB
+            # self.slow_mode_trigger.debounce(0.1).getAsBoolean():  # this should work instead but doesn't
             slowmode_multiplier = constants.k_slowmode_multiplier
-        elif self.container.driver_controller.getRawAxis(2) > 0.5:  # squeezing the axisbutton
+        elif self.controller.getLeftTriggerAxis() > 0.5:  # squeezing the left axisbutton
             slowmode_multiplier = 1.5 * constants.k_slowmode_multiplier
-        else: slowmode_multiplier = 1.0
+        else:
+            slowmode_multiplier = 1.0
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
         max_angular = 1 * slowmode_multiplier
+
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
         # SO IF IT DOES NOT DRIVE CORRECTLY THAT WAY, CHECK KINEMATICS, THEN INVERSION OF DRIVE/ TURNING MOTORS
         # not all swerves are the same - some require inversion of drive and or turn motors
-        # desired_fwd = -self.input_transform(1.0*self.container.driver_controller.getRawAxis(1)) * max_linear
-        # desired_strafe = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(0)) * max_linear
-        # desired_rot = -self.input_transform(1.0 * self.container.driver_controller.getRawAxis(4)) * max_angular
         desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
         desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
         desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
