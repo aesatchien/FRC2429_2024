@@ -19,7 +19,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     """A robot arm subsystem that moves with a motion profile."""
     
     # CrankArm should probably have four positions that we need to map out
-    positions = {'intake': -90, 'shoot': -55, 'shoot2': -35, 'amp': 50, 'trap': 110}  # todo: set a rest?
+    positions = {'intake': -80, 'shoot': -55, 'shoot2': -35, 'amp': 50, 'trap': 110}  # todo: set a rest?
     for key in positions.keys():  # convert to radians for the subsystem's internal math
         positions[key] *= math.pi / 180
 
@@ -128,6 +128,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         #pc = commands2.PrintCommand(message)
         #return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
 
+
     def configure_motors(self):
         # move motor configuration out of __init__
         self.motor.setInverted(True)  # right motor CW moves crank arm down
@@ -172,6 +173,9 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         temp_setpoint = self.check_goal(temp_setpoint)
         self.setGoal(temp_setpoint)
+
+    def set_crank_preset(self, preset) -> None:
+        self.preset = preset
 
     def get_angle(self):  # getter for the relevant angles
         self.angle = self.abs_encoder.getPosition()

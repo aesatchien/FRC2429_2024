@@ -17,7 +17,6 @@ class ArmMove(commands2.Command):
         self.degrees = degrees
         self.direction = direction
         self.wait_to_finish = wait_to_finish  # determine how long we wait to end
-
         self.addRequirements(self.arm)  # commandsv2 version of requirements
 
     def initialize(self) -> None:

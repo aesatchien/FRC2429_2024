@@ -33,6 +33,7 @@ from commands.led_toggle import LedToggle
 from commands.intake_toggle import IntakeToggle
 from commands.arm_coast import CrankArmCoast
 from commands.arm_move import ArmMove
+from commands.arm_cycle import ArmCycle
 from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.shooter_toggle import ShooterToggle
@@ -61,6 +62,8 @@ class RobotContainer:
         self.indexer = Indexer()
         self.shooter = Shooter()
         self.climber = Climber()
+
+        arm_mode = 'intake'
 
         self.configure_joysticks()
         self.bind_buttons()
@@ -133,8 +136,10 @@ class RobotContainer:
     def bind_buttons(self):
         pass
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
-        self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
-        self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
+        # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        self.co_trigger_a.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm))
+        # self.co_trigger_b.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
 
         #bind crank arm
         setpoints = False
@@ -154,7 +159,7 @@ class RobotContainer:
         self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
         # bind intake
-        self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+        # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind LED
         #  self.co_trigger_a.onTrue(LedToggle(container=self))
@@ -169,7 +174,8 @@ class RobotContainer:
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
-        wpilib.SmartDashboard.putData('_CMD_arm_up', ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
+        # wpilib.SmartDashboard.putData('_CMD_arm_up', ArmCycle(container=self, upper_crank= self.shooter_arm, lower_crank = self.crank_arm))
+
 
         self.pathplanner_names_chooser = wpilib.SendableChooser()
         # import os

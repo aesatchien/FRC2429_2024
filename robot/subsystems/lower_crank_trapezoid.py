@@ -180,6 +180,9 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         temp_setpoint = self.check_goal(temp_setpoint)
         self.setGoal(temp_setpoint)
 
+    def set_crank_preset(self, preset) -> None:
+        self.preset = preset
+
     def get_angle(self):  # getter for the relevant angles
         # will always read in radians a value near 90 degrees plus or minus 45 - otherwise we are out of design
         # should be no other math to do for this system
