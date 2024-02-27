@@ -93,7 +93,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.configure_motors()
 
         self.goal = self.get_angle()
-        self.setGoal(self.goal)  # do we want to do this?
+        self.set_goal(self.goal)  # do we want to do this?
         self.at_goal = True
         self.enable()  # enable if using, disable if testing angles
 
@@ -111,7 +111,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             self.sim_encoder.setPosition(setpoint.position)
 
     def setArmGoalCommand(self, kArmOffsetRads: float) -> commands2.Command:
-        return commands2.cmd.runOnce(lambda: self.setGoal(kArmOffsetRads), self)
+        return commands2.cmd.runOnce(lambda: self.set_goal(kArmOffsetRads), self)
 
         # ------------   2429 Additions to the template  ------------
 
@@ -123,17 +123,14 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
-        goal = current_angle + degrees * math.pi / 180
-        # clamp the goal between out top and bottom limits
-        goal = self.check_goal(goal)
-        message = f'setting {self.getName()} from {current_angle * 180 / math.pi:.0f} to {goal * 180 / math.pi:.0f}'
+        goal = current_angle + math.radians(degrees)
+        self.set_goal(goal)  # check and set
+        message = f'setting {self.getName()} from {math.degrees(current_angle):.0f} to {math.degrees(self.goal):.0f}'
         if not silent:
             print(message)
-        self.goal = goal  # our goal, not wpilibs
-        self.setGoal(goal)
 
         # pc = commands2.PrintCommand(message)
-        # return commands2.cmd.runOnce(lambda: self.setGoal(goal), self).andThen(pc)
+        # return commands2.cmd.runOnce(lambda: self.set_goal(goal), self).andThen(pc)
 
     def configure_motors(self):
         # move motor configuration out of __init__
@@ -154,9 +151,9 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
                                pid_dict=constants.k_PID_dict_pos_shooter_arm, can_id=can_id,
                                slot=0, pid_only=False, burn_flash=False)
-            configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
-                               pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=can_id,
-                               slot=1, pid_only=False, burn_flash=constants.k_burn_flash)
+            # configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
+            #                    pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=can_id,
+            #                    slot=1, pid_only=False, burn_flash=constants.k_burn_flash)
 
     def set_brake_mode(self, mode='brake'):
         if mode == 'brake':
@@ -178,7 +175,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             temp_setpoint = sorted(allowed_positions)[-1] if len(allowed_positions) > 0 else angle
 
         temp_setpoint = self.check_goal(temp_setpoint)
-        self.setGoal(temp_setpoint)
+        self.set_goal(temp_setpoint)
 
     def set_crank_preset(self, preset) -> None:
         self.preset = preset
@@ -206,6 +203,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             print(message)
             goal = clamped_goal
         return goal
+
+    def set_goal(self, goal):
+        # make our own sanity-check on the subsystem's setGoal funtion
+        self.goal = self.check_goal(goal)
+        self.setGoal(self.goal)
 
     def periodic(self) -> None:
         super().periodic()  # this does the automatic motion profiling in the background
