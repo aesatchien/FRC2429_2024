@@ -115,7 +115,6 @@ class RobotContainer:
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
-
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake))
@@ -125,6 +124,7 @@ class RobotContainer:
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
         self.co_trigger_a.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm))
+        self.co_trigger_b.onTrue(ArmCycle(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm))
         # self.co_trigger_b.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
 
         #bind crank arm
