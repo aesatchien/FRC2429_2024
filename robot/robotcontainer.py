@@ -1,6 +1,6 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
 
-import time, enum
+import time, enum, os
 import wpilib
 import commands2
 from commands2.button import CommandXboxController
@@ -159,21 +159,12 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
-
-        # wpilib.SmartDashboard.putData('_CMD_arm_up', ArmCycle(container=self, upper_crank= self.shooter_arm, lower_crank = self.crank_arm))
-
-        self.pathplanner_names_chooser = wpilib.SendableChooser()
-        # import os
-
-        #self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
-        #self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
+        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        file_names = os.listdir(path_to_pathplanner_trajectories)
+        for file_name in file_names:
+            file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+            self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
     def get_autonomous_command(self):
 
-        # return self.autonomous_chooser.getSelected()
-
-        # Load the path you want to follow using its name in the GUI
-        path = PathPlannerPath.fromPathFile('Auto 1')
-        # Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path)
-
+        return self.autonomous_chooser.getSelected()

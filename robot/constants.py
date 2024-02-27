@@ -3,7 +3,7 @@ A place for the constant values in the code that may be used in more than one pl
 This offers a convenient resources to teams who need to make both quick and universal
 changes.
 
-2024 robot for team 2429 - the blockheads
+2024 robot for team 2429 - the la canada engineering club
 """
 
 import math
@@ -15,6 +15,7 @@ k_debugging_messages = True  # turn these off for competition
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain
+k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
 
 # --------------  DRIVER OI  ---------------
 # ID for the driver's joystick (template)
