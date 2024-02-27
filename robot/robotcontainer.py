@@ -161,9 +161,22 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
         path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
         file_names = os.listdir(path_to_pathplanner_trajectories)
-        for file_name in file_names:
+        file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+        for ix, file_name in enumerate(file_names):
             file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-            self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+            if ix == 0:
+                self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+            else:
+                self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+
+        # put commands that we want to call from the dashboard
+        wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
+        wpilib.SmartDashboard.putData('UpperCrankMoveUp', ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=None))
+        wpilib.SmartDashboard.putData('UpperCrankMoveDown', ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=None))
+        wpilib.SmartDashboard.putData('LowerCrankMoveUp', ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=None))
+        wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
+        wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
+        wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
 
     def get_autonomous_command(self):
 
