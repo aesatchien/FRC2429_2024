@@ -15,6 +15,7 @@ k_debugging_messages = True  # turn these off for competition
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain
+k_enable_copilot = True
 
 # --------------  DRIVER OI  ---------------
 # ID for the driver's joystick (template)
