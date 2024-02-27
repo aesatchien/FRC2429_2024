@@ -36,6 +36,7 @@ from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
+import os
 
 
 
@@ -161,13 +162,24 @@ class RobotContainer:
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
-        # wpilib.SmartDashboard.putData('_CMD_arm_up', ArmCycle(container=self, upper_crank= self.shooter_arm, lower_crank = self.crank_arm))
+        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        file_names = os.listdir(path_to_pathplanner_trajectories)
+        file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+        for ix, file_name in enumerate(file_names):
+            file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+            if ix == 0:
+                self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+            else:
+                self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
-        self.pathplanner_names_chooser = wpilib.SendableChooser()
-        # import os
-
-        #self.autonomous_chooser.setDefaultOption('_ do nothing', DriveWait(self, duration=1))
-        #self.autonomous_chooser.addOption('drive 2m', DriveSwerveAutoVelocity(self, self.drive, velocity=1).withTimeout(2))
+        # put commands that we want to call from the dashboard
+        wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
+        wpilib.SmartDashboard.putData('UpperCrankMoveUp', ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=None))
+        wpilib.SmartDashboard.putData('UpperCrankMoveDown', ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=None))
+        wpilib.SmartDashboard.putData('LowerCrankMoveUp', ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=None))
+        wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
+        wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
+        wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
 
     def get_autonomous_command(self):
 
