@@ -9,7 +9,8 @@ from commands2.button import CommandXboxController
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.auto import AutoBuilder
 
-import constants  # all the constants except for swerve
+import constants
+from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -160,9 +161,12 @@ class RobotContainer:
 
     def initialize_dashboard(self):
 
+        PathPlannerMaker = PathPlannerConfiguration()
+
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
+        PathPlannerMaker.configure_paths(self.autonomous_chooser)
 
         # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
         # file_names = os.listdir(path_to_pathplanner_trajectories)
@@ -173,6 +177,18 @@ class RobotContainer:
         #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
         #     else:
         #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+
+        self.position_chooser = wpilib.SendableChooser()
+        wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
+        self.position_chooser.setDefaultOption("0, 0, 0", {"x": 0, "y": 0, "rotation": 0}) #Note: (0,0) is the bottom left corner of the field.
+        self.position_chooser.addOption("0, 2, 0", {"x": 0, "y": 2, "rotation": 0})
+        self.position_chooser.addOption("2, 0, 0", {"x": 2, "y": 0, "rotation": 0})
+        self.position_chooser.addOption("2, 2, 0", {"x": 2, "y": 2, "rotation": 90})        
+        self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.configure_path_manual(self.position_chooser.getSelected(), 0, 0).withTimeout(5))
+
+        # This is not working right now. Apparently line 51 in pathplannermaker.py is the problem. In theory, it should make the robot drive to (x,y) position relative* to where it currently is.
+        # self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, target_pos, 0, 0).withTimeout(5))
+
 
         # put commands that we want to call from the dashboard
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
@@ -187,10 +203,10 @@ class RobotContainer:
 
     def get_autonomous_command(self):
 
-        # return self.autonomous_chooser.getSelected()
+        return self.autonomous_chooser.getSelected()
 
         # Load the path you want to follow using its name in the GUI
-        path = PathPlannerPath.fromPathFile('_do_nothing')
+        # path = PathPlannerPath.fromPathFile('_do_nothing')
         # Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(path)
+        # return AutoBuilder.followPath(path)
 
