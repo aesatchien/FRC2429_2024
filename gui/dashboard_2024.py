@@ -70,7 +70,7 @@ class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         # trick to inherit all the UI elements from the design file  - DO NOT CODE THE LAYOUT!
-        uic.loadUi('layout_2023.ui', self)  # if this isn't in the directory, you got no program
+        uic.loadUi('layout_2024.ui', self)  # if this isn't in the directory, you got no program
 
         # set up network tables
         self.ntinst = NetworkTableInstance.getDefault()
@@ -306,25 +306,15 @@ class Ui(QtWidgets.QMainWindow):
                                            'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
         'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator,
                                            'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
-        'qlabel_arm_retract_indicator': {'widget': self.qlabel_arm_retract_indicator, 'nt': '/SmartDashboard/ArmMoveDown/running',
-                                               'command': '/SmartDashboard/ArmMoveDown/running'},
-        'qlabel_arm_extend_indicator': {'widget': self.qlabel_arm_extend_indicator, 'nt': '/SmartDashboard/ArmMoveUp/running',
-                                             'command': '/SmartDashboard/ArmMoveUp/running'},
         'qlabel_camera_view': {'widget':self.qlabel_camera_view, 'nt':None, 'command':None},
         'qlabel_compressor_indicator': {'widget':self.qlabel_compressor_indicator, 'nt':'/SmartDashboard/compressor_state', 'command': None},
         'qlabel_compressor_enabled_indicator': {'widget': self.qlabel_compressor_enabled_indicator, 'nt': '/SmartDashboard/compressor_close_loop',
                                                 'command': '/SmartDashboard/CompressorToggle/running'},
-        'qlabel_elevator_down_indicator': {'widget': self.qlabel_elevator_down_indicator,
-                                              'nt': '/SmartDashboard/ElevatorMoveDown/running', 'command': '/SmartDashboard/ElevatorMoveDown/running'},
-        'qlabel_elevator_up_indicator': {'widget': self.qlabel_elevator_up_indicator,
-                                              'nt': '/SmartDashboard/ElevatorMoveUp/running', 'command': '/SmartDashboard/ElevatorMoveUp/running'},
         'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
                                         'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
                                         'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
         'qlabel_green_target_indicator': {'widget': self.qlabel_green_target_indicator, 'nt': '/SmartDashboard/green_targets_exist', 'command': '/SmartDashboard/AutoStrafeGreen/running'},
         'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': '/SmartDashboard/AutoStrafeTag/running'},
-        'qlabel_navx_reset_indicator': {'widget': self.qlabel_navx_reset_indicator,
-                                              'nt': '/SmartDashboard/GyroReset/running', 'command': '/SmartDashboard/GyroReset/running'},
         'qlabel_manipulator_closed_indicator': {'widget': self.qlabel_manipulator_closed_indicator, 'nt': '/SmartDashboard/manipulator_closed', 'command': '/SmartDashboard/ManipulatorToggle/running'},
         'qlabel_matchtime': {'widget': self.qlabel_matchtime, 'nt': '/SmartDashboard/match_time', 'command': None},
         'qlabel_nt_connected': {'widget': self.qlabel_nt_connected, 'nt': None, 'command': None},
@@ -335,21 +325,26 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_turret_to_post_indicator': {'widget': self.qlabel_turret_to_post_indicator, 'nt': '/SmartDashboard/TurretMoveByVision/running', 'command': '/SmartDashboard/TurretMoveByVision/running'},
         'qlabel_turret_calibration_indicator': {'widget': self.qlabel_turret_calibration_indicator, 'nt': '/SmartDashboard/TurretInitialize/running',
                                     'command': '/SmartDashboard/TurretInitialize/running'},
-        'qlabel_turret_down_indicator': {'widget': self.qlabel_turret_down_indicator, 'nt': '/SmartDashboard/TurretMoveDown/running', 'command': '/SmartDashboard/TurretMoveDown/running'},
-        'qlabel_turret_up_indicator': {'widget': self.qlabel_turret_up_indicator, 'nt': '/SmartDashboard/TurretMoveUp/running', 'command': '/SmartDashboard/TurretMoveUp/running'},
         'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
-        'qlabel_wrist_down_indicator': {'widget': self.qlabel_wrist_down_indicator, 'nt': '/SmartDashboard/WristMoveDown/running',
-                                               'command': '/SmartDashboard/WristMoveDown/running'},
-        'qlabel_wrist_up_indicator': {'widget': self.qlabel_wrist_up_indicator, 'nt': '/SmartDashboard/WristMoveUp/running', 'command': '/SmartDashboard/WristMoveUp/running'},
-        'qlcd_turret_angle': {'widget':self.qlcd_turret_angle, 'nt':'/SmartDashboard/turret_angle', 'command': None},
-        'qlcd_elevator_height': {'widget': self.qlcd_elevator_height, 'nt': '/SmartDashboard/elevator_height', 'command': None},
-        'qlcd_arm_extension': {'widget':self.qlcd_arm_extension, 'nt':'/SmartDashboard/arm_extension', 'command': None},
-        'qlcd_wrist_angle': {'widget': self.qlcd_wrist_angle, 'nt': '/SmartDashboard/wrist_angle', 'command': None},
-        'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
         'hub_targets': {'widget': None, 'nt': '/ArmCam//green/targets', 'command': None},
         'hub_rotation': {'widget': None, 'nt': '/ArmCam//green/rotation', 'command': None},
         'hub_distance': {'widget': None, 'nt': '/ArmCam//green/distance', 'command': None},
         'drive_pose': {'widget': None, 'nt': '/SmartDashboard/drive_pose', 'command': None},
+            # FINISHED FOR 2024
+        'qlabel_navx_reset_indicator': {'widget': self.qlabel_navx_reset_indicator, 'nt': '/SmartDashboard/GyroReset/running', 'command': '/SmartDashboard/GyroReset/running'},
+        'qlabel_upper_crank_up_indicator': {'widget': self.qlabel_upper_crank_up_indicator, 'nt': '/SmartDashboard/UpperCrankMoveUp/running', 'command': '/SmartDashboard/UpperCrankMoveUp/running'},
+        'qlabel_upper_crank_down_indicator': {'widget': self.qlabel_upper_crank_down_indicator, 'nt': '/SmartDashboard/UpperCrankMoveDown/running', 'command': '/SmartDashboard/UpperCrankMoveDown/running'},
+        'qlabel_lower_crank_up_indicator': {'widget': self.qlabel_lower_crank_up_indicator, 'nt': '/SmartDashboard/LowerCrankMoveUp/running', 'command': '/SmartDashboard/LowerCrankMoveUp/running'},
+        'qlabel_lower_crank_down_indicator': {'widget': self.qlabel_lower_crank_down_indicator, 'nt': '/SmartDashboard/LowerCrankMoveDown/running', 'command': '/SmartDashboard/LowerCrankMoveDown/running'},
+        'qlabel_intake_off_indicator': {'widget': self.qlabel_intake_off_indicator, 'nt': '/SmartDashboard/IntakeOff/running','command': '/SmartDashboard/IntakeOff/running'},
+        'qlabel_intake_on_indicator': {'widget': self.qlabel_intake_on_indicator, 'nt': '/SmartDashboard/IntakeOn/running', 'command': '/SmartDashboard/IntakeOn/running'},
+        'qlabel_indexer_off_indicator': {'widget': self.qlabel_indexer_off_indicator, 'nt': '/SmartDashboard/IndexerOff/running', 'command': '/SmartDashboard/IndexerOff/running'},
+        'qlabel_indexer_on_indicator': {'widget': self.qlabel_indexer_on_indicator, 'nt': '/SmartDashboard/IndexerOn/running', 'command': '/SmartDashboard/IndexerOn/running'},
+        'qlcd_upper_crank_angle': {'widget':self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
+        'qlcd_lower_crank_angle': {'widget': self.qlcd_lower_crank_angle, 'nt': '/SmartDashboard/crank_arm_degrees', 'command': None},
+        'qlcd_indexer_speed': {'widget':self.qlcd_indexer_speed, 'nt':'/SmartDashboard/indexer_output', 'command': None},
+        'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
+        'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
         }
 
         # get all the entries and add them to the dictionary

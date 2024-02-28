@@ -110,13 +110,16 @@
        </rect>
       </property>
       <property name="title">
-       <string>Pneumatics</string>
+       <string>Shooter</string>
       </property>
       <widget class="QLabel" name="qlabel_compressor_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>80</y>
          <width>161</width>
          <height>51</height>
         </rect>
@@ -147,10 +150,13 @@ color:rgb(0, 0, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_compressor_enabled_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>80</y>
+         <y>140</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -179,10 +185,13 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_manipulator_closed_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
+         <y>180</y>
          <width>161</width>
          <height>71</height>
         </rect>
@@ -242,6 +251,71 @@ background-color:rgb(127, 127, 127);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <widget class="QLabel2" name="qlabel_navx_reset_indicator_2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>121</x>
+         <y>41</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 7px;
+border-radius: 7px;
+color:rgb(255, 255, 255);
+background-color:rgb(0, 20, 250);</string>
+       </property>
+       <property name="text">
+        <string>RESET</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="qlcd_shooter_speed">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>31</y>
+         <width>101</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="digitCount">
+        <number>4</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>13</y>
+         <width>131</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Shooter RPM</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
@@ -265,10 +339,10 @@ background-color:rgb(127, 127, 127);</string>
         </rect>
        </property>
        <property name="text">
-        <string>Turret Angle</string>
+        <string>Upper Crank Angle</string>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="qlcd_turret_angle">
+      <widget class="QLCDNumber" name="qlcd_upper_crank_angle">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -281,7 +355,7 @@ background-color:rgb(127, 127, 127);</string>
         <number>4</number>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="qlcd_elevator_height">
+      <widget class="QLCDNumber" name="qlcd_lower_crank_angle">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -304,10 +378,10 @@ background-color:rgb(127, 127, 127);</string>
         </rect>
        </property>
        <property name="text">
-        <string>Elevator Height</string>
+        <string>Lower Crank Angle</string>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="qlcd_arm_extension">
+      <widget class="QLCDNumber" name="qlcd_indexer_speed">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -343,7 +417,7 @@ background-color:rgb(127, 127, 127);</string>
         </rect>
        </property>
        <property name="text">
-        <string>Arm Extension</string>
+        <string>Indexer Speed</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_10">
@@ -356,10 +430,10 @@ background-color:rgb(127, 127, 127);</string>
         </rect>
        </property>
        <property name="text">
-        <string>Wrist Angle</string>
+        <string>Intake Speed</string>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="qlcd_wrist_angle">
+      <widget class="QLCDNumber" name="qlcd_intake_speed">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -385,7 +459,7 @@ background-color:rgb(127, 127, 127);</string>
         <enum>QLCDNumber::Filled</enum>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_turret_up_indicator">
+      <widget class="QLabel2" name="qlabel_upper_crank_up_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -409,7 +483,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>CW</string>
+        <string>UP</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -418,7 +492,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_turret_down_indicator">
+      <widget class="QLabel2" name="qlabel_upper_crank_down_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -442,7 +516,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>CCW</string>
+        <string>DOWN</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -451,7 +525,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_arm_extend_indicator">
+      <widget class="QLabel2" name="qlabel_indexer_on_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -475,7 +549,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>OUT</string>
+        <string>ON</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -484,7 +558,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_arm_retract_indicator">
+      <widget class="QLabel2" name="qlabel_indexer_off_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -508,7 +582,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>IN</string>
+        <string>OFF</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -517,7 +591,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_elevator_up_indicator">
+      <widget class="QLabel2" name="qlabel_lower_crank_up_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -550,7 +624,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_elevator_down_indicator">
+      <widget class="QLabel2" name="qlabel_lower_crank_down_indicator">
        <property name="geometry">
         <rect>
          <x>130</x>
@@ -583,7 +657,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_wrist_down_indicator">
+      <widget class="QLabel2" name="qlabel_intake_off_indicator">
        <property name="geometry">
         <rect>
          <x>129</x>
@@ -607,7 +681,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>DOWN</string>
+        <string>OFF</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -616,7 +690,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_wrist_up_indicator">
+      <widget class="QLabel2" name="qlabel_intake_on_indicator">
        <property name="geometry">
         <rect>
          <x>129</x>
@@ -640,7 +714,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>UP</string>
+        <string>ON</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -671,7 +745,7 @@ background-color:rgb(0, 20, 250);</string>
       </property>
       <widget class="QLabel2" name="qlabel_turret_calibration_indicator">
        <property name="enabled">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -696,7 +770,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Calibrate Turret</string>
+        <string>Calibrate Lower Arm</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -707,7 +781,7 @@ background-color:rgb(80, 235, 0);</string>
       </widget>
       <widget class="QLabel2" name="qlabel_arm_calibration_indicator">
        <property name="enabled">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -731,7 +805,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Calibrate Arm</string>
+        <string>Calibrate Upper Arm</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -825,7 +899,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>GREEN
+        <string>ORANGE
 TARGET
  DETECTED</string>
        </property>
@@ -887,6 +961,9 @@ TAG
        <string>Autonomous Commands</string>
       </property>
       <widget class="QLabel2" name="qlabel_high_score_from_stow_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -918,6 +995,9 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_upper_pickup_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -949,6 +1029,9 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_safe_carry_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -980,6 +1063,9 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_turret_to_post_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1011,6 +1097,9 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_low_score_from_stow_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1042,6 +1131,9 @@ background-color:rgb(80, 235, 0);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_release_and_stow_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1473,7 +1565,7 @@ background-color:rgb(10, 10, 227);</string>
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>png/field_small.png</pixmap>
+       <pixmap>png/field_small_2024.PNG</pixmap>
       </property>
      </widget>
      <zorder>qlabel_field_image</zorder>
