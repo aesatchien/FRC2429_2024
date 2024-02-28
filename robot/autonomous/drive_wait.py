@@ -1,8 +1,8 @@
 # "feed()" is not a method of the Swerve class and will cause an error if used on a Swerve object.
 
 from commands2 import WaitCommand
-from robot.robotcontainer import RobotContainer
-from subsystems.swerve import Swerve
+from wpilib import SmartDashboard
+from wpilib.drive import DifferentialDrive
 
 # overload the WaitCommand so our drive does not complain
 class DriveWait(WaitCommand):  # change the name for your command
@@ -10,11 +10,18 @@ class DriveWait(WaitCommand):  # change the name for your command
     def __init__(self, container, duration) -> None:
         super().__init__(duration)
         self.setName('DriveWait')  # change this to something appropriate for this command
-        self.container : RobotContainer = container
-        self.drive : Swerve = self.container.drive
-        # self.addRequirements(self.drive)  # commandsv2 version of requirements
+        self.container = container
 
-    def execute(self) -> None:
-        if isinstance(self.drive, Swerve):
-            self.drive.feed() #"feed()" is not a method of the Swerve class. "feed()" resets the timer on the actuator that is used to do the timeouts (for the DifferentialDrive class).
-        else: pass
+    def initialize(self) -> None:
+        """Called just before this Command runs the first time."""
+        self.start_time = round(self.container.get_enabled_time(), 2)
+        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
+        SmartDashboard.putString("alert",
+                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+
+    def end(self, interrupted: bool) -> None:
+        end_time = self.container.get_enabled_time()
+        message = 'Interrupted' if interrupted else 'Ended'
+        print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        SmartDashboard.putString(f"alert",
+                                 f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

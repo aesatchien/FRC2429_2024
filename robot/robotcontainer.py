@@ -7,7 +7,7 @@ from commands2.button import CommandXboxController
 
 # pathplanner
 from pathplannerlib.path import PathPlannerPath
-from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 import constants  # all the constants except for swerve
 
@@ -37,6 +37,9 @@ from commands.indexer_by_joystick import IndexerByJoystick
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
 
+# autonomous
+from autonomous.drive_wait import DriveWait
+
 
 
 class RobotContainer:
@@ -62,6 +65,8 @@ class RobotContainer:
             self.indexer = Indexer()
             self.shooter = Shooter()
             self.climber = Climber()
+
+        self.registerCommands()
 
         # set up driving
         self.configure_driver_joystick()
@@ -154,10 +159,19 @@ class RobotContainer:
         # self.co_trigger_x.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
         # self.co_trigger_y.onTrue(ClimberToggle(container=self, climber=self.climber, force='off'))
 
+    def registerCommands(self):
+        print("!! Registering commands !!")
+        NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
+        NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
+        NamedCommands.registerCommand('Toggle intake', IntakeToggle(self, self.intake))
+
     def initialize_dashboard(self):
 
-        # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
+        # populate autonomous routines
+        # Manually add our own
+        self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
+        # Automatically get Pathplanner paths
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
         path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
         file_names = os.listdir(path_to_pathplanner_trajectories)

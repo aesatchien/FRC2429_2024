@@ -20,7 +20,6 @@ class ArmMove(commands2.Command):
         self.addRequirements(self.arm)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
-
         self.start_time = round(self.container.get_enabled_time(), 2)
         self.print_start_message()
         if self.direction is None:
@@ -40,8 +39,8 @@ class ArmMove(commands2.Command):
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
-        # print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
-        # SmartDashboard.putString(f"alert", f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        SmartDashboard.putString(f"alert", f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
 
     def print_start_message(self):
         self.start_time = round(self.container.get_enabled_time(), 2)
