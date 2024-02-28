@@ -29,8 +29,8 @@ class Shooter(Subsystem):
         self.flywheel_upper_left = rev.CANSparkFlex(constants.k_flywheel_upper_left_neo_port, motor_type)
 
         # the follower is inverted
-        self.flywheel_lower_left.setInverted(False)
-        self.flywheel_upper_left.setInverted(True)
+        self.flywheel_lower_left.setInverted(False)   # False 2240228
+        self.flywheel_upper_left.setInverted(False)    # False 2240228
 
         # encoders
         self.flywheel_left_encoder = self.flywheel_lower_left.getEncoder()

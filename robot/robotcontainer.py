@@ -70,7 +70,7 @@ class RobotContainer:
             self.shooter_arm = UpperCrankArmTrapezoidal()
             self.indexer = Indexer()
             self.shooter = Shooter()
-            self.climber = Climber()
+            #self.climber = Climber()
 
         self.registerCommands()
 
@@ -182,17 +182,22 @@ class RobotContainer:
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
         # Automatically get Pathplanner paths
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
-        PathPlannerMaker.configure_paths(self.autonomous_chooser)
 
-        # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
-        # file_names = os.listdir(path_to_pathplanner_trajectories)
-        # file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
-        # for ix, file_name in enumerate(file_names):
-        #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-        #     if ix == 0:
-        #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
-        #     else:
-        #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+        try_path_planner = False
+        if try_path_planner:
+            PathPlannerMaker.configure_paths(self.autonomous_chooser)
+            # This is not working right now. Apparently line 51 in pathplannermaker.py is the problem. In theory, it should make the robot drive to (x,y) position relative* to where it currently is.
+            # self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, target_pos, 0, 0).withTimeout(5))
+
+            # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+            # file_names = os.listdir(path_to_pathplanner_trajectories)
+            # file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+            # for ix, file_name in enumerate(file_names):
+            #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+            #     if ix == 0:
+            #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+            #     else:
+            #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
@@ -201,9 +206,6 @@ class RobotContainer:
         self.position_chooser.addOption("2, 0, 0", {"x": 2, "y": 0, "rotation": 0})
         self.position_chooser.addOption("2, 2, 0", {"x": 2, "y": 2, "rotation": 90})        
         self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.configure_path_manual(self.position_chooser.getSelected(), 0, 0).withTimeout(5))
-
-        # This is not working right now. Apparently line 51 in pathplannermaker.py is the problem. In theory, it should make the robot drive to (x,y) position relative* to where it currently is.
-        # self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, target_pos, 0, 0).withTimeout(5))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
@@ -218,7 +220,6 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
-
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
