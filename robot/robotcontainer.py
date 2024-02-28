@@ -1,6 +1,6 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
 
-import time, enum, os
+import time, enum
 import wpilib
 import commands2
 from commands2.button import CommandXboxController
@@ -37,6 +37,7 @@ from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
+import os
 
 
 
@@ -74,8 +75,9 @@ class RobotContainer:
         # optionally skip the copilot and non-drivetrain subsystems for debugging
         if not constants.k_swerve_only:  # only test the swerve - no other subsystems
             self.configure_copilot_joystick()
-            self.bind_driver_buttons()
-            self.bind_copilot_buttons()
+            if constants.k_enable_copilot:
+                self.configure_copilot_joystick()
+                self.bind_copilot_buttons()
 
         self.initialize_dashboard()
 
@@ -116,6 +118,7 @@ class RobotContainer:
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
+
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake))
@@ -125,7 +128,6 @@ class RobotContainer:
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
         self.co_trigger_a.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm))
-        self.co_trigger_b.onTrue(ArmCycle(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm))
         # self.co_trigger_b.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
 
         #bind crank arm
@@ -160,6 +162,7 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
+
         path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
         file_names = os.listdir(path_to_pathplanner_trajectories)
         file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
@@ -183,4 +186,10 @@ class RobotContainer:
 
     def get_autonomous_command(self):
 
-        return self.autonomous_chooser.getSelected()
+        # return self.autonomous_chooser.getSelected()
+
+        # Load the path you want to follow using its name in the GUI
+        path = PathPlannerPath.fromPathFile('Auto 1')
+        # Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(path)
+
