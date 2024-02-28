@@ -78,7 +78,7 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -85,
+    'max_angle': 109, 'min_angle': -75,
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.372,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
