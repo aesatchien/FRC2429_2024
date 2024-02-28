@@ -166,19 +166,17 @@ class RobotContainer:
         NamedCommands.registerCommand('Toggle intake', IntakeToggle(self, self.intake))
 
     def initialize_dashboard(self):
-
-        self.autonomous_chooser = wpilib.SendableChooser()
         # populate autonomous routines
+        self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
         # Automatically get Pathplanner paths
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
-        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        path_to_pathplanner_trajectories = os.path.abspath(constants.k_path_from_robot_to_pathplanner_files)
         file_names = os.listdir(path_to_pathplanner_trajectories)
         for file_name in file_names:
             file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
             self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
     def get_autonomous_command(self):
-
         return self.autonomous_chooser.getSelected()
