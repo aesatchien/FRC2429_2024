@@ -14,16 +14,17 @@ class Intake(Subsystem):
 
         motor_type = rev.CANSparkFlex.MotorType.kBrushless
         self.intake_motor_left = rev.CANSparkFlex(constants.k_intake_neo_port, motor_type)
+        self.intake_motor_left.setInverted(True)
 
         self.encoder = self.intake_motor_left.getEncoder()
+
         self.intake_controller = self.intake_motor_left.getPIDController()
         self.intake_controller.setP(0)
 
         self.intake_enabled = False
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
-
     def set_intake_motor(self, rpm):
-        self.intake_voltage = 5
+        self.intake_voltage = 3
         self.intake_controller.setReference(self.intake_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         self.intake_enabled = True
         print(f'setting rpm / voltage to {rpm} {self.intake_voltage}')

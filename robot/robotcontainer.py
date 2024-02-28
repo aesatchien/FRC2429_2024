@@ -74,7 +74,7 @@ class RobotContainer:
 
         # optionally skip the copilot and non-drivetrain subsystems for debugging
         if not constants.k_swerve_only:  # only test the swerve - no other subsystems
-            self.configure_copilot_joystick()
+            self.bind_driver_buttons()
             if constants.k_enable_copilot:
                 self.configure_copilot_joystick()
                 self.bind_copilot_buttons()
@@ -164,15 +164,15 @@ class RobotContainer:
         self.autonomous_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
-        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
-        file_names = os.listdir(path_to_pathplanner_trajectories)
-        file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
-        for ix, file_name in enumerate(file_names):
-            file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-            if ix == 0:
-                self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
-            else:
-                self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+        # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        # file_names = os.listdir(path_to_pathplanner_trajectories)
+        # file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+        # for ix, file_name in enumerate(file_names):
+        #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+        #     if ix == 0:
+        #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+        #     else:
+        #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
         # put commands that we want to call from the dashboard
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
