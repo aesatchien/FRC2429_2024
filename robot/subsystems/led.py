@@ -60,6 +60,13 @@ class Led(commands2.Subsystem):
         ).withTimeout(timeout)
 
     def periodic(self) -> None:
+        # update match time
+        if self.counter % 25 == 0:
+            if wpilib.RobotBase.isSimulation():
+                SmartDashboard.putNumber('match_time', wpilib.Timer.getFPGATimestamp())
+            else:
+                SmartDashboard.putNumber('match_time', wpilib.DriverStation.getMatchTime())
+
         # update LEDs
         if self.counter % 5 == 0:
             SmartDashboard.putString('led_mode', self.mode.value)

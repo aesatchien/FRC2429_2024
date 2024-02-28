@@ -22,6 +22,9 @@ from subsystems.indexer import Indexer
 from subsystems.shooter import Shooter
 from subsystems.climber import Climber
 
+# auto
+from autonomous.auto_shoot_cycle import AutoShootCycle
+
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
@@ -202,8 +205,7 @@ class RobotContainer:
         # This is not working right now. Apparently line 51 in pathplannermaker.py is the problem. In theory, it should make the robot drive to (x,y) position relative* to where it currently is.
         # self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, target_pos, 0, 0).withTimeout(5))
 
-
-        # put commands that we want to call from the dashboard
+        # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
         wpilib.SmartDashboard.putData('UpperCrankMoveUp', ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=None))
         wpilib.SmartDashboard.putData('UpperCrankMoveDown', ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=None))
@@ -213,6 +215,10 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
         wpilib.SmartDashboard.putData('IndexerOn', IndexerToggle(container=self, indexer=self.indexer, force='on'))
         wpilib.SmartDashboard.putData('IndexerOff', IndexerToggle(container=self, indexer=self.indexer, force='off'))
+        wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
+        wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
+
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()

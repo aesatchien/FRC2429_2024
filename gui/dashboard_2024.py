@@ -300,37 +300,14 @@ class Ui(QtWidgets.QMainWindow):
     def initialize_widgets(self):
 
         self.widget_dict = {
-        'qcombobox_autonomous_routines': {'widget':self.qcombobox_autonomous_routines, 'nt':r'/SmartDashboard/autonomous routines/options', 'command':None,
-                                          'selected': r'/SmartDashboard/autonomous routines/selected'},
-        'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator,
-                                           'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
-        'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator,
-                                           'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
-        'qlabel_camera_view': {'widget':self.qlabel_camera_view, 'nt':None, 'command':None},
-        'qlabel_compressor_indicator': {'widget':self.qlabel_compressor_indicator, 'nt':'/SmartDashboard/compressor_state', 'command': None},
-        'qlabel_compressor_enabled_indicator': {'widget': self.qlabel_compressor_enabled_indicator, 'nt': '/SmartDashboard/compressor_close_loop',
-                                                'command': '/SmartDashboard/CompressorToggle/running'},
-        'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
-                                        'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
-                                        'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
-        'qlabel_green_target_indicator': {'widget': self.qlabel_green_target_indicator, 'nt': '/SmartDashboard/green_targets_exist', 'command': '/SmartDashboard/AutoStrafeGreen/running'},
-        'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': '/SmartDashboard/AutoStrafeTag/running'},
-        'qlabel_manipulator_closed_indicator': {'widget': self.qlabel_manipulator_closed_indicator, 'nt': '/SmartDashboard/manipulator_closed', 'command': '/SmartDashboard/ManipulatorToggle/running'},
-        'qlabel_matchtime': {'widget': self.qlabel_matchtime, 'nt': '/SmartDashboard/match_time', 'command': None},
-        'qlabel_nt_connected': {'widget': self.qlabel_nt_connected, 'nt': None, 'command': None},
-        'qlabel_safe_carry_indicator': {'widget': self.qlabel_safe_carry_indicator, 'nt': '/SmartDashboard/SafeCarry/running', 'command': '/SmartDashboard/SafeCarry/running'},
-        'qlabel_low_score_from_stow_indicator': {'widget': self.qlabel_low_score_from_stow_indicator, 'nt': '/SmartDashboard/ScoreLowConeFromStow/running', 'command': '/SmartDashboard/ScoreLowConeFromStow/running'},
-        'qlabel_high_score_from_stow_indicator': {'widget': self.qlabel_high_score_from_stow_indicator, 'nt': '/SmartDashboard/ScoreHiConeFromStow/running', 'command': '/SmartDashboard/ScoreHiConeFromStow/running'},
-        'qlabel_release_and_stow_indicator': {'widget':self.qlabel_release_and_stow_indicator, 'nt':'/SmartDashboard/ReleaseAndStow/running', 'command': '/SmartDashboard/ReleaseAndStow/running'},
-        'qlabel_turret_to_post_indicator': {'widget': self.qlabel_turret_to_post_indicator, 'nt': '/SmartDashboard/TurretMoveByVision/running', 'command': '/SmartDashboard/TurretMoveByVision/running'},
-        'qlabel_turret_calibration_indicator': {'widget': self.qlabel_turret_calibration_indicator, 'nt': '/SmartDashboard/TurretInitialize/running',
-                                    'command': '/SmartDashboard/TurretInitialize/running'},
-        'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
-        'hub_targets': {'widget': None, 'nt': '/ArmCam//green/targets', 'command': None},
-        'hub_rotation': {'widget': None, 'nt': '/ArmCam//green/rotation', 'command': None},
-        'hub_distance': {'widget': None, 'nt': '/ArmCam//green/distance', 'command': None},
+        # FINISHED FOR 2024
+            # GUI UPDATES
         'drive_pose': {'widget': None, 'nt': '/SmartDashboard/drive_pose', 'command': None},
-            # FINISHED FOR 2024
+        'qcombobox_autonomous_routines': {'widget':self.qcombobox_autonomous_routines, 'nt':r'/SmartDashboard/autonomous routines/options', 'command':None, 'selected': r'/SmartDashboard/autonomous routines/selected'},
+        'qlabel_nt_connected': {'widget': self.qlabel_nt_connected, 'nt': None, 'command': None},
+        'qlabel_matchtime': {'widget': self.qlabel_matchtime, 'nt': '/SmartDashboard/match_time', 'command': None},
+        'qlabel_camera_view': {'widget': self.qlabel_camera_view, 'nt': None, 'command': None},  # does this do anything? - can't remember
+            # COMMANDS
         'qlabel_navx_reset_indicator': {'widget': self.qlabel_navx_reset_indicator, 'nt': '/SmartDashboard/GyroReset/running', 'command': '/SmartDashboard/GyroReset/running'},
         'qlabel_upper_crank_up_indicator': {'widget': self.qlabel_upper_crank_up_indicator, 'nt': '/SmartDashboard/UpperCrankMoveUp/running', 'command': '/SmartDashboard/UpperCrankMoveUp/running'},
         'qlabel_upper_crank_down_indicator': {'widget': self.qlabel_upper_crank_down_indicator, 'nt': '/SmartDashboard/UpperCrankMoveDown/running', 'command': '/SmartDashboard/UpperCrankMoveDown/running'},
@@ -340,11 +317,30 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_intake_on_indicator': {'widget': self.qlabel_intake_on_indicator, 'nt': '/SmartDashboard/IntakeOn/running', 'command': '/SmartDashboard/IntakeOn/running'},
         'qlabel_indexer_off_indicator': {'widget': self.qlabel_indexer_off_indicator, 'nt': '/SmartDashboard/IndexerOff/running', 'command': '/SmartDashboard/IndexerOff/running'},
         'qlabel_indexer_on_indicator': {'widget': self.qlabel_indexer_on_indicator, 'nt': '/SmartDashboard/IndexerOn/running', 'command': '/SmartDashboard/IndexerOn/running'},
+        'qlabel_shooter_off_indicator': {'widget': self.qlabel_shooter_off_indicator, 'nt': '/SmartDashboard/ShooterOff/running', 'command': '/SmartDashboard/ShooterOff/running'},
+        'qlabel_shooter_on_indicator': {'widget': self.qlabel_shooter_on_indicator, 'nt': '/SmartDashboard/ShooterOn/running', 'command': '/SmartDashboard/ShooterOn/running'},
+        'qlabel_shooter_indicator': {'widget': self.qlabel_shooter_indicator,'nt': '/SmartDashboard/shooter_ready', 'command': None},
+            # NUMERIC INDICATORS
+        'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
         'qlcd_upper_crank_angle': {'widget':self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
         'qlcd_lower_crank_angle': {'widget': self.qlcd_lower_crank_angle, 'nt': '/SmartDashboard/crank_arm_degrees', 'command': None},
         'qlcd_indexer_speed': {'widget':self.qlcd_indexer_speed, 'nt':'/SmartDashboard/indexer_output', 'command': None},
         'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
-        'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
+            # LEFTOVER TO SORT FROM 2023
+        'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
+        'qlabel_green_target_indicator': {'widget': self.qlabel_green_target_indicator, 'nt': '/SmartDashboard/green_targets_exist', 'command': '/SmartDashboard/AutoStrafeGreen/running'},
+        'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': '/SmartDashboard/AutoStrafeTag/running'},
+        'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
+        'qlabel_shoot_cycle_indicator': {'widget': self.qlabel_shoot_cycle_indicator, 'nt': '/SmartDashboard/AutoShootCycle/running', 'command': '/SmartDashboard/AutoShootCycle/running'},
+        'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
+                                        'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
+                                        'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
+        'qlabel_manipulator_closed_indicator': {'widget': self.qlabel_manipulator_closed_indicator, 'nt': '/SmartDashboard/manipulator_closed', 'command': '/SmartDashboard/ManipulatorToggle/running'},
+        # 'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
+        'hub_targets': {'widget': None, 'nt': '/ArmCam//green/targets', 'command': None},
+        'hub_rotation': {'widget': None, 'nt': '/ArmCam//green/rotation', 'command': None},
+        'hub_distance': {'widget': None, 'nt': '/ArmCam//green/distance', 'command': None},
+
         }
 
         # get all the entries and add them to the dictionary

@@ -112,7 +112,7 @@
       <property name="title">
        <string>Shooter</string>
       </property>
-      <widget class="QLabel" name="qlabel_compressor_indicator">
+      <widget class="QLabel" name="qlabel_shooter_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -139,8 +139,7 @@ background-color:rgb(80, 235, 0);
 color:rgb(0, 0, 0);</string>
        </property>
        <property name="text">
-        <string>COMPRESSOR
- ON</string>
+        <string>SHOOTER ON</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -149,9 +148,9 @@ color:rgb(0, 0, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_compressor_enabled_indicator">
+      <widget class="QLabel2" name="qlabel_shoot_cycle_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -175,7 +174,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>ENABLED</string>
+        <string>SHOOT CYCLE</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -210,8 +209,8 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>MANIPULATOR
-CLOSED</string>
+        <string>&lt;MANIPULATOR
+CLOSED&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -242,7 +241,7 @@ border-radius: 7px;
 background-color:rgb(127, 127, 127);</string>
        </property>
        <property name="text">
-        <string>Cone or Cube</string>
+        <string>&lt;Cone or Cube&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -251,14 +250,14 @@ background-color:rgb(127, 127, 127);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_navx_reset_indicator_2">
+      <widget class="QLabel2" name="qlabel_shooter_on_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
-         <x>121</x>
-         <y>41</y>
+         <x>120</x>
+         <y>30</y>
          <width>51</width>
          <height>21</height>
         </rect>
@@ -278,7 +277,7 @@ color:rgb(255, 255, 255);
 background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
-        <string>RESET</string>
+        <string>SELECT</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -314,6 +313,42 @@ background-color:rgb(0, 20, 250);</string>
        </property>
        <property name="text">
         <string>Shooter RPM</string>
+       </property>
+      </widget>
+      <widget class="QLabel2" name="qlabel_shooter_off_indicator">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>52</y>
+         <width>51</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 7px;
+border-radius: 7px;
+color:rgb(255, 255, 255);
+background-color:rgb(0, 20, 250);</string>
+       </property>
+       <property name="text">
+        <string>OFF</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </widget>
@@ -899,9 +934,9 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>ORANGE
+        <string>&lt;ORANGE
 TARGET
- DETECTED</string>
+ DETECTED&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -936,9 +971,9 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>APRIL
+        <string>&lt;APRIL
 TAG
- DETECTED</string>
+ DETECTED&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -960,7 +995,7 @@ TAG
       <property name="title">
        <string>Autonomous Commands</string>
       </property>
-      <widget class="QLabel2" name="qlabel_high_score_from_stow_indicator">
+      <widget class="QLabel2" name="qlabel_cmd1_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -985,7 +1020,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Stow to High Cone</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -994,7 +1029,7 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_upper_pickup_indicator">
+      <widget class="QLabel2" name="qlabel_cmd3_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1019,7 +1054,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Upper Pickup</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1028,7 +1063,7 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_safe_carry_indicator">
+      <widget class="QLabel2" name="qlabel_cmd4_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1053,7 +1088,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Safe Carry</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1062,7 +1097,7 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_turret_to_post_indicator">
+      <widget class="QLabel2" name="qlabel_cmd5_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1087,7 +1122,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Turret to Vision</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1096,7 +1131,7 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_low_score_from_stow_indicator">
+      <widget class="QLabel2" name="qlabel_cmd2_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1121,7 +1156,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Stow to Low Cone</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1130,7 +1165,7 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_release_and_stow_indicator">
+      <widget class="QLabel2" name="qlabel_cmd6_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1155,7 +1190,7 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>Release and Stow</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1186,7 +1221,7 @@ border-radius: 7px;
 background-color:rgb(127, 127, 127);</string>
        </property>
        <property name="text">
-        <string>Align To Target</string>
+        <string>&lt;Align To Target&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
