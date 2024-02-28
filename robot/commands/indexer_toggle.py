@@ -1,28 +1,28 @@
 import commands2
 from wpilib import SmartDashboard
-from subsystems.intake import Intake
+from subsystems.indexer import Indexer
 
-class IntakeToggle(commands2.CommandBase):
+class IndexerToggle(commands2.CommandBase):
 
-    def __init__(self, container, intake:Intake, rpm=1000, force=None, ) -> None:
+    def __init__(self, container, indexer:Indexer, power=5, force=None, ) -> None:
         super().__init__()
-        self.setName('IntakeToggle')
-        self.intake = intake
+        self.setName('IndexerToggle')
+        self.indexer = indexer
         self.container = container
-        self.rpm = rpm
         self.force = force
-        self.addRequirements(intake)
+        self.power = power
+        self.addRequirements(indexer)
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
 
         if self.force == 'on':
-            self.intake.set_intake_motor(self.rpm)
+            self.indexer.set_indexer(self.power)
         elif self.force == 'off':
-            self.intake.stop_intake()
+            self.indexer.stop_indexer()
         else:
-            self.intake.toggle_intake(self.rpm)
+            self.indexer.toggle_indexer(self.power)
 
     def execute(self) -> None:
         pass

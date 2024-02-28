@@ -34,6 +34,7 @@ from commands.arm_move import ArmMove
 from commands.arm_cycle import ArmCycle
 from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
+from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
 import os
@@ -181,13 +182,15 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
         wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
         wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
+        wpilib.SmartDashboard.putData('IndexerOn', IndexerToggle(container=self, indexer=self.indexer, force='on'))
+        wpilib.SmartDashboard.putData('IndexerOff', IndexerToggle(container=self, indexer=self.indexer, force='off'))
 
     def get_autonomous_command(self):
 
         # return self.autonomous_chooser.getSelected()
 
         # Load the path you want to follow using its name in the GUI
-        path = PathPlannerPath.fromPathFile('Auto 1')
+        path = PathPlannerPath.fromPathFile('_do_nothing')
         # Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path)
 
