@@ -1,0 +1,62 @@
+import math
+import commands2
+import wpilib
+from wpilib import SmartDashboard
+from wpilib import Timer
+from pathlib import Path
+import pickle
+from datetime import datetime
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d
+from pathplannerlib.auto import AutoBuilder, PathPlannerPath
+from pathplannerlib.path import PathConstraints, GoalEndState
+
+import os
+import typing
+from subsystems.swerve import Swerve
+from subsystems.swerve_constants import DriveConstants as dc
+from subsystems.swerve_constants import AutoConstants as ac
+import constants
+from subsystems.swerve_constants import AutoConstants as ac
+
+class PathPlannerConfiguration():
+
+    def __init__(self) -> None:
+        pass
+
+    # This is a method that will configure the paths for the robot to follow, based on the .path files in the deploy/pathplanner/paths directory.
+    def configure_paths(self, autonomous_chooser:wpilib.SendableChooser):
+        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        file_names = os.listdir(path_to_pathplanner_trajectories)
+        file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+        for ix, file_name in enumerate(file_names):
+            file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+            if ix == 0:
+                print("FILE NAME", file_name)
+                autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(5))
+            else:
+                print("FILE NAME", file_name)
+                autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(5))
+
+
+    # This is a method that will create a path from (0,0) to the desired position.
+    def configure_path_manual(position_list:typing.Dict[str, float], final_velocity:float, distance_to_rotate:float) -> commands2.Command:
+        return AutoBuilder.pathfindToPose(
+            Pose2d(position_list['x'], position_list['y'], Rotation2d.fromDegrees(position_list['rotation'])),
+            PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
+            final_velocity,
+            distance_to_rotate
+        )
+    
+    # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
+    def on_the_fly_path(robot:Swerve, position_list:typing.Dict[str, float], final_velocity:float, final_angle:float) -> commands2.Command:
+        current_pose = robot.get_pose()
+        start_pose = Pose2d(current_pose.translation(), Rotation2d())
+        end_pose = start_pose.transformBy(Translation2d(position_list["x"], position_list["y"])).rotateBy(Rotation2d(position_list["rotation"]))
+
+        bezier_points = PathPlannerPath.bezierFromPoses(start_pose, end_pose)
+        path = PathPlannerPath(
+            bezier_points,
+            PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
+            GoalEndState(final_velocity, Rotation2d.fromDegrees(final_angle))
+        )
+        return AutoBuilder.followPath(path)
