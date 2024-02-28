@@ -5,10 +5,9 @@ from wpilib import SmartDashboard
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 
+counter = 0
+
 class ArmCycle(commands2.Command):
-
-    counter = 0
-
     def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, direction = None) -> None:
         super().__init__()
         self.setName('ArmCycle')
@@ -28,25 +27,26 @@ class ArmCycle(commands2.Command):
         }
 
     def initialize(self) -> None:
+        global counter
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
 
         if self.direction is None or self.direction == 'up':
-            self.counter += 1
+            counter += 1
 
         elif self.direction == 'down':
-            self.counter -= 1
-            if self.counter < 0:
-                self.counter = len(self.crank_presets)-1
+            counter -= 1
+            if counter < 0:
+                counter = len(self.crank_presets)-1
 
-        active_mode = list(self.crank_presets.keys())[self.counter % len(self.crank_presets)]
+        active_mode = list(self.crank_presets.keys())[counter % len(self.crank_presets)]
         self.container.arm_mode = active_mode
 
         self.upper_crank.setGoal(self.crank_presets[active_mode]['upper'])
         self.lower_crank.setGoal(self.crank_presets[active_mode]['lower'])
 
-        print("\n" + f"** Started {self.getName()} at {self.start_time} with mode {active_mode} counter {self.counter} s **", flush=True)
-        SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s with mode {active_mode} counter {self.counter}**")
+        print("\n" + f"** Started {self.getName()} at {self.start_time} with mode {active_mode} counter {counter} s **", flush=True)
+        SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s with mode {active_mode} counter {counter}**")
 
     def execute(self) -> None:
         pass
