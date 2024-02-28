@@ -34,6 +34,7 @@ from commands.arm_move import ArmMove
 from commands.arm_cycle import ArmCycle
 from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
+from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
 
@@ -177,6 +178,8 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
         wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
         wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
+        wpilib.SmartDashboard.putData('IndexerOn', IndexerToggle(container=self, indexer=self.indexer, force='on'))
+        wpilib.SmartDashboard.putData('IndexerOff', IndexerToggle(container=self, indexer=self.indexer, force='off'))
 
     def get_autonomous_command(self):
 
