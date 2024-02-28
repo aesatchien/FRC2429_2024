@@ -206,6 +206,9 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.goal = self.check_goal(goal)
         self.setGoal(self.goal)
 
+    def get_at_goal(self) -> bool:
+        return self.at_goal
+
     def periodic(self) -> None:
         super().periodic()  # this does the automatic motion profiling in the background
         self.counter += 1
