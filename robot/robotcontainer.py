@@ -189,7 +189,7 @@ class RobotContainer:
         # return self.autonomous_chooser.getSelected()
 
         # Load the path you want to follow using its name in the GUI
-        path = PathPlannerPath.fromPathFile('Auto 1')
+        path = PathPlannerPath.fromPathFile('_do_nothing')
         # Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path)
 
