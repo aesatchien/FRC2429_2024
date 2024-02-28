@@ -26,7 +26,13 @@ robotpy_extras = [
     # "xrp",
 ]
 
+# idk why this works but I got the idea from 4774 -LHACK
+dependencies = [
+     "photonlibpy"
+]
+
 # Other pip packages to install
 requires = [
+     "photonlibpy"
 #    "robotpy-commands-v2==2024.0.0b4"
 ]

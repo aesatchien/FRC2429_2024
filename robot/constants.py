@@ -116,6 +116,9 @@ k_indexer_neo_port = 12
 k_led_pwm_port = 3
 k_led_count = 36
 
+# ------------------- CAMERA -------------------
+k_camera_name = "camera name" # todo: this is just a placeholder 2/28/24 LHACK
+
 # --------------  SIMULATION AND FIELD INITIALIZATION  ---------------
 k_start_x = 2.2  # eventually this will have to be set by the autonomous choices
 k_start_y = 5.85
