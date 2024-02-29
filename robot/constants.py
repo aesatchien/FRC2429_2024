@@ -16,7 +16,7 @@ k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the ba
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain
 k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
-k_enable_copilot = False
+k_enable_copilot = True
 
 # --------------  DRIVER OI  ---------------
 # ID for the driver's joystick (template)
