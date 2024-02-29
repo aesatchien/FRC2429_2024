@@ -64,20 +64,21 @@ class PathPlannerConfiguration():
         )
         return AutoBuilder.followPath(path)
     
-    def on_the_fly_path(robot:Swerve, position_chooser:wpilib.SendableChooser, final_velocity:float) -> commands2.Command:
-        desired_pos = position_chooser.getSelected()
+    #Not quite sure how to get the sendable chooser to update.
+    # def on_the_fly_path(robot:Swerve, position_chooser:wpilib.SendableChooser, final_velocity:float) -> commands2.Command:
+    #     desired_pos = position_chooser.getSelected()
         
-        current_pose = robot.get_pose()
-        #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
-        delta_pose = Transform2d(Translation2d(desired_pos["x"], desired_pos["y"]), Rotation2d.fromDegrees(desired_pos["rotation"]))
+    #     current_pose = robot.get_pose()
+    #     #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
+    #     delta_pose = Transform2d(Translation2d(desired_pos["x"], desired_pos["y"]), Rotation2d.fromDegrees(desired_pos["rotation"]))
 
-        start_pose = Pose2d(current_pose.translation(), current_pose.rotation())
-        end_pose = start_pose.transformBy(delta_pose)
+    #     start_pose = Pose2d(current_pose.translation(), current_pose.rotation())
+    #     end_pose = start_pose.transformBy(delta_pose)
 
-        bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
-        path = PathPlannerPath(
-            bezier_points,
-            PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
-            GoalEndState(final_velocity, Rotation2d.fromDegrees(desired_pos["rotation"]))
-        )
-        return AutoBuilder.followPath(path)
+    #     bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
+    #     path = PathPlannerPath(
+    #         bezier_points,
+    #         PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
+    #         GoalEndState(final_velocity, Rotation2d.fromDegrees(desired_pos["rotation"]))
+    #     )
+    #     return AutoBuilder.followPath(path)

@@ -191,8 +191,6 @@ class RobotContainer:
             # - limitation: a bezier curve has a degree of n+1 points -> often does not calculate "straight" paths. Should use simpler auto method for "straight" paths.
             self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": 3, "y": 3, "rotation": 45}, 0).withTimeout(5))
 
-        # self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.configure_path_manual(self.position_chooser.getSelected(), 0, 0).withTimeout(5))
-
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
         wpilib.SmartDashboard.putData('UpperCrankMoveUp', ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=None))
