@@ -24,6 +24,7 @@ from subsystems.climber import Climber
 
 # auto
 from autonomous.auto_shoot_cycle import AutoShootCycle
+from autonomous.playback_auto import PlaybackAuto
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -41,6 +42,7 @@ from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.climber_toggle import ClimberToggle
+from commands.record_auto import RecordAuto
 import os
 
 # autonomous
@@ -108,6 +110,7 @@ class RobotContainer:
         self.trigger_b = self.driver_command_controller.b()
         self.trigger_y = self.driver_command_controller.y()
         self.trigger_rb = self.driver_command_controller.rightBumper()
+        self.trigger_start = self.driver_command_controller.start()
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
@@ -131,6 +134,10 @@ class RobotContainer:
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake))
+        if wpilib.RobotBase.isReal():
+            self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
+        else:
+            self.trigger_start.onTrue(RecordAuto(self, 'input_log.json'))
 
     def bind_copilot_buttons(self):
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
@@ -180,8 +187,12 @@ class RobotContainer:
         self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
+        if wpilib.RobotBase.isReal():
+            self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
+        else:
+            self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
+
         # Automatically get Pathplanner paths
-        wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
         try_path_planner = False
         if try_path_planner:
@@ -198,6 +209,8 @@ class RobotContainer:
             #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
             #     else:
             #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
+
+        wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
