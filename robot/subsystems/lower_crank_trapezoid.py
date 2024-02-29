@@ -58,10 +58,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # drive the shooter crank entirely by the SPARKMAX encoder mounted to the right motor TODO: clean this
         self.abs_encoder = self.motor.getAbsoluteEncoder(encoderType=rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle)
-        self.abs_encoder.setInverted(False)  # clockwise on the current configuration cranks the arm up
+        self.abs_encoder.setInverted(True)  # clockwise on the current configuration cranks the arm up, but the encoder is mounted backwards
         self.abs_encoder.setPositionConversionFactor(1)  # stay absolute,
         self.abs_encoder.setVelocityConversionFactor(1 / 60)  # stay absolute
-        self.abs_encoder.setZeroOffset(self.config['abs_encoder_zero_offset'])  # get abs encoder value near straight up (90deg) and call that its zero
+        # Cory says don't use this too confusing
+        # self.abs_encoder.setZeroOffset(self.config['abs_encoder_zero_offset'])  # get abs encoder value near straight up (90deg) and call that its zero
         initial_position = sum([self.abs_encoder.getPosition() for i in range(5)]) / 5
         # crank abs encoder is 4:1 to the arm
 
@@ -69,7 +70,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
         self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        absolute_offset_from_90 = self.config['encoder_position_conversion_factor'] * initial_position
+        absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset'])  # this is in radians
         self.spark_encoder.setPosition(math.pi/2 + absolute_offset_from_90)  # convert absolute encoder to a spot near pi/2 radians
 
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
@@ -230,5 +231,6 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
                 wpilib.SmartDashboard.putNumber(f'{self.getName()}_power', self.motor.getAppliedOutput())
             self.is_moving = abs(self.abs_encoder.getVelocity()) > 0.01  # rad per second
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_moving', self.is_moving)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_abs_encoder', self.abs_encoder.getPosition())
 
 
