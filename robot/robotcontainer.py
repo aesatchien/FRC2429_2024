@@ -25,6 +25,8 @@ from subsystems.climber import Climber
 # auto
 from autonomous.auto_shoot_cycle import AutoShootCycle
 from autonomous.playback_auto import PlaybackAuto
+from autonomous.aim_and_shoot import AimAndShoot
+from autonomous.shoot_and_drive_out import ShootAndDriveOut
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -41,7 +43,7 @@ from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
-from commands.climber_toggle import ClimberToggle
+# from commands.climber_toggle import ClimberToggle
 from commands.record_auto import RecordAuto
 import os
 
@@ -193,6 +195,8 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
+        self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
+        self.autonomous_chooser.addOption('Shoot and drive out', ShootAndDriveOut(self, self.crank_arm, self.shooter_arm, self.drive))
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
         if wpilib.RobotBase.isReal():
             self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
@@ -201,19 +205,9 @@ class RobotContainer:
 
         # Automatically get Pathplanner paths
 
-        try_path_planner = False
+        try_path_planner = True
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
-
-            # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
-            # file_names = os.listdir(path_to_pathplanner_trajectories)
-            # file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
-            # for ix, file_name in enumerate(file_names):
-            #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-            #     if ix == 0:
-            #         self.autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
-            #     else:
-            #         self.autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)))
 
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 

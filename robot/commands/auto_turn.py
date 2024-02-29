@@ -30,7 +30,7 @@ class AutoTurn(commands2.Command):  # change the name for your command
         # self.rot_PID_controller.setTolerance(0.5) #sets the tolerance to 0.5 degrees
 
     def execute(self) -> None:
-        desired_rotation = self.rot_PID_controller.calculate(self.target_angle, 0)
+        desired_rotation = self.rot_PID_controller.calculate(self.target_angle, 0) # todo: shouldn't this be the measurement, not the setpoint?
         self.drive.drive(0, 0, desired_rotation, fieldRelative=False, rate_limited=True)
         
     def isFinished(self) -> bool:

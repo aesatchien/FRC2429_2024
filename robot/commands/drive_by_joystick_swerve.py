@@ -19,7 +19,7 @@ class DriveByJoystickSwerve(commands2.Command):
         self.setName('drive_by_joystick_swerve')
         self.container = container
         self.swerve = swerve
-        # self.field_oriented = field_oriented  # Sanjith wants this on a button instead
+        self.field_oriented = field_oriented  # Sanjith wants this on a button instead
         self.rate_limited = rate_limited
         self.addRequirements(*[self.swerve])
         # can't import container and don't want to pass lambdas just yet
