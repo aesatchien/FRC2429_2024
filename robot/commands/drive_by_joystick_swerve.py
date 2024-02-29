@@ -19,7 +19,7 @@ class DriveByJoystickSwerve(commands2.Command):
         self.setName('drive_by_joystick_swerve')
         self.container = container
         self.swerve = swerve
-        # self.field_oriented = field_oriented  # Sanjith wants this on a button instead
+        self.field_oriented = field_oriented  # Sanjith wants this on a button instead
         self.rate_limited = rate_limited
         self.addRequirements(*[self.swerve])
         # can't import container and don't want to pass lambdas just yet
@@ -46,9 +46,9 @@ class DriveByJoystickSwerve(commands2.Command):
             slowmode_multiplier = 1.0
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
-            field_oriented = False
+            self.field_oriented = False
         else:
-            field_oriented = True
+            self.field_oriented = True
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
         max_angular = 1 * slowmode_multiplier
@@ -71,10 +71,10 @@ class DriveByJoystickSwerve(commands2.Command):
             if desired_magnitude > max_linear:
                 desired_translation = desired_translation * max_linear / desired_magnitude
             self.swerve.drive(desired_translation.X(), desired_translation.Y(), desired_rot,
-                          fieldRelative= field_oriented, rate_limited=self.rate_limited)
+                          fieldRelative= self.field_oriented, rate_limited=self.rate_limited)
         else:
             self.swerve.drive(xSpeed=desired_fwd,ySpeed=desired_strafe, rot=desired_rot,
-                              fieldRelative= field_oriented, rate_limited=self.rate_limited, keep_angle=True)
+                              fieldRelative= self.field_oriented, rate_limited=self.rate_limited, keep_angle=True)
 
     def end(self, interrupted: bool) -> None:
         # probably should leave the wheels where they are?

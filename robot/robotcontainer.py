@@ -125,15 +125,15 @@ class RobotContainer:
         self.co_trigger_d = self.co_pilot_command_controller.povDown()
 
     def configure_swerve_bindings(self):
-        self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
-        direction = 'forwards', decide_by_turret = False).withTimeout(0.5))
+        #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
+        #direction = 'forwards', decide_by_turret = False).withTimeout(0.5))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
-        self.trigger_rb.onTrue(IntakeToggle(container=self, intake=self.intake))
+        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake))
         if wpilib.RobotBase.isReal():
             self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
         else:

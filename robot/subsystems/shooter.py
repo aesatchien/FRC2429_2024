@@ -88,7 +88,7 @@ class Shooter(Subsystem):
     def get_velocity(self):
         return self.flywheel_left_encoder.getVelocity()
 
-    def toggle_shooter(self, rpm):
+    def toggle_shooter(self, rpm=None):
         if self.shooter_on:
             self.stop_shooter()
         else:

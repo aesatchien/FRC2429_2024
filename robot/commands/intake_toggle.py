@@ -35,7 +35,7 @@ class IntakeToggle(commands2.CommandBase):
             self.shooter.stop_shooter()
         else:
             self.intake.toggle_intake(self.rpm)
-            self.indexer.toggle_indexer()
+            self.indexer.toggle_indexer(power=1)
             self.shooter.toggle_shooter()
 
 
