@@ -21,7 +21,6 @@ class DriveWait(commands2.CommandBase):  # change the name for your command
     def execute(self):
         pass
     def isFinished(self) -> bool:
-        print(self.container.get_enabled_time() - self.start_time > self.duration)
         return self.start_time - self.container.get_enabled_time() > self.duration
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()

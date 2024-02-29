@@ -25,7 +25,11 @@ class PathPlannerConfiguration():
 
     # This is a method that will configure the paths for the robot to follow, based on the .path files in the deploy/pathplanner/paths directory.
     def configure_paths(self, autonomous_chooser:wpilib.SendableChooser):
-        path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
+        if wpilib.RobotBase.isReal():
+            path_to_pathplanner_trajectories = '/home/lvuser/py/deploy/pathplanner/paths'
+        else:
+            path_to_pathplanner_trajectories = os.path.abspath(constants.k_path_from_robot_to_pathplanner_files)
+
         file_names = os.listdir(path_to_pathplanner_trajectories)
         file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
         for ix, file_name in enumerate(file_names):

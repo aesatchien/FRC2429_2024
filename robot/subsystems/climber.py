@@ -1,4 +1,5 @@
 from commands2 import Subsystem
+import wpilib
 from wpilib import SmartDashboard
 import rev
 
@@ -37,6 +38,9 @@ class Climber(Subsystem):
         self.left_winch_controller.setFF(self.kFF, 0)
         self.left_winch_controller.setFF(self.kFF, 0)
 
+        self.left_servo = wpilib.Servo(constants.k_left_servo_port)
+        self.right_servo = wpilib.Servo(constants.k_right_servo_port)
+
         # toggle state
         self.climber_enable = False
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
@@ -74,6 +78,16 @@ class Climber(Subsystem):
         else:
             self.set_climber(rpm)
 
+    def open_servos(self):
+        # Not sure how the climber works, all I know is that 103 deg is the "open" position for the servos
+        # and 10 is the "closed" position -LHACK
+        self.left_servo.setAngle(103)
+        self.right_servo.setAngle(103)
+
+    def close_servos(self):
+        self.left_servo.setAngle(10)
+        self.right_servo.setAngle(10)
+
     def periodic(self) -> None:
 
         self.counter += 1
@@ -83,7 +97,3 @@ class Climber(Subsystem):
             SmartDashboard.putBoolean('climber_ready', self.left_winch_encoder.getVelocity() > 1800)
             SmartDashboard.putNumber('climber_current', self.left_winch.getOutputCurrent())
             SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
-
-
-
-
