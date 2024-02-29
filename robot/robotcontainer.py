@@ -197,8 +197,6 @@ class RobotContainer:
         try_path_planner = True
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
-            # This is not working right now. Apparently line 51 in pathplannermaker.py is the problem. In theory, it should make the robot drive to (x,y) position relative* to where it currently is.
-            # self.autonomous_chooser.addOption("on the fly option", PathPlannerConfiguration.on_the_fly_path(self.drive, target_pos, 0, 0).withTimeout(5))
 
             # path_to_pathplanner_trajectories = os.path.join(os.getcwd(), constants.k_path_from_robot_to_pathplanner_files)
             # file_names = os.listdir(path_to_pathplanner_trajectories)
