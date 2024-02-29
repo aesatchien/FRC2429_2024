@@ -19,7 +19,6 @@ class ArmCycle(commands2.Command):
         self.addRequirements(self.upper_crank)
         self.addRequirements(self.lower_crank)
 
-        # add transit preset so we extend lower crank to 90 deg before deploying upper one?
         self.crank_presets = {
             'intake': {'upper': math.radians(-80), 'lower': math.radians(70)},
             'shoot': {'upper': math.radians(-55), 'lower': math.radians(90)},
