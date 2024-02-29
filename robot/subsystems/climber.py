@@ -23,8 +23,8 @@ class Climber(Subsystem):
         self.follower_winch = rev.CANSparkMax(constants.k_follower_winch_neo_port, motor_type)
 
         # follower inverted
-        self.left_winch.setInverted(False)
-        self.follower_winch.setInverted(True)
+        self.left_winch.setInverted(True)
+        self.follower_winch.setInverted(False)
 
         #encoder
         self.left_winch_encoder = self.left_winch.getEncoder()
