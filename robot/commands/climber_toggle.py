@@ -3,7 +3,7 @@ import wpilib
 from wpilib import SmartDashboard
 from subsystems.climber import Climber
 
-class IndexerToggle(commands2.CommandBase):
+class ClimberToggle(commands2.CommandBase):
 
     def __init__(self, container, climber:Climber, power=5, force=None, timeout=None) -> None:
         super().__init__()

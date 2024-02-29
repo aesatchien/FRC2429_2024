@@ -52,7 +52,7 @@ k_crank_arm_dict = {
     'max_angle': 115, 'min_angle': 65,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.536,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
+    'abs_encoder_zero_offset': 0.57,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -82,7 +82,7 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -75,
+    'max_angle': 109, 'min_angle': -79,
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.372,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,

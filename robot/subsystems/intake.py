@@ -12,8 +12,8 @@ class Intake(Subsystem):
         self.counter = 0
         self.current_limit = 35
 
-        motor_type = rev.CANSparkFlex.MotorType.kBrushless
-        self.intake_motor_left = rev.CANSparkFlex(constants.k_intake_neo_port, motor_type)
+        motor_type = rev.CANSparkMax.MotorType.kBrushless
+        self.intake_motor_left = rev.CANSparkMax(constants.k_intake_neo_port, motor_type)
         self.intake_motor_left.setInverted(True)
 
         self.encoder = self.intake_motor_left.getEncoder()
@@ -25,13 +25,13 @@ class Intake(Subsystem):
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
     def set_intake_motor(self, rpm):
         self.intake_voltage = 5
-        self.intake_controller.setReference(self.intake_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
+        self.intake_controller.setReference(self.intake_voltage, rev.CANSparkMax.ControlType.kVoltage, 0)
         self.intake_enabled = True
         print(f'setting rpm / voltage to {rpm} {self.intake_voltage}')
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
 
     def stop_intake(self):
-        self.intake_controller.setReference(0, rev.CANSparkFlex.ControlType.kVoltage)
+        self.intake_controller.setReference(0, rev.CANSparkMax.ControlType.kVoltage)
         self.intake_enabled = False
         self.intake_voltage = 0
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
