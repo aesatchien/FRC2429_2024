@@ -140,25 +140,32 @@ class RobotContainer:
         self.co_trigger_b.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm, direction="down").withTimeout(2))
         # self.co_trigger_b.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
 
-        #bind crank arm
+        #bind Auto Shoot Cycle
+        self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
+
+         #bind crank arm
         setpoints = False
         if setpoints:
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=15, direction='up'))
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-15, direction='down'))
+            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction='up'))
+            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction='down'))
+            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=20, direction='up'))
+            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-20, direction='down'))
         else:
             direction = None
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=direction))
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=direction))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction))
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=15, direction=direction))
+            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-15, direction=direction))
+            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=direction))
+            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
 
-        self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
-        self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
+        # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
         # bind intake
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+
+        # bind indexer
+        self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
+        self.co_trigger_x.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
 
         # bind LED
         #  self.co_trigger_a.onTrue(LedToggle(container=self))
@@ -183,7 +190,7 @@ class RobotContainer:
         # Automatically get Pathplanner paths
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
-        try_path_planner = True
+        try_path_planner = False
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
 

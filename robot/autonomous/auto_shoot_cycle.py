@@ -11,10 +11,10 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
         self.container = container
 
         # back up indexer, turn on shooter, wait, fire indexer full speed into
-        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-2, force='on', timeout=0.25))
-        self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='on', rpm=3500))
+        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-2, force='on', timeout=0.1))
+        self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='on', rpm=2000))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=1))
-        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=5, force='on', timeout=0.5))
-        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
-        self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='off'))
+        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=5, force='on', timeout=None))
+        # self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
+        # self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='off'))
 

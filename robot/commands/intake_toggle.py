@@ -2,6 +2,8 @@ import commands2
 import wpilib
 from wpilib import SmartDashboard
 from subsystems.intake import Intake
+from subsystems.indexer import Indexer
+from subsystems.shooter import Shooter
 
 class IntakeToggle(commands2.CommandBase):
 
@@ -9,6 +11,8 @@ class IntakeToggle(commands2.CommandBase):
         super().__init__()
         self.setName('IntakeToggle')
         self.intake = intake
+        self.indexer : Indexer = container.indexer
+        self.shooter : Shooter = container.shooter
         self.container = container
         self.rpm = rpm
         self.force = force
@@ -24,10 +28,16 @@ class IntakeToggle(commands2.CommandBase):
 
         if self.force == 'on':
             self.intake.set_intake_motor(self.rpm)
+            self.indexer.set_indexer(1)
         elif self.force == 'off':
             self.intake.stop_intake()
+            self.indexer.stop_indexer()
+            self.shooter.stop_shooter()
         else:
             self.intake.toggle_intake(self.rpm)
+            self.indexer.toggle_indexer()
+            self.shooter.toggle_shooter()
+
 
     def execute(self) -> None:
         pass

@@ -17,7 +17,7 @@ class Indexer(Subsystem):
 
         motor_type = rev.CANSparkMax.MotorType.kBrushless
         self.indexer_motor = rev.CANSparkMax(constants.k_indexer_neo_port, motor_type)
-        self.indexer_motor.setInverted(True)
+        self.indexer_motor.setInverted(False)
 
         #encoder
         self.indexer_encoder = self.indexer_motor.getEncoder()

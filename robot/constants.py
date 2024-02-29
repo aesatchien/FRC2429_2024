@@ -33,8 +33,8 @@ k_rate_limited = True  # on swerve, use slew limiters to keep acceleration from 
 # ------------------- HARDWARE, FROM BOTTOM TO TOP -------------------
 
 # ------------------- CLIMBER -------------------
-k_follower_winch_neo_port =4
-k_left_winch_neo_port = 3
+k_follower_winch_neo_port =3
+k_left_winch_neo_port = 4
 
 # ------------------- Intake -------------------
 k_intake_neo_port = 5  # CAN ID
