@@ -35,8 +35,8 @@ class IntakeToggle(commands2.CommandBase):
             self.shooter.stop_shooter()
         else:
             self.intake.toggle_intake(self.rpm)
-            self.indexer.toggle_indexer()
-            self.shooter.toggle_shooter()
+            self.indexer.toggle_indexer(5)
+            self.shooter.toggle_shooter(1) # Placeholder/dummy variable since i don't know what we want it to do and otherwise it'll give errors -LHACK
 
 
     def execute(self) -> None:

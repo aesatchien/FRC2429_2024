@@ -7,7 +7,7 @@ from pathlib import Path
 import pickle
 from datetime import datetime
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
-from pathplannerlib.auto import AutoBuilder, PathPlannerPath
+from pathplannerlib.auto import AutoBuilder, PathPlannerPath, PathPlannerAuto
 from pathplannerlib.path import PathConstraints, GoalEndState
 
 import os
@@ -27,19 +27,36 @@ class PathPlannerConfiguration():
     def configure_paths(self, autonomous_chooser:wpilib.SendableChooser):
         if wpilib.RobotBase.isReal():
             path_to_pathplanner_trajectories = '/home/lvuser/py/deploy/pathplanner/paths'
+            path_to_pathplanner_autos = '/home/lvuser/py/deploy/pathplanner/autos'
         else:
             path_to_pathplanner_trajectories = os.path.abspath(constants.k_path_from_robot_to_pathplanner_files)
+            path_to_pathplanner_autos = os.path.abspath(constants.k_path_from_robot_to_pathplanner_autos)
 
-        file_names = os.listdir(path_to_pathplanner_trajectories)
-        file_names = [file_name for file_name in file_names if '.path' in file_name]  # in case non-path files exist
+        file_names = os.listdir(path_to_pathplanner_trajectories) + os.listdir(path_to_pathplanner_autos)
+
         for ix, file_name in enumerate(file_names):
-            file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-            if ix == 0:
-                print("FILE NAME", file_name)
-                autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
-            else:
-                print("FILE NAME", file_name)
-                autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
+            pure_name = os.path.splitext(file_name)[0]
+            extension = os.path.splitext(file_name)[1]
+            if extension == '.path':
+                if ix == 0:
+                    autonomous_chooser.setDefaultOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
+                else:
+                    autonomous_chooser.addOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
+            elif extension == '.auto':
+                if ix == 0:
+                    autonomous_chooser.setDefaultOption(pure_name, PathPlannerAuto(pure_name))
+                else:
+                    autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
+
+
+        # for ix, file_name in enumerate(file_names):
+        #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
+        #     if ix == 0:
+        #         print("FILE NAME", file_name)
+        #         autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
+        #     else:
+        #         print("FILE NAME", file_name)
+        #         autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
 
 
     # This is a method that will create a path from (0,0) to the desired position.

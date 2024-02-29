@@ -114,7 +114,7 @@ class Swerve (Subsystem):
         :param pose: The pose to which to set the odometry.
         """
         self.odometry.resetPosition(
-            Rotation2d.fromDegrees(self.get_angle()), pose, *self.get_module_positions())
+            Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
 
     def drive(self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool, rate_limited: bool, keep_angle:bool=True) -> None:
         """Method to drive the robot using joystick info.
