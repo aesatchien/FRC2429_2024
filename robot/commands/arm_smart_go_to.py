@@ -7,6 +7,7 @@ import constants
 
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
+from subsystems.led import Led
 
 from commands.arm_move import ArmMove
 from commands2 import WaitCommand
@@ -26,7 +27,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
     def initialize(self) -> None:
         command = None
         if self.desired_position == 'shoot':
-            self.container.led.set_indicator('VISION_TARGET_FAILURE')
+            self.container.led.set_indicator(Led.Indicator.READY_SHOOT)
             if self.lower_crank.get_angle() < math.radians(80):
                 crank_wait_time = 1.5
             else:
@@ -36,7 +37,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                         .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
         elif self.desired_position == 'intake':
-            self.container.led.set_indicator('VISION_TARGET_SUCCESS')
+            self.container.led.set_indicator(Led.Indicator.VISION_TARGET_SUCCESS)
             if self.upper_crank.get_angle() > math.radians(-50):
                 shooter_wait_time = 1.5
             else:
@@ -46,7 +47,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                         .andThen(ArmMove(self.container, self.lower_crank, degrees=constants.k_crank_presets['intake']['lower'], absolute=True))))
 
         elif self.desired_position == 'amp':
-            self.container.led.set_mode('cube')
+            self.container.led.set_mode(Led.Mode.CUBE)
             if self.lower_crank.get_angle() < math.radians(80):
                 crank_wait_time = 1.5
             else:

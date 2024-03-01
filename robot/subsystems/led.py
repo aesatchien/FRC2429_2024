@@ -11,12 +11,12 @@ import constants
 
 class Led(commands2.Subsystem):
     class Mode(enum.Enum):
-        CONE = 'CONE'  # yellow
+        RING = 'RING'  # orange
         CUBE = 'CUBE'  # purple
 
     # temporary indicators (flashing for pickup, strafing, etc)
     class Indicator(enum.Enum):
-        READY_SHOOT = 'READY_SHOOT'  # flashing green
+        READY_SHOOT = 'READY_SHOOT'  # flashing white
         VISION_TARGET_FAILURE = 'VISION_TARGET_FAILURE'  # red
         VISION_TARGET_SUCCESS = 'VISION_TARGET_SUCCESS'  # flashing blue
         PICKUP_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue
@@ -40,7 +40,7 @@ class Led(commands2.Subsystem):
         self.led_strip.setData(self.led_data)
         self.led_strip.start()
 
-        self.mode = Led.Mode.CONE
+        self.mode = Led.Mode.RING
         self.indicator = Led.Indicator.NONE
 
     def set_mode(self, mode: Mode) -> None:
@@ -73,7 +73,7 @@ class Led(commands2.Subsystem):
             SmartDashboard.putString('led_indicator', self.indicator.value)
 
             # advertise our state to the dash
-            SmartDashboard.putBoolean('cone_selected', self.mode == self.Mode.CONE)
+            SmartDashboard.putBoolean('cone_selected', self.mode == self.Mode.RING)
 
             self.animation_counter += 1
 
@@ -83,7 +83,7 @@ class Led(commands2.Subsystem):
                 # check if there is an indicator, and override
                 if self.indicator != Led.Indicator.NONE:
                     if self.indicator == Led.Indicator.READY_SHOOT:
-                        # flashing green
+                        # flashing white
                         freq = 1  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
 
@@ -97,7 +97,7 @@ class Led(commands2.Subsystem):
                         led.setRGB(255, 0, 0)
 
                     elif self.indicator == Led.Indicator.VISION_TARGET_SUCCESS:
-                        # flashing orange
+                        # flashing blue
                         freq = 1  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
 
@@ -129,9 +129,9 @@ class Led(commands2.Subsystem):
                             led.setRGB(255, 40, 0)
 
                 else:
-                    if self.mode == Led.Mode.CONE:
-                        # solid yellow
-                        led.setRGB(255, 96, 0)
+                    if self.mode == Led.Mode.RING:
+                        # solid orange
+                        led.setRGB(255, 40, 0)
 
                     elif self.mode == Led.Mode.CUBE:
                         # solid purple
