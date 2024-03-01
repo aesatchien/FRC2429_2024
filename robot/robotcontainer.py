@@ -216,7 +216,7 @@ class RobotContainer:
         self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
         self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
-        self.autonomous_chooser.addOption('Shoot and drive out', ShootAndDriveOut(self, self.crank_arm, self.shooter_arm, self.drive))
+        self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(self, self.crank_arm, self.shooter_arm, self.drive))
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
         if wpilib.RobotBase.isReal():
             self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
@@ -225,7 +225,7 @@ class RobotContainer:
 
         # Automatically get Pathplanner paths
 
-        try_path_planner = True
+        try_path_planner = False
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
 
