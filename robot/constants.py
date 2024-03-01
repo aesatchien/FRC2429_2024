@@ -85,7 +85,7 @@ k_shooter_arm_dict = {
     'name': 'upper_arm',
     'max_angle': 109, 'min_angle': -79,
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset':  0.372,  # 0.45, # 0.420,  # makes horizontal 0
+    'abs_encoder_zero_offset':  0.329,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
