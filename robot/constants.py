@@ -40,6 +40,11 @@ k_left_servo_port = 0
 k_right_servo_port = 1
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
+k_crank_presets = {
+    'intake': {'upper':-80, 'lower': 66},
+    'shoot': {'upper': -35, 'lower':90},
+    'amp': {'upper': 50, 'lower': 100},
+}
 
 # ------------------- Intake -------------------
 k_intake_neo_port = 5  # CAN ID

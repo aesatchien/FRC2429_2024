@@ -29,7 +29,7 @@ class RunClimber(commands2.CommandBase):
 
     def isFinished(self) -> bool:
         if self.navx is not None:
-            self.climber.set_climber()
+            self.climber.stop_climber()
         return False
 
     def end(self, interrupted: bool) -> None:

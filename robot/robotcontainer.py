@@ -38,7 +38,7 @@ from commands.led_toggle import LedToggle
 from commands.intake_toggle import IntakeToggle
 from commands.arm_coast import CrankArmCoast
 from commands.arm_move import ArmMove
-from commands.arm_cycle import ArmCycle
+from commands.arm_smart_go_to import ArmSmartGoTo
 from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
@@ -95,7 +95,7 @@ class RobotContainer:
 
         self.initialize_dashboard()
 
-        arm_mode = 'intake'
+        self.arm_mode = 'intake'
         # arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
         # self.led.setDefaultCommand(LedLoop(container=self))
@@ -155,9 +155,9 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_a.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm, desired_position='shoot2').withTimeout(2))
-        self.co_trigger_b.onTrue(ArmCycle(container=self, upper_crank = self.shooter_arm, lower_crank = self.crank_arm, desired_position='amp').withTimeout(2))
-        self.co_trigger_x.onTrue(ArmCycle(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='intake'))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='amp'))
+        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='intake'))
         # self.co_trigger_b.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
         # x is intake
 
@@ -196,6 +196,9 @@ class RobotContainer:
         NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
         NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
         NamedCommands.registerCommand('Toggle intake', IntakeToggle(self, self.intake))
+
+    def get_arm_mode(self):
+        return self.arm_mode
 
     def initialize_dashboard(self):
         PathPlannerMaker = PathPlannerConfiguration()

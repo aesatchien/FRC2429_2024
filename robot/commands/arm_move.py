@@ -9,7 +9,7 @@ import math
 
 class ArmMove(commands2.Command):
 
-    def __init__(self, container, arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, absolute=False, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_Move')
         self.container = container
@@ -17,13 +17,17 @@ class ArmMove(commands2.Command):
         self.degrees = degrees
         self.direction = direction
         self.wait_to_finish = wait_to_finish  # determine how long we wait to end
+        self.absolute = absolute
         self.addRequirements(self.arm)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
         self.print_start_message()
         if self.direction is None:
-            self.arm.move_degrees(self.degrees)
+            if self.absolute:
+                self.arm.set_goal(math.radians(self.degrees))
+            else:
+                self.arm.move_degrees(self.degrees)
         else:
             self.arm.set_next_position(direction=self.direction)
 
