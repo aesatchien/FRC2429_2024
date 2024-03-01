@@ -72,7 +72,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
     def isFinished(self) -> bool:
         if self.wait_for_finish:
-            return self.lower_crank.at_goal() and self.upper_crank.at_goal()
+            return self.lower_crank.get_at_goal() and self.upper_crank.get_at_goal()
         else:
             return True
 

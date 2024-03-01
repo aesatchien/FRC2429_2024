@@ -14,5 +14,6 @@ class AimAndShoot(commands2.SequentialCommandGroup):
         super().__init__()
         self.setName('AimAndShoot')  # change this to something appropriate for this command
         self.container = container
-        self.addCommands(ArmSmartGoTo(self.container, upper_crank=upper_arm, lower_crank=lower_arm, desired_position='shoot')) # Go to first position, specifically "shoot"
+        self.addCommands(ArmSmartGoTo(self.container, upper_crank=upper_arm, lower_crank=lower_arm, desired_position='shoot', wait_for_finish=True))# Go to first position, specifically "shoot"
+        self.addCommands(commands2.WaitCommand(3))
         self.addCommands(AutoShootCycle(self.container))
