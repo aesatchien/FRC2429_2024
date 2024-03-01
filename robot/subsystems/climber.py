@@ -41,6 +41,7 @@ class Climber(Subsystem):
 
         # toggle state
         self.climber_enable = False
+        self.servos_open = False
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
     def set_climber(self, volts):
@@ -69,6 +70,14 @@ class Climber(Subsystem):
             self.stop_climber()
         else:
             self.set_climber(rpm)
+
+    def toggle_climber_servos(self):
+        if self.servos_open:
+            self.close_servos()
+        else:
+            self.open_servos()
+        self.servos_open = not self.servos_open
+        return self.servos_open
 
     def open_servos(self):
         # Not sure how the climber works, all I know is that 103 deg is the "open" position for the servos
