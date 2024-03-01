@@ -88,6 +88,9 @@ class Shooter(Subsystem):
     def get_velocity(self):
         return self.flywheel_left_encoder.getVelocity()
 
+    def get_at_velocity(self):
+        return self.at_velocity
+
     def toggle_shooter(self, rpm=None):
         if self.shooter_on:
             self.stop_shooter()
@@ -104,7 +107,7 @@ class Shooter(Subsystem):
             # not too often
             SmartDashboard.putNumber('shooter_rpm', self.flywheel_left_encoder.getVelocity())
             SmartDashboard.putNumber('shooter_rpm_target', self.rpm)
-            at_velocity = math.fabs(self.get_velocity() - self.rpm) < 200  # need to figure out this tolerance
-            SmartDashboard.putBoolean('shooter_ready', at_velocity)
+            self.at_velocity = math.fabs(self.get_velocity() - self.rpm) < 300  # need to figure out this tolerance
+            SmartDashboard.putBoolean('shooter_ready', self.at_velocity)
             SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
             SmartDashboard.putNumber('shooter_output', self.flywheel_lower_left.getAppliedOutput())

@@ -7,29 +7,28 @@ from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
-    def __init__(self, container, shooter, rpm=3000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, force=None) -> None:
+    def __init__(self, container, shooter, rpm=3000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
         super().__init__()
         self.setName('ShooterToggle')
         self.container = container
         self.shooter = shooter
         self.upper_crank = upper_crank
         self.rpm = rpm
-        self.force = force
         self.auto_amp_slowdown = auto_amp_slowdown
+        self.wait_for_spinup = wait_for_spinup
+        self.force = force
         self.addRequirements(shooter)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         # give ourselves three possible actions
-        rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else 2000
-
-        print(f"!! Delivering {rpm} rpm to the shooter !!")
+        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else 2000
 
         if self.force == 'on':
-            self.shooter.set_flywheel(rpm)
+            self.shooter.set_flywheel(self.rpm)
         elif self.force == 'off':
             self.shooter.stop_shooter()
         else:
-            self.shooter.toggle_shooter(rpm)
+            self.shooter.toggle_shooter(self.rpm)
         
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
@@ -39,8 +38,11 @@ class ShooterToggle(commands2.Command):
     def execute(self) -> None:
         pass
 
-    def isFinished(self) -> bool:  
-        return True
+    def isFinished(self) -> bool:
+        if self.wait_for_spinup:
+            return self.shooter.get_at_velocity()
+        if not self.wait_for_spinup:
+            return True
 
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
