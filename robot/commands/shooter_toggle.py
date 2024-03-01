@@ -22,7 +22,7 @@ class ShooterToggle(commands2.Command):
 
     def initialize(self) -> None:
         # give ourselves three possible actions
-        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else self.amp_rpm
+        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle() < 0) else self.amp_rpm
 
         if self.force == 'on':
             self.shooter.set_flywheel(self.rpm)
