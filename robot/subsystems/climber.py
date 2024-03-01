@@ -44,11 +44,9 @@ class Climber(Subsystem):
         self.servos_open = False
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
-    def set_climber(self, volts):
-        self.climber_voltage = volts
-        self.left_winch.setVoltage(2)
-        self.follower_winch.setVoltage(2)
-        # self.left_winch_controller.setReference(self.climber_voltage, rev.CANSparkMax.ControlType.kVoltage, 0)
+    def set_climber(self, left_volts, right_volts):
+        self.left_winch.setVoltage(left_volts)
+        self.follower_winch.setVoltage(right_volts)
         self.climber_enable = True
         print(f'setting volts to {self.climber_voltage}')
         SmartDashboard.putBoolean('climber_state', self.climber_enable)

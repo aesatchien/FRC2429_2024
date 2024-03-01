@@ -115,6 +115,8 @@ class RobotContainer:
         self.trigger_rb = self.driver_command_controller.rightBumper()
         self.trigger_start = self.driver_command_controller.start()
         self.trigger_d = self.driver_command_controller.povDown()
+        self.trigger_u = self.driver_command_controller.povUp()
+        self.trigger_r = self.driver_command_controller.povRight()
         self.trigger_l = self.driver_command_controller.povLeft()
 
     def configure_copilot_joystick(self):
@@ -140,8 +142,10 @@ class RobotContainer:
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake))
-        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber))
-        self.trigger_l.onTrue(ToggleClimbServos(self, self.climber))
+        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
+        self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
+        self.trigger_l.onTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
+        self.trigger_r.onTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
         if wpilib.RobotBase.isReal():
             self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
         else:

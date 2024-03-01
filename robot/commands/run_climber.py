@@ -1,18 +1,18 @@
 import commands2
-import wpilib
 from wpilib import SmartDashboard
+import navx
 from subsystems.climber import Climber
 
 class RunClimber(commands2.CommandBase):
 
-    def __init__(self, container, climber:Climber, power=5, timeout=None) -> None:
+    def __init__(self, container, climber:Climber, navx : navx.AHRS=None, left_volts=2, right_volts=2) -> None:
         super().__init__()
         self.setName('IndexerToggle')
         self.climber = climber
         self.container = container
-        self.power = power
-        self.timeout = timeout
-        self.timer = wpilib.Timer()
+        self.navx = navx
+        self.left_volts = left_volts
+        self.right_volts = right_volts
         self.addRequirements(climber)
 
     # TODO: have coast by default but brake when climbing
@@ -21,16 +21,16 @@ class RunClimber(commands2.CommandBase):
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
 
         self.timer.restart()
-        self.climber.set_climber(self.power)
+        if self.navx is None:
+            self.climber.set_climber(self.left_volts, self.right_volts)
 
     def execute(self) -> None:
         pass
 
     def isFinished(self) -> bool:
-        if self.timeout is None:
-            return False
-        else:
-            return self.timer.get() > self.timeout
+        if self.navx is not None:
+            self.climber.set_climber()
+        return False
 
     def end(self, interrupted: bool) -> None:
         self.climber.stop_climber()
