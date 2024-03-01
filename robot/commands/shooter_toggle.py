@@ -7,13 +7,14 @@ from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
-    def __init__(self, container, shooter, rpm=3000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
+    def __init__(self, container, shooter, rpm=3000, amp_rpm=2000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
         super().__init__()
         self.setName('ShooterToggle')
         self.container = container
         self.shooter = shooter
         self.upper_crank = upper_crank
         self.rpm = rpm
+        self.amp_rpm = amp_rpm
         self.auto_amp_slowdown = auto_amp_slowdown
         self.wait_for_spinup = wait_for_spinup
         self.force = force
@@ -21,7 +22,7 @@ class ShooterToggle(commands2.Command):
 
     def initialize(self) -> None:
         # give ourselves three possible actions
-        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else 2000
+        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else self.amp_rpm
 
         if self.force == 'on':
             self.shooter.set_flywheel(self.rpm)
