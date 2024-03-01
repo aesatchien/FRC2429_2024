@@ -121,6 +121,7 @@ class RobotContainer:
         self.co_trigger_y = self.co_pilot_command_controller.y()
         self.co_trigger_x = self.co_pilot_command_controller.x()
         self.co_trigger_rb = self.co_pilot_command_controller.rightBumper()
+        self.co_trigger_lb = self.co_pilot_command_controller.leftBumper()
         self.co_trigger_r = self.co_pilot_command_controller.povRight()
         self.co_trigger_l = self.co_pilot_command_controller.povLeft()
         self.co_trigger_u = self.co_pilot_command_controller.povUp()
@@ -177,7 +178,7 @@ class RobotContainer:
         self.co_trigger_x.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
 
         # bind LED
-        #  self.co_trigger_a.onTrue(LedToggle(container=self))
+        self.co_trigger_lb.onTrue(LedToggle(container=self))
 
         # bind climber
         self.co_trigger_x.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
