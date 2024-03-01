@@ -181,7 +181,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def set_crank_preset(self, preset) -> None:
         self.preset = preset
 
-    def set_encoder_position(self, position):
+    def set_encoder_position(self, position: float):
         self.spark_encoder.setPosition(position)
 
     def get_angle(self):  # getter for the relevant angles
