@@ -3,26 +3,33 @@
 import commands2
 from wpilib import SmartDashboard
 
+from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
-    def __init__(self, container, shooter, rpm=3000, force=None) -> None:
+    def __init__(self, container, shooter, rpm=3000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, force=None) -> None:
         super().__init__()
         self.setName('ShooterToggle')
-        self.shooter = shooter
         self.container = container
+        self.shooter = shooter
+        self.upper_crank = upper_crank
         self.rpm = rpm
         self.force = force
+        self.auto_amp_slowdown = auto_amp_slowdown
         self.addRequirements(shooter)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         # give ourselves three possible actions
+        rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle()) < 0 else 2000
+
+        print(f"!! Delivering {rpm} rpm to the shooter !!")
+
         if self.force == 'on':
-            self.shooter.set_flywheel(self.rpm)
+            self.shooter.set_flywheel(rpm)
         elif self.force == 'off':
             self.shooter.stop_shooter()
         else:
-            self.shooter.toggle_shooter(self.rpm)
+            self.shooter.toggle_shooter(rpm)
         
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
