@@ -181,6 +181,9 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def set_crank_preset(self, preset) -> None:
         self.preset = preset
 
+    def set_encoder_position(self, position):
+        self.spark_encoder.setPosition(position)
+
     def get_angle(self):  # getter for the relevant angles
         # will always read in radians a value near 90 degrees plus or minus 45 - otherwise we are out of design
         # should be no other math to do for this system
