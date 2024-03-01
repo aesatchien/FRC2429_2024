@@ -1,17 +1,23 @@
 import commands2
 from wpilib import SmartDashboard
 
+from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 
 class GaslightCrankEncoders(commands2.CommandBase):  # change the name for your command
     # Very unfinished
-    def __init__(self, container, drive, degrees) -> None:
+    def __init__(self, container, lower_crank: LowerCrankArmTrapezoidal, position_to_gaslight_to) -> None:
         super().__init__()
         self.setName('Gaslight crank encoders')  # change this to something appropriate for this command
         self.container = container
+        self.lower_crank = lower_crank
+        self.position_to_gaslight_to = position_to_gaslight_to
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
+        # deactivate arm so it doesn't get confused as we gaslight it
+        self.lower_crank.disable_arm()
+        self.lower_crank.set_encoder_position(self.position_to_gaslight_to)
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert",
@@ -24,6 +30,7 @@ class GaslightCrankEncoders(commands2.CommandBase):  # change the name for your 
         return True
 
     def end(self, interrupted: bool) -> None:
+        self.lower_crank.enable_arm()
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
