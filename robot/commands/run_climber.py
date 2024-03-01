@@ -15,6 +15,7 @@ class RunClimber(commands2.CommandBase):
         self.timer = wpilib.Timer()
         self.addRequirements(climber)
 
+    # TODO: have coast by default but brake when climbing
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)

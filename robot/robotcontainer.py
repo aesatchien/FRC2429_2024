@@ -44,6 +44,7 @@ from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
+from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
 import os
 
@@ -114,6 +115,7 @@ class RobotContainer:
         self.trigger_rb = self.driver_command_controller.rightBumper()
         self.trigger_start = self.driver_command_controller.start()
         self.trigger_d = self.driver_command_controller.povDown()
+        self.trigger_l = self.driver_command_controller.povLeft()
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
@@ -139,6 +141,7 @@ class RobotContainer:
         # bind driver buttons not related to swerve
         self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber))
+        self.trigger_l.onTrue(ToggleClimbServos(self, self.climber))
         if wpilib.RobotBase.isReal():
             self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
         else:
