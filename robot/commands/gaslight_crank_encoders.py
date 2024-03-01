@@ -18,13 +18,10 @@ class GaslightCrankEncoders(commands2.CommandBase):  # change the name for your 
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
-        # deactivate arm so it doesn't get confused as we gaslight it
-        self.lower_crank.disable_arm()
         position_to_gaslight_to = self.positions_to_gaslight_to[self.counter % len(self.positions_to_gaslight_to)]
+        self.counter += 1
         # We gaslight it to be somewhere, then tell it to go there; somehow it ungaslights itself
         self.lower_crank.set_encoder_position(math.radians(position_to_gaslight_to))
-        self.lower_crank.set_goal(math.radians(position_to_gaslight_to))
-        self.counter += 1
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s gaslighting to {position_to_gaslight_to} **", flush=True)
         SmartDashboard.putString("alert",
@@ -36,8 +33,10 @@ class GaslightCrankEncoders(commands2.CommandBase):  # change the name for your 
     def isFinished(self) -> bool:
         return True
 
+    def runsWhenDisabled(self) -> bool:
+        return True
+
     def end(self, interrupted: bool) -> None:
-        self.lower_crank.enable_arm()
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

@@ -47,7 +47,7 @@ from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
 from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
-from commands.gaslight_crank_encoders import GaslightCrankEncoders
+# from commands.gaslight_crank_encoders import GaslightCrankEncoders
 import os
 
 # autonomous
@@ -253,7 +253,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
-        wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
+        # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
