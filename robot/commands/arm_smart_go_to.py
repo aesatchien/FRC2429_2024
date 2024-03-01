@@ -13,13 +13,14 @@ from commands2 import WaitCommand
 
 class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, desired_position: str) -> None:
+    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, desired_position: str, wait_for_finish=False) -> None:
         super().__init__()
         self.setName('Arm smart go to')  # change this to something appropriate for this command
         self.container = container
         self.upper_crank = upper_crank
         self.lower_crank = lower_crank
         self.desired_position = desired_position
+        self.wait_for_finish = wait_for_finish
         if not self.desired_position in ['intake', 'shoot', 'amp']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
@@ -66,7 +67,10 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         pass
 
     def isFinished(self) -> bool:
-        return True
+        if self.wait_for_finish:
+            return self.lower_crank.at_goal() and self.upper_crank.at_goal()
+        else:
+            return True
 
     def end(self, interrupted: bool) -> None:
         pass
