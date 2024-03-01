@@ -83,11 +83,11 @@ class Climber(Subsystem):
         # Not sure how the climber works, all I know is that 103 deg is the "open" position for the servos
         # and 10 is the "closed" position -LHACK
         self.left_servo.setAngle(103)
-        self.right_servo.setAngle(103)
+        self.right_servo.setAngle(10)
 
     def close_servos(self):
         self.left_servo.setAngle(10)
-        self.right_servo.setAngle(10)
+        self.right_servo.setAngle(103)
 
     def periodic(self) -> None:
 
