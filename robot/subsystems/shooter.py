@@ -51,7 +51,7 @@ class Shooter(Subsystem):
         # TODO configure_sparkmax()
         # configure_sparkmax()
 
-    def set_flywheel(self, rpm):
+    def set_flywheel(self, rpm, volts=None, use_voltage=False):
         # self.flywheel_left_controller.setReference(rpm, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 0)
         # self.shooter_voltage = self.shooter_voltage + 1 if self.shooter_voltage < 12 else 5  # CJH increment voltage test
         # self.shooter_rpm = self.shooter_rpm + 1000 if self.shooter_rpm < 5000 else 1000  # AEH increment rpm test
@@ -62,8 +62,8 @@ class Shooter(Subsystem):
         else:
             self.rpm = rpm
 
-        use_voltage = False
         if use_voltage:
+            self.voltage = volts
             self.flywheel_lower_left_controller.setReference(self.voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
             self.flywheel_upper_left_controller.setReference(self.voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         else:

@@ -24,10 +24,18 @@ class Intake(Subsystem):
         self.intake_enabled = False
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
     def set_intake_motor(self, rpm):
+        # misleading- rpm does nothing!
         self.intake_voltage = 5
         self.intake_controller.setReference(self.intake_voltage, rev.CANSparkMax.ControlType.kVoltage, 0)
         self.intake_enabled = True
         print(f'setting rpm / voltage to {rpm} {self.intake_voltage}')
+        SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
+
+    def set_intake_motor_volts(self, volts):
+        self.intake_voltage = volts
+        self.intake_controller.setReference(self.intake_voltage, rev.CANSparkMax.ControlType.kVoltage, 0)
+        self.intake_enabled = True
+        print(f'setting VOLTAGE to {self.intake_voltage}')
         SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)
 
     def stop_intake(self):

@@ -46,6 +46,7 @@ from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
+from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
 import os
 
 # autonomous
@@ -131,6 +132,7 @@ class RobotContainer:
         self.co_trigger_l = self.co_pilot_command_controller.povLeft()
         self.co_trigger_u = self.co_pilot_command_controller.povUp()
         self.co_trigger_d = self.co_pilot_command_controller.povDown()
+        self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
 
     def configure_swerve_bindings(self):
         #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
@@ -187,6 +189,8 @@ class RobotContainer:
         # bind indexer
         self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
         self.co_trigger_x.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
+        self.co_trigger_l_trigger.whileTrue(RunIntakeReverseByTrigger(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
+        # use that trigger command to call something like intake drive by trigger if the trigger is greater than sometbing
 
         # bind LED
         self.co_trigger_lb.onTrue(LedToggle(container=self))
