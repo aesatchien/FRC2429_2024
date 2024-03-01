@@ -124,7 +124,7 @@ k_flywheel_upper_left_neo_port = 11 #CAN ID
 k_indexer_neo_port = 12
 
 # ------------------- LED -------------------
-k_led_pwm_port = 3
+k_led_pwm_port = 9
 k_led_count = 36
 
 # ------------------- CAMERA -------------------
