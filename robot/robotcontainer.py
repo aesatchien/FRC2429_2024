@@ -43,7 +43,7 @@ from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
-# from commands.climber_toggle import ClimberToggle
+from commands.climber_toggle import ClimberToggle
 from commands.record_auto import RecordAuto
 import os
 
