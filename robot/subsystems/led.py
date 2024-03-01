@@ -16,7 +16,7 @@ class Led(commands2.Subsystem):
 
     # temporary indicators (flashing for pickup, strafing, etc)
     class Indicator(enum.Enum):
-        READY_SHOOT = 'PICKUP_COMPLETE'  # flashing green
+        READY_SHOOT = 'READY_SHOOT'  # flashing green
         VISION_TARGET_FAILURE = 'VISION_TARGET_FAILURE'  # red
         VISION_TARGET_SUCCESS = 'VISION_TARGET_SUCCESS'  # flashing blue
         PICKUP_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue

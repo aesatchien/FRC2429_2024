@@ -14,4 +14,4 @@ class ShootAndDriveOut(commands2.SequentialCommandGroup):
         self.setName('AimAndShoot')  # change this to something appropriate for this command
         self.container = container
         self.addCommands(AimAndShoot(self.container, lower_arm=lower_arm, upper_arm=upper_arm))
-        self.addCommands(DriveSwerveAutoVelocity(self.container, drive, 1, 'forwards').withTimeout(1.5))
+        self.addCommands(DriveSwerveAutoVelocity(self.container, drive, -1, 'forwards').withTimeout(1.5))

@@ -1,3 +1,3 @@
 #!/usr/bin/bash
-conda activate robo2023
-python dashboard_2023.py &
+conda activate robo2024
+python dashboard_2024.py &
