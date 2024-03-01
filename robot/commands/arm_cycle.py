@@ -20,11 +20,11 @@ class ArmCycle(commands2.Command):
         self.addRequirements(self.lower_crank)
 
         self.crank_presets = {
-            'intake': {'upper': math.radians(-80), 'lower': math.radians(70)},
-            'shoot': {'upper': math.radians(-55), 'lower': math.radians(90)},
+            'intake': {'upper': math.radians(-80), 'lower': math.radians(66)},
+            # 'shoot': {'upper': math.radians(-55), 'lower': math.radians(90)},
             'shoot2': {'upper': math.radians(-35), 'lower': math.radians(90)},
             'amp': {'upper': math.radians(50), 'lower': math.radians(100)},
-            'trap': {'upper': math.radians(110), 'lower': math.radians(110)},
+            # 'trap': {'upper': math.radians(110), 'lower': math.radians(110)},
         }
 
     def initialize(self) -> None:
@@ -58,7 +58,7 @@ class ArmCycle(commands2.Command):
 
         if self.upper_crank.get_angle() > constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad:
             # Keep the lower crank up till the upper crank folds
-            self.lower_crank.set_goal(self.crank_presets['shoot']['lower'])
+            self.lower_crank.set_goal(self.crank_presets['shoot2']['lower'])
         else:
             self.lower_crank.set_goal(self.lower_desired_position)
 

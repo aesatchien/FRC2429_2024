@@ -42,14 +42,14 @@ class LedToggle(commands2.Command):
         # active_mode = self.modes[self.counter % len(self.modes)]
         self.container.game_piece_mode = active_mode
 
-        if active_mode == 'PICKUP_COMPLETE':
-          self.container.led.set_mode(Led.Indicator.PICKUP_COMPLETE)
-        elif active_mode == 'READY_SHOOT':
-          self.container.led.set_mode(Led.Indicator.READY_SHOOT)
-
-        self.container.led.set_indicator(active_mode)
-        print(f"** Light mode: {active_mode}**",flush=True)
-        SmartDashboard.putString(f"alert", f"** Light mode: {active_mode}  **")
+        # if active_mode == 'PICKUP_COMPLETE':
+        #   self.container.led.set_mode(Led.Indicator.PICKUP_COMPLETE)
+        # elif active_mode == 'READY_SHOOT':
+        #   self.container.led.set_mode(Led.Indicator.READY_SHOOT)
+        #
+        # self.container.led.set_indicator(active_mode)
+        # print(f"** Light mode: {active_mode}**",flush=True)
+        # SmartDashboard.putString(f"alert", f"** Light mode: {active_mode}  **")
 
     def isFinished(self) -> bool:
         return True
