@@ -1,8 +1,7 @@
 import commands2
 import constants
 
-from commands.arm_move import ArmMove
-from commands.arm_cycle import ArmCycle
+from commands.arm_smart_go_to import ArmSmartGoTo
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from autonomous.auto_shoot_cycle import AutoShootCycle
@@ -12,5 +11,5 @@ class AimAndShoot(commands2.SequentialCommandGroup):
         super().__init__()
         self.setName('AimAndShoot')  # change this to something appropriate for this command
         self.container = container
-        self.addCommands(ArmCycle(container=self.container, upper_crank=upper_arm, lower_crank=lower_arm, desired_position='shoot2')) # Go to first position, specifically "shoot"
+        self.addCommands(ArmSmartGoTo(self.container, upper_arm, lower_arm, 'shoot')) # Go to first position, specifically "shoot"
         self.addCommands(AutoShootCycle(self.container))
