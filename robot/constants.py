@@ -57,8 +57,8 @@ k_crank_arm_dict = {
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-    'k_MaxVelocityRadPerSecond': 0.5,
-    'k_MaxAccelerationRadPerSecSquared': 0.2,
+    'k_MaxVelocityRadPerSecond': 0.8,
+    'k_MaxAccelerationRadPerSecSquared': 0.5,
     'k_kSVolts': 0.01,  # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio
@@ -89,7 +89,7 @@ k_shooter_arm_dict = {
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-    'k_MaxVelocityRadPerSecond': 1.25,
+    'k_MaxVelocityRadPerSecond': 1.5,
     'k_MaxAccelerationRadPerSecSquared': 1.5,
     'k_kSVolts': 0.3,  # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
@@ -106,7 +106,8 @@ k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':0, '
 #k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,'kMaxOutput': 0.35, 'kMinOutput': -0.35, 'SM_MaxVel':100, 'SM_MaxAccel':100}
 
 # The least "folded" the upper crank can be while still allowing the lower crank to retract as much as it likes
-k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-70)
+k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65
+                                                                       )
 
 
 # ------------------- SHOOTER -------------------
