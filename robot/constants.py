@@ -10,7 +10,7 @@ import math
 
 # top level items
 
-k_burn_flash = False  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
+k_burn_flash = True  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
 k_debugging_messages = True  # turn these off for competition
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
@@ -45,7 +45,7 @@ k_left_winch_neo_port = 4
 k_intake_neo_port = 5  # CAN ID
 
 # ------------------- Lower CRANK -------------------
-k_lower_crank_gear_ratio = 5 * 5 * 3 * 4  # 553 (maxplanetary) * 4 (pulley) = 300
+k_lower_crank_gear_ratio = 5 * 5 * 3 * 3  # 553 (maxplanetary) * 3 (pulley) = 225
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
@@ -53,7 +53,7 @@ k_crank_arm_dict = {
     'max_angle': 115, 'min_angle': 65,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.589,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
+    'abs_encoder_zero_offset': 0.479,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal

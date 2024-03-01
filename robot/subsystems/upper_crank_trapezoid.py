@@ -145,7 +145,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             can_id = self.motor.getDeviceId()
             configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
                                pid_dict=constants.k_PID_dict_pos_shooter_arm, can_id=can_id,
-                               slot=0, pid_only=False, burn_flash=False)
+                               slot=0, pid_only=False, burn_flash=constants.k_burn_flash)
             # configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
             #                    pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=can_id,
             #                    slot=1, pid_only=False, burn_flash=constants.k_burn_flash)

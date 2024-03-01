@@ -70,7 +70,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
         self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset'])  # this is in radians
+        absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians
         self.spark_encoder.setPosition(math.pi/2 + absolute_offset_from_90)  # convert absolute encoder to a spot near pi/2 radians
 
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
@@ -151,7 +151,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             can_id = self.motor.getDeviceId()
             configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
                                pid_dict=constants.k_PID_dict_pos_shooter_arm, can_id=can_id,
-                               slot=0, pid_only=False, burn_flash=False)
+                               slot=0, pid_only=False, burn_flash=constants.k_burn_flash)
             # configure_sparkmax(sparkmax=self.motor, pid_controller=self.controller,
             #                    pid_dict=constants.k_PID_dict_vel_shooter_arm, can_id=can_id,
             #                    slot=1, pid_only=False, burn_flash=constants.k_burn_flash)

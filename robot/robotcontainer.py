@@ -180,8 +180,8 @@ class RobotContainer:
         #  self.co_trigger_a.onTrue(LedToggle(container=self))
 
         # bind climber
-        # self.co_trigger_x.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
-        # self.co_trigger_y.onTrue(ClimberToggle(container=self, climber=self.climber, force='off'))
+        self.co_trigger_x.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
+        self.co_trigger_y.onFalse(ClimberToggle(container=self, climber=self.climber, force='off'))
 
     def registerCommands(self):
         print("!! Registering commands !!")
