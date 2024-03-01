@@ -43,7 +43,7 @@ from commands.arm_joystick_control import ArmJoystickControl
 from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
-from commands.climber_toggle import ClimberToggle
+from commands.run_climber import RunClimber
 from commands.record_auto import RecordAuto
 import os
 
@@ -74,7 +74,7 @@ class RobotContainer:
             self.shooter_arm = UpperCrankArmTrapezoidal()
             self.indexer = Indexer()
             self.shooter = Shooter()
-            #self.climber = Climber()
+            self.climber = Climber()
 
         self.registerCommands()
 
@@ -113,6 +113,7 @@ class RobotContainer:
         self.trigger_y = self.driver_command_controller.y()
         self.trigger_rb = self.driver_command_controller.rightBumper()
         self.trigger_start = self.driver_command_controller.start()
+        self.trigger_d = self.driver_command_controller.povDown()
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
@@ -137,6 +138,7 @@ class RobotContainer:
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake))
+        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber))
         if wpilib.RobotBase.isReal():
             self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
         else:
@@ -179,10 +181,6 @@ class RobotContainer:
 
         # bind LED
         self.co_trigger_lb.onTrue(LedToggle(container=self))
-
-        # bind climber
-        self.co_trigger_x.onTrue(ClimberToggle(container=self, climber=self.climber, rpm=2500, force='on'))
-        self.co_trigger_y.onFalse(ClimberToggle(container=self, climber=self.climber, force='off'))
 
     def registerCommands(self):
         print("!! Registering commands !!")
