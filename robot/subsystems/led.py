@@ -16,10 +16,10 @@ class Led(commands2.Subsystem):
 
     # temporary indicators (flashing for pickup, strafing, etc)
     class Indicator(enum.Enum):
-        PICKUP_COMPLETE = 'PICKUP_COMPLETE'  # flashing green
+        READY_SHOOT = 'PICKUP_COMPLETE'  # flashing green
         VISION_TARGET_FAILURE = 'VISION_TARGET_FAILURE'  # red
         VISION_TARGET_SUCCESS = 'VISION_TARGET_SUCCESS'  # flashing blue
-        AUTO_STRAFE_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue
+        PICKUP_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue
         RAINBOW = 'RAINBOW'
         RSL = 'RSL'
         NONE = 'NONE'
@@ -82,7 +82,7 @@ class Led(commands2.Subsystem):
 
                 # check if there is an indicator, and override
                 if self.indicator != Led.Indicator.NONE:
-                    if self.indicator == Led.Indicator.PICKUP_COMPLETE:
+                    if self.indicator == Led.Indicator.READY_SHOOT:
                         # flashing green
                         freq = 1  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
@@ -106,7 +106,7 @@ class Led(commands2.Subsystem):
                         else:
                             led.setRGB(0, 0, 255)
 
-                    elif self.indicator == Led.Indicator.AUTO_STRAFE_COMPLETE:
+                    elif self.indicator == Led.Indicator.PICKUP_COMPLETE:
                         # solid orange
                         led.setRGB(255, 40, 0)
 
