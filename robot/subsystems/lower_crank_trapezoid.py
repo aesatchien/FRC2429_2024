@@ -4,6 +4,7 @@
 # the WPILib BSD license file in the root directory of this project.
 #
 import math
+import json
 import wpilib
 import commands2
 import commands2.cmd
@@ -82,12 +83,13 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
         self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
+
         read_offset_from_file = False
         if read_offset_from_file:
-            pass
-            position_to_set_encoder = 1 # placeholder cuz cory needs the dio port changed
+            with open('abs_encoder_data.json', 'r') as abs_encoder_data:
+                position_to_set_encoder = 2 * math.pi * (initial_position - json.load(abs_encoder_data)) / 3
         else:
-            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians
+            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians, the 3 is to account for the gear ratio
             position_to_set_encoder = absolute_offset_from_90 + math.pi/2
         self.spark_encoder.setPosition(position_to_set_encoder)  # convert absolute encoder to a spot near pi/2 radians
 
@@ -211,7 +213,6 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         """
         sets the encoder position to position and sets the goal to position (so we stay where we are).
         """
-        print(f"!! Setting encoder position to {position} !!")
         self.spark_encoder.setPosition(position)
         self.sim_encoder.setPosition(position)
         self.angle = position
@@ -261,7 +262,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         if wpilib.RobotBase.isReal():
             self.limit_switch_state = self.limit_switch.get()
         else:
-            self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
+            self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true_rad)
         return self.limit_switch_state
 
     def get_current(self):
@@ -287,7 +288,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             if wpilib.RobotBase.isReal():
                 self.limit_switch_state = self.limit_switch.get()
             else:
-                self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
+                self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true_rad)
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_limit_switch', self.limit_switch_state)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_error', self.error)

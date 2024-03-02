@@ -88,7 +88,7 @@ class Ui(QtWidgets.QMainWindow):
         self.refresh_time = 50  # milliseconds before refreshing
         self.widget_dict = {}
         self.command_dict = {}
-        self.camera_enabled = False;m
+        self.camera_enabled = False
         self.thread = None
         self.camera_dict = {'ArmCam': 'http://10.24.29.12:1181/stream.mjpg',  # CJH messing with these to get photonvision 20240301
                             'GroundCam': 'http://10.24.29.12:1182/stream.mjpg',

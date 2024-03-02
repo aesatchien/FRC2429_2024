@@ -1,3 +1,4 @@
+import math
 import json
 import commands2
 import wpilib
@@ -29,10 +30,7 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
 
     def execute(self) -> None:
         if not wpilib.RobotBase.isReal():
-            print(f"!! We're in a simulation, setting lower crank encoder position to {self.lower_crank.get_angle()} + 0.01 !!")
             self.lower_crank.set_encoder_position(self.lower_crank.get_angle() - 0.01)
-        else:
-            print("!! We're out of the matrix, not setting no encoders !!")
         pass
 
     def isFinished(self) -> bool:
@@ -44,7 +42,7 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
 
     def end(self, interrupted: bool) -> None:
         if self.limit_reached:
-            self.lower_crank.set_encoder_position(constants.k_lower_crank_position_when_limit_switch_true)
+            self.lower_crank.set_encoder_position(constants.k_lower_crank_position_when_limit_switch_true_rad)
             path_to_abs_encoder_data = constants.k_path_to_abs_encoder_data if wpilib.RobotBase.isReal() else 'abs_encoder_data.json'
             with open(path_to_abs_encoder_data, 'w') as encoder_data_file:
                 # When we're at the limit switch, WE know the angle is 60 deg, and the abs encoder thinks we're at say 90 degrees.
@@ -54,7 +52,7 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
 
                 # If we boot up at 100 deg, the abs encoder thinks we're at 130 degrees, and we subtract the difference
                 # once more, get 100 degrees and celebrate.
-                abs_encoder_offset = sum([self.lower_crank.get_abs_encoder_reading() for i in range(5)]) / 5 - constants.k_lower_crank_position_when_limit_switch_true
+                abs_encoder_offset = sum([self.lower_crank.get_abs_encoder_reading() for i in range(5)]) / 5 - constants.k_lower_crank_position_when_limit_switch_true_rad / math.tau
                 json.dump(abs_encoder_offset, encoder_data_file)
             # we change abs encoder offset
 
