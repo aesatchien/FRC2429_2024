@@ -1,0 +1,1 @@
+# when we find switch, measure abs encoder position and write to file.

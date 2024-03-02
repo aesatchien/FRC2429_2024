@@ -66,12 +66,30 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         initial_position = sum([self.abs_encoder.getPosition() for i in range(5)]) / 5
         # crank abs encoder is 4:1 to the arm
 
+        # todo: for the first time copy-paste the current abs encoder offset and add a flag that decides whether
+
+        # When we're at the limit switch, WE know the angle is 60 deg, and the abs encoder thinks we're at say 90 degrees.
+        # We save the difference, 30 degrees.  Ie, we save (where abs thinks we are) - (where we know we are)
+        # Next time we boot up, we're at 60 degrees, the abs encoder still thinks we're at 90 degrees
+        # and we subtract the difference and we're happy
+
+        # If we boot up at 100 deg, the abs encoder thinks we're at 130 degrees, and we subtract the difference
+        # once more and we're happy.
+
+        # todo: pull 09:02
+
         self.spark_encoder = self.motor.getEncoder()
         pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
         self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
         self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
-        absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians
-        self.spark_encoder.setPosition(math.pi/2 + absolute_offset_from_90)  # convert absolute encoder to a spot near pi/2 radians
+        read_offset_from_file = False
+        if read_offset_from_file:
+            pass
+            position_to_set_encoder = 1 # placeholder cuz cory needs the dio port changed
+        else:
+            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians
+            position_to_set_encoder = absolute_offset_from_90 + math.pi/2
+        self.spark_encoder.setPosition(position_to_set_encoder)  # convert absolute encoder to a spot near pi/2 radians
 
         boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
         boot_message += f'set to {self.spark_encoder.getPosition() * 180 / math.pi:.1f} degrees'
@@ -191,8 +209,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def set_encoder_position(self, position: float):
         """
-        Disables the arm, sets the encoder position to position,
-        sets the goal to position (so we stay where we are), then enable the arm again
+        sets the encoder position to position and sets the goal to position (so we stay where we are).
         """
         print(f"!! Setting encoder position to {position} !!")
         self.spark_encoder.setPosition(position)
@@ -252,6 +269,12 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             return self.motor.getOutputCurrent()
         else:
             return 6 if self.angle < math.radians(constants.k_crank_arm_dict['min_angle']) else 4
+
+    def get_abs_encoder_reading(self):
+        """
+        Returns the absolute encoder's position with the conversion factors applied.
+        """
+        return self.abs_encoder.getPosition()
 
     def periodic(self) -> None:
         # What if we didn't call the below for a few cycles after we set the position?

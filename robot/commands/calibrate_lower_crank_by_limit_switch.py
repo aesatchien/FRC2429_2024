@@ -1,3 +1,4 @@
+import json
 import commands2
 import wpilib
 from wpilib import SmartDashboard
@@ -44,6 +45,19 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
     def end(self, interrupted: bool) -> None:
         if self.limit_reached:
             self.lower_crank.set_encoder_position(constants.k_lower_crank_position_when_limit_switch_true)
+            path_to_abs_encoder_data = constants.k_path_to_abs_encoder_data if wpilib.RobotBase.isReal() else 'abs_encoder_data.json'
+            with open(path_to_abs_encoder_data, 'w') as encoder_data_file:
+                # When we're at the limit switch, WE know the angle is 60 deg, and the abs encoder thinks we're at say 90 degrees.
+                # We save the difference, 30 degrees.  Ie, we save (where abs thinks we are) - (where we know we are).
+                # Next time we boot up, we're at 60 degrees, the abs encoder still thinks we're at 90 degrees
+                # and we subtract the difference, get 30 degrees, and everything's great.
+
+                # If we boot up at 100 deg, the abs encoder thinks we're at 130 degrees, and we subtract the difference
+                # once more, get 100 degrees and celebrate.
+                abs_encoder_offset = sum([self.lower_crank.get_abs_encoder_reading() for i in range(5)]) / 5 - constants.k_lower_crank_position_when_limit_switch_true
+                json.dump(abs_encoder_offset, encoder_data_file)
+            # we change abs encoder offset
+
         self.lower_crank.enable_arm()
         print()
         end_time = self.container.get_enabled_time()
