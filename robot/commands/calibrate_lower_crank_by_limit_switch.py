@@ -29,6 +29,7 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
         self.limit_reached = False
         self.lower_crank.disable_arm()
         self.lower_crank.set_voltage(-2)
+        self.led.set_indicator(Led.Indicator.CALIBRATION_START)
 
     def execute(self) -> None:
         if not wpilib.RobotBase.isReal():
@@ -56,6 +57,9 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
                 # once more, get 100 degrees and celebrate.
                 abs_encoder_offset = sum([self.lower_crank.get_abs_encoder_reading() for i in range(5)]) / 5 - constants.k_lower_crank_position_when_limit_switch_true_rad / math.tau
                 json.dump(abs_encoder_offset, encoder_data_file)
+            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, timeout=2)
+        else:
+            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, timeout=2)
             # we change abs encoder offset
 
         self.lower_crank.enable_arm()
