@@ -56,7 +56,7 @@ class CameraWorker(QObject):
                 #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
                 # self.progress.emit(1)
             except Exception as e:
-                print(f'cv error: {e}')
+                print(f'cv error: {e}m,lmmmmmmmmmmmmmmmmmmmmmmmmm,lm,lm,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,l,ll,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,m,l,l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,,lllll,,llllllll,ll,,,llll,lllll,llllll,,,ll,,,m,mmm,mmmm,l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,lm,,,,,,,,mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm,mmmmmmmmmmmmmmmmmmmm')
                 # should I stop the thread here? or just let the user fix it by restarting manually?
         self.finished.emit()
 
@@ -88,10 +88,10 @@ class Ui(QtWidgets.QMainWindow):
         self.refresh_time = 50  # milliseconds before refreshing
         self.widget_dict = {}
         self.command_dict = {}
-        self.camera_enabled = False
+        self.camera_enabled = False;m
         self.thread = None
-        self.camera_dict = {'ArmCam': 'http://10.24.29.12:1186/stream.mjpg',
-                            'GroundCam': 'http://10.24.29.12:1187/stream.mjpg',
+        self.camera_dict = {'ArmCam': 'http://10.24.29.12:1181/stream.mjpg',  # CJH messing with these to get photonvision 20240301
+                            'GroundCam': 'http://10.24.29.12:1182/stream.mjpg',
                             'Raw Arm': 'http://10.24.29.12:1181/stream.mjpg',
                             'Raw Ground': 'http://10.24.29.12:1182/stream.mjpg'}
 

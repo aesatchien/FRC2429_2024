@@ -4,6 +4,7 @@ from wpilib import SmartDashboard
 from subsystems.intake import Intake
 from subsystems.indexer import Indexer
 from subsystems.shooter import Shooter
+from subsystems.led import Led
 
 class IntakeToggle(commands2.CommandBase):
 
@@ -27,9 +28,11 @@ class IntakeToggle(commands2.CommandBase):
         self.timer.restart()
 
         if self.force == 'on':
+            self.container.led.set_indicator(Led.Indicator.INTAKE_ON)
             self.intake.set_intake_motor(self.rpm)
             self.indexer.set_indexer(1)
         elif self.force == 'off':
+            self.container.led.set_indicator(Led.Indicator.NONE)
             self.intake.stop_intake()
             self.indexer.stop_indexer()
             self.shooter.stop_shooter()

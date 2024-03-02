@@ -17,11 +17,11 @@ class Led(commands2.Subsystem):
     # temporary indicators (flashing for pickup, strafing, etc)
     class Indicator(enum.Enum):
         READY_SHOOT = 'READY_SHOOT'  # flashing white
-        VISION_TARGET_FAILURE = 'VISION_TARGET_FAILURE'  # red
-        VISION_TARGET_SUCCESS = 'VISION_TARGET_SUCCESS'  # flashing blue
+        AMP = 'AMP'  # red
+        INTAKE = 'INTAKE'  # flashing blue
         PICKUP_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue
         RAINBOW = 'RAINBOW'
-        RSL = 'RSL'
+        INTAKE_ON = 'INTAKE_ON'
         NONE = 'NONE'
 
     def __init__(self):
@@ -92,19 +92,19 @@ class Led(commands2.Subsystem):
                         else:
                             led.setRGB(255, 255, 255)
 
-                    elif self.indicator == Led.Indicator.VISION_TARGET_FAILURE:
+                    elif self.indicator == Led.Indicator.AMP:
                         # solid red
                         led.setRGB(255, 0, 0)
 
-                    elif self.indicator == Led.Indicator.VISION_TARGET_SUCCESS:
-                        # flashing blue
-                        freq = 1  # 10 /s > 2x /s
-                        cycle = math.floor(self.animation_counter / freq)
-
-                        if cycle % 2 == 0:
-                            led.setRGB(0, 0, 0)
-                        else:
-                            led.setRGB(0, 0, 255)
+                    elif self.indicator == Led.Indicator.INTAKE:
+                        # solid blue
+                        # freq = 1  # 10 /s > 2x /s
+                        # cycle = math.floor(self.animation_counter / freq)
+                        #
+                        # if cycle % 2 == 0:
+                        #     led.setRGB(0, 0, 0)
+                        # else:
+                        led.setRGB(0, 0, 255)
 
                     elif self.indicator == Led.Indicator.PICKUP_COMPLETE:
                         # solid orange
@@ -118,15 +118,15 @@ class Led(commands2.Subsystem):
 
                         led.setHSV(math.floor(hue), 255, 255)
 
-                    elif self.indicator == Led.Indicator.RSL: # Haochen emote
-                        # flashing orange
-                        freq = 2  # 10 /s > 2x /s
-                        cycle = math.floor(self.animation_counter / freq)
+                    elif self.indicator == Led.Indicator.INTAKE_ON: # Haochen emote
+                        # solid orange
+                        # freq = 2  # 10 /s > 2x /s
+                        # cycle = math.floor(self.animation_counter / freq)
 
-                        if cycle % 2 == 0:
-                            led.setRGB(0, 0, 0)
-                        else:
-                            led.setRGB(255, 40, 0)
+                        # if cycle % 2 == 0:
+                        #     led.setRGB(0, 0, 0)
+                        # else:
+                        led.setRGB(255, 40, 0)
 
                 else:
                     if self.mode == Led.Mode.RING:
