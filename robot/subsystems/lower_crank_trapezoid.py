@@ -87,6 +87,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.controller.setPositionPIDWrappingMaxInput(math.pi)
         self.controller.setPositionPIDWrappingMinInput(-math.pi)
 
+        self.limit_switch = wpilib.DigitalInput(constants.k_lower_crank_limit_switch_channel)
+
         # use the encoder for positioning in the sim
         self.sim_encoder = self.spark_encoder
 
@@ -97,10 +99,13 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.set_goal(self.goal)  # do we want to do this?
         self.at_goal = True
         self.error = 0
+        self.limit_switch_state = self.limit_switch.get()
         self.enable()  # enable if using, disable if testing angles
+        self.enabled = True
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
+        # print("SETPOINT POSITION: " + str(math.degrees(setpoint.position)))
         feedforward = self.feedforward.calculate(setpoint.position, setpoint.velocity)
 
         # Add the feedforward to the PID output to get the motor output
@@ -119,9 +124,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def enable_arm(self):  # built-in function of the subsystem - turns on continuous motion profiling
         self.enable()
+        self.enabled = True
 
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
         self.disable()
+        self.enabled = False
 
     def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
@@ -187,10 +194,18 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         Disables the arm, sets the encoder position to position,
         sets the goal to position (so we stay where we are), then enable the arm again
         """
-        self.disable_arm()
+        print(f"!! Setting encoder position to {position} !!")
         self.spark_encoder.setPosition(position)
+        self.sim_encoder.setPosition(position)
+        self.angle = position
         self.set_goal(position)
-        self.enable_arm()
+
+    def set_voltage(self, volts):
+        """
+        Sets the voltage of the motor.  Only works if the motor is disabled.
+        """
+        if not self.enabled:
+            self.controller.setReference(value=volts, ctrl=rev.CANSparkMax.ControlType.kVoltage)
 
     def get_angle(self):  # getter for the relevant angles
         # will always read in radians a value near 90 degrees plus or minus 45 - otherwise we are out of design
@@ -225,18 +240,33 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # update it before returning it
         return self.at_goal
 
-    def get_error(self):
-        self.error = self.angle - self.goal  # maybe we want to call this an error
-        return self.error
+    def get_limit_switch_state(self) -> bool:
+        if wpilib.RobotBase.isReal():
+            self.limit_switch_state = self.limit_switch.get()
+        else:
+            self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
+        return self.limit_switch_state
+
+    def get_current(self):
+        if wpilib.RobotBase.isReal():
+            return self.motor.getOutputCurrent()
+        else:
+            return 6 if self.angle < math.radians(constants.k_crank_arm_dict['min_angle']) else 4
 
     def periodic(self) -> None:
+        # What if we didn't call the below for a few cycles after we set the position?
         super().periodic()  # this does the automatic motion profiling in the background
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
             self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # maybe we want to call this an error
             self.error = self.angle - self.goal
+            if wpilib.RobotBase.isReal():
+                self.limit_switch_state = self.limit_switch.get()
+            else:
+                self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
+            wpilib.SmartDashboard.putBoolean(f'{self.getName()}_limit_switch', self.limit_switch_state)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_error', self.error)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_spark_pos', self.spark_encoder.getPosition())
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)

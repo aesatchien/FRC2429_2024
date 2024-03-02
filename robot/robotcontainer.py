@@ -1,5 +1,5 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
-
+import math
 import time, enum
 import wpilib
 import commands2
@@ -47,8 +47,9 @@ from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
 from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
-# from commands.gaslight_crank_encoders import GaslightCrankEncoders
-import os
+from commands.gaslight_crank_encoders import GaslightCrankEncoders
+from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
+# import os
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -135,6 +136,7 @@ class RobotContainer:
         self.co_trigger_d = self.co_pilot_command_controller.povDown()
         self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
         self.co_trigger_r_trigger = self.co_pilot_command_controller.rightTrigger(0.2)
+        self.co_trigger_start = self.co_pilot_command_controller.start()
 
     def configure_swerve_bindings(self):
         #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
@@ -145,7 +147,10 @@ class RobotContainer:
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
-        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
+        self.trigger_a.onTrue(commands2.ConditionalCommand(
+                                onTrue=IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'),
+                                onFalse=IntakeToggle(container=self,intake=self.intake, rpm=1000, force='off'),
+                                condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
@@ -183,6 +188,8 @@ class RobotContainer:
             self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-15, direction=direction))
             self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=direction))
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
+
+        self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm))
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
@@ -253,7 +260,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
-        # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
+        wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
