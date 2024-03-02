@@ -111,8 +111,7 @@ k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':0, '
 #k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF': kFF_top_crank, 'kArbFF':0,'kMaxOutput': 0.35, 'kMinOutput': -0.35, 'SM_MaxVel':100, 'SM_MaxAccel':100}
 
 # The least "folded" the upper crank can be while still allowing the lower crank to retract as much as it likes
-k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65
-                                                                       )
+k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65)
 
 
 # ------------------- SHOOTER -------------------

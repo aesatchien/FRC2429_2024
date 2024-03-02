@@ -29,33 +29,30 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         command = None
         if self.desired_position == 'shoot':
             self.container.led.set_indicator(Led.Indicator.READY_SHOOT)
-            if self.lower_crank.get_angle() < math.radians(80):
-                crank_wait_time = 1.5
+            if self.lower_crank.get_angle() < constants.k_min_lower_crank_angle_where_deploying_upper_crank_safe_rad:
+                wait_for_lower = True
             else:
-                crank_wait_time = 0
-            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True)
-                        .andThen(WaitCommand(crank_wait_time))
+                wait_for_lower = False
+            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=wait_for_lower)
                         .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
         elif self.desired_position == 'intake':
             self.container.led.set_indicator(Led.Indicator.VISION_TARGET_SUCCESS)
-            if self.upper_crank.get_angle() > math.radians(-50):
-                shooter_wait_time = 1.5
+            if self.upper_crank.get_angle() > constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad:
+                wait_for_upper = True
             else:
-                shooter_wait_time = 0
-            command = (ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['intake']['upper'], absolute=True)
-                        .andThen(WaitCommand(shooter_wait_time)
-                        .andThen(ArmMove(self.container, self.lower_crank, degrees=constants.k_crank_presets['intake']['lower'], absolute=True))))
+                wait_for_upper = False
+
+            command = (ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['intake']['upper'], absolute=True, wait_to_finish=wait_for_upper)
+                       .andThen(ArmMove(self.container, self.lower_crank, degrees=constants.k_crank_presets['intake']['lower'], absolute=True)))
 
         elif self.desired_position == 'amp':
             self.container.led.set_mode(Led.Mode.CUBE)
             if self.lower_crank.get_angle() < math.radians(80):
-                crank_wait_time = 1.5
+                wait_for_lower = True
             else:
-                print()
-                crank_wait_time = 0
-            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True)
-                       .andThen(WaitCommand(crank_wait_time))
+                wait_for_lower = False
+            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=wait_for_lower)
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['amp']['upper'], absolute=True)))
 
         commands2.CommandScheduler.getInstance().schedule(command)
