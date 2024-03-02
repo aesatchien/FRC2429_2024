@@ -38,7 +38,7 @@ class LedToggle(commands2.Command):
 
     def execute(self) -> None:
         self.counter += 1
-        active_mode = self.modes[self.counter % len(self.modes)]
+        active_mode = self.indicators[self.counter % len(self.indicators)]
         # active_mode = self.modes[self.counter % len(self.modes)]
         self.container.game_piece_mode = active_mode
 

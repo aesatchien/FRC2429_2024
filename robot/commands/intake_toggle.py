@@ -37,6 +37,10 @@ class IntakeToggle(commands2.CommandBase):
             self.indexer.stop_indexer()
             self.shooter.stop_shooter()
         else:
+            if self.intake.intake_enabled:
+                self.container.led.set_indicator(Led.Indicator.NONE)
+            else:
+                self.container.led.set_indicator(Led.Indicator.INTAKE_ON)
             self.intake.toggle_intake(self.rpm)
             self.indexer.toggle_indexer(power=1)
             self.shooter.toggle_shooter()
