@@ -1,17 +1,18 @@
 import commands2
 from wpilib import SmartDashboard
 from subsystems.swerve import Swerve
+from wpimath.geometry import Pose2d
 from wpimath.filter import Debouncer
 
 
 class GyroReset(commands2.Command):
-    def __init__(self, container, swerve: Swerve) -> None:
+    def __init__(self, container, swerve: Swerve, angle=None) -> None:
         super().__init__()
         self.setName('GyroReset')
         self.container = container
         self.swerve = swerve
         self.counter = 0
-
+        self.angle = angle
         self.addRequirements(self.swerve)  # commandsv2 version of requirements
 
     def runsWhenDisabled(self):  # ok to run when disabled - override the base method
@@ -26,7 +27,10 @@ class GyroReset(commands2.Command):
 
         # All this command does for now is reset the gyro, although we may need to add more
         # self.swerve.gyro.reset()
-        self.swerve.reset_gyro()  # also update the keep_angle
+        if self.angle is None:
+            self.swerve.reset_gyro()  # also update the keep_angle
+        else:
+            self.swerve.reset_gyro(self.angle)
 
     def execute(self) -> None:
         pass
