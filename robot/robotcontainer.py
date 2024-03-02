@@ -158,9 +158,10 @@ class RobotContainer:
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
         if wpilib.RobotBase.isReal():
-            self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
-        else:
-            self.trigger_start.onTrue(RecordAuto(self, 'input_log.json'))
+            pass
+        #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
+        # else:
+        #     self.trigger_start.onTrue(RecordAuto(self, 'input_log.json'))
 
     def bind_copilot_buttons(self):
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
@@ -192,7 +193,7 @@ class RobotContainer:
             self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=direction))
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
 
-        self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm))
+        self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
