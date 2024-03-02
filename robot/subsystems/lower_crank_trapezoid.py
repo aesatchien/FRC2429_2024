@@ -189,6 +189,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         """
         self.disable_arm()
         self.spark_encoder.setPosition(position)
+        self.angle = position
         self.set_goal(position)
         self.enable_arm()
 
