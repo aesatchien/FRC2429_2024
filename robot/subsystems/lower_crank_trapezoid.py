@@ -96,6 +96,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.goal = self.get_angle()
         self.set_goal(self.goal)  # do we want to do this?
         self.at_goal = True
+        self.error = 0
         self.enable()  # enable if using, disable if testing angles
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
@@ -224,13 +225,19 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # update it before returning it
         return self.at_goal
 
+    def get_error(self):
+        self.error = self.angle - self.goal  # maybe we want to call this an error
+        return self.error
+
     def periodic(self) -> None:
         super().periodic()  # this does the automatic motion profiling in the background
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
             self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # maybe we want to call this an error
+            self.error = self.angle - self.goal
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
+            wpilib.SmartDashboard.putNumber(f'{self.getName()}_error', self.error)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_spark_pos', self.spark_encoder.getPosition())
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rads', self.angle)
