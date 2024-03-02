@@ -19,11 +19,11 @@ class LedToggle(commands2.Command):
         ]
         self.indicators = [
             self.container.led.indicator.READY_SHOOT,
-            self.container.led.indicator.VISION_TARGET_FAILURE,
-            self.container.led.indicator.VISION_TARGET_SUCCESS,
+            self.container.led.indicator.AMP,
+            self.container.led.indicator.INTAKE,
             self.container.led.indicator.PICKUP_COMPLETE,
             self.container.led.indicator.RAINBOW,
-            self.container.led.indicator.RSL,
+            self.container.led.indicator.INTAKE_ON,
             self.container.led.indicator.NONE,
         ]
 

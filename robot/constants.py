@@ -58,7 +58,7 @@ k_crank_arm_dict = {
     'max_angle': 115, 'min_angle': 60,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.657,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
+    'abs_encoder_zero_offset': 0.450,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal

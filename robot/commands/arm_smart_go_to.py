@@ -36,14 +36,14 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
         elif self.desired_position == 'intake':
-            self.container.led.set_indicator(Led.Indicator.VISION_TARGET_SUCCESS)
+            self.container.led.set_indicator(Led.Indicator.INTAKE)
 
             command = (ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['intake']['upper'], absolute=True, wait_to_finish=False)
                        .andThen(commands2.WaitUntilCommand(lambda: self.upper_crank.get_angle() < constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad)).withTimeout(2)
                        .andThen(ArmMove(self.container, self.lower_crank, degrees=constants.k_crank_presets['intake']['lower'], absolute=True)))
 
         elif self.desired_position == 'amp':
-            self.container.led.set_mode(Led.Mode.CUBE)
+            self.container.led.set_indicator(Led.Indicator.AMP)
 
             command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=False)
                        .andThen(commands2.WaitUntilCommand(lambda: self.lower_crank.get_angle() > constants.k_min_lower_crank_angle_where_deploying_upper_crank_safe_rad)).withTimeout(2)
