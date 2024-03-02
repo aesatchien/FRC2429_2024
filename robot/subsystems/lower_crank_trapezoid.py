@@ -244,7 +244,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         if wpilib.RobotBase.isReal():
             self.limit_switch_state = self.limit_switch.get()
         else:
-            self.limit_switch_state = self.angle > math.radians(constants.k_crank_presets['intake']['lower'])
+            self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
         return self.limit_switch_state
 
     def get_current(self):
@@ -264,7 +264,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             if wpilib.RobotBase.isReal():
                 self.limit_switch_state = self.limit_switch.get()
             else:
-                self.limit_switch_state = self.angle > math.radians(constants.k_crank_presets['intake']['lower'])
+                self.limit_switch_state = self.angle > math.radians(constants.k_lower_crank_position_when_limit_switch_true)
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_limit_switch', self.limit_switch_state)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_error', self.error)
