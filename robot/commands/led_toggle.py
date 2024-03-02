@@ -14,7 +14,7 @@ class LedToggle(commands2.Command):
         self.force = force
         self.addRequirements(container.led)
         self.modes = [
-            'cone',
+            'ring',
             'cube',
         ]
         self.indicators = [
