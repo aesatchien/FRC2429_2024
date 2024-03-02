@@ -69,6 +69,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # todo: for the first time copy-paste the current abs encoder offset and add a flag that decides whether
 
+        self.spark_encoder = self.motor.getEncoder()
+        pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
+        self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
+        self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
+
         # When we're at the limit switch, WE know the angle is 60 deg, and the abs encoder thinks we're at say 90 degrees.
         # We save the difference, 30 degrees.  Ie, we save (where abs thinks we are) - (where we know we are)
         # Next time we boot up, we're at 60 degrees, the abs encoder still thinks we're at 90 degrees
@@ -76,13 +81,6 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # If we boot up at 100 deg, the abs encoder thinks we're at 130 degrees, and we subtract the difference
         # once more and we're happy.
-
-        # todo: pull 09:02
-
-        self.spark_encoder = self.motor.getEncoder()
-        pos_factor = self.config['encoder_position_conversion_factor']  # 2pi / 300
-        self.spark_encoder.setPositionConversionFactor(pos_factor)  # radians,
-        self.spark_encoder.setVelocityConversionFactor(pos_factor / 60)  # radians per second
 
         read_offset_from_file = False
         if read_offset_from_file:

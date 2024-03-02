@@ -6,15 +6,17 @@ from wpilib import SmartDashboard
 
 import constants
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
+from subsystems.led import Led
 
 
 class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, lower_crank: LowerCrankArmTrapezoidal) -> None:
+    def __init__(self, container, lower_crank: LowerCrankArmTrapezoidal, led: Led) -> None:
         super().__init__()
         self.setName('Sample Name')  # change this to something appropriate for this command
         self.container = container
         self.lower_crank = lower_crank
+        self.led = led
         self.addRequirements(self.lower_crank)
 
     def initialize(self) -> None:
@@ -26,7 +28,7 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
 
         self.limit_reached = False
         self.lower_crank.disable_arm()
-        self.lower_crank.set_voltage(-1)
+        self.lower_crank.set_voltage(-2)
 
     def execute(self) -> None:
         if not wpilib.RobotBase.isReal():
