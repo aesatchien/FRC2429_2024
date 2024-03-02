@@ -79,8 +79,8 @@ k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':
 # The most "folded" the lower crank can be while still allowing the upper crank to do whatever it likes
 k_min_lower_crank_angle_where_deploying_upper_crank_safe_rad = math.radians(80)
 k_lower_crank_limit_switch_channel = 9
-k_lower_crank_position_when_limit_switch_true_rad = math.radians(50)
-k_lower_crank_current_where_jammed = 5
+k_lower_crank_position_when_limit_switch_true_rad = math.radians(53)
+k_lower_crank_current_where_jammed = 20
 
 # ------------------- Top CRANK -------------------
 k_top_crank_gear_ratio = 5 * 5 * 4 * 1  # 554 (maxplanetary) * 1 (pulley) = 100

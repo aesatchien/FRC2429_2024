@@ -28,7 +28,7 @@ from autonomous.auto_shoot_cycle import AutoShootCycle
 from autonomous.playback_auto import PlaybackAuto
 from autonomous.aim_and_shoot import AimAndShoot
 from autonomous.shoot_and_drive_out import ShootAndDriveOut
-from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
+# from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
