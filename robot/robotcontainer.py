@@ -145,7 +145,7 @@ class RobotContainer:
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
-        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake))
+        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
@@ -162,7 +162,7 @@ class RobotContainer:
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='intake'))
-        self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
+        # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
 
         self.co_trigger_lb.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
