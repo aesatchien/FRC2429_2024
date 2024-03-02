@@ -294,8 +294,11 @@ class Swerve (Subsystem):
     def get_pitch(self):  # need to calibrate the navx, apparently
         return self.gyro.getPitch() - 4.75
 
-    def reset_gyro(self):  # use this from now on whenever we reset the gyro
+    def reset_gyro(self, adjustment=None):  # use this from now on whenever we reset the gyro
         self.gyro.reset()
+        if adjustment is not None:
+            # ADD adjustment.
+            self.gyro.setAngleAdjustment(adjustment)
         self.keep_angle = 0
 
     def periodic(self) -> None:

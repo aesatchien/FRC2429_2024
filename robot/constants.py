@@ -42,7 +42,7 @@ k_right_servo_port = 1
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
 k_crank_presets = {
-    'intake': {'upper':-85, 'lower': 63},
+    'intake': {'upper':-87, 'lower': 63},
     'shoot': {'upper': -50, 'lower':90},
     'amp': {'upper': 50, 'lower': 100},
 }
@@ -92,7 +92,7 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -86,  # was -79 before Q7
+    'max_angle': 109, 'min_angle': -88,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.317,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,

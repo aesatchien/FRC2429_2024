@@ -15,6 +15,7 @@ from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveByJoystickSwerve(commands2.Command):
     def __init__(self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
+        # TODO: sanjith would like his joystick to directly adjust heading so if he puts his stick at 45 deg the robot will go to 45 deg
         super().__init__()
         self.setName('drive_by_joystick_swerve')
         self.container = container
