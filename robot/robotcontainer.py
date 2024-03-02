@@ -48,6 +48,7 @@ from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
 from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
 from commands.gaslight_crank_encoders import GaslightCrankEncoders
+from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 # import os
 
 # autonomous
@@ -135,6 +136,7 @@ class RobotContainer:
         self.co_trigger_d = self.co_pilot_command_controller.povDown()
         self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
         self.co_trigger_r_trigger = self.co_pilot_command_controller.rightTrigger(0.2)
+        self.co_trigger_start = self.co_pilot_command_controller.start()
 
     def configure_swerve_bindings(self):
         #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
@@ -186,6 +188,8 @@ class RobotContainer:
             self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-15, direction=direction))
             self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=direction))
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
+
+        self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm))
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
