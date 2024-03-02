@@ -36,7 +36,7 @@ class DriveByJoystickSwerve(commands2.Command):
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
-        self.slowmode_history = [1 for i in range(50)]
+        self.slowmode_history = [1 for i in range(20)]
 
     def execute(self) -> None:
         # setting a slow mode here - not sure if it's the best way

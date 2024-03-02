@@ -31,6 +31,7 @@ class IntakeToggle(commands2.CommandBase):
             self.container.led.set_indicator(Led.Indicator.INTAKE_ON)
             self.intake.set_intake_motor(self.rpm)
             self.indexer.set_indexer(1)
+            self.shooter.stop_shooter()
         elif self.force == 'off':
             self.container.led.set_indicator(Led.Indicator.NONE)
             self.intake.stop_intake()
