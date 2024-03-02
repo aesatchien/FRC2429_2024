@@ -36,15 +36,22 @@ class DriveByJoystickSwerve(commands2.Command):
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
+        self.slowmode_history = [1 for i in range(20)]
+
     def execute(self) -> None:
         # setting a slow mode here - not sure if it's the best way
         if self.debouncer.calculate(self.slow_mode_trigger.getAsBoolean()):  # holding down button 5 - LB
-            # self.slow_mode_trigger.debounce(0.1).getAsBoolean():  # this should work instead but doesn't
+            self.slowmode_history.append(constants.k_slowmode_multiplier)
             slowmode_multiplier = constants.k_slowmode_multiplier
         elif self.controller.getLeftTriggerAxis() > 0.5:  # squeezing the left axisbutton
-            slowmode_multiplier = 1.5 * constants.k_slowmode_multiplier
+            self.slowmode_history.append(constants.k_slowmode_multiplier * 1.5)
+            slowmode_multiplier = constants.k_slowmode_multiplier * 1.5
         else:
-            slowmode_multiplier = 1.0
+            self.slowmode_history.append(1)
+            slowmode_multiplier = sum(self.slowmode_history) / len(self.slowmode_history)
+
+        self.slowmode_history.pop(0)
+
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
             self.field_oriented = False

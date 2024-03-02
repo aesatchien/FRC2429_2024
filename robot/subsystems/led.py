@@ -22,6 +22,9 @@ class Led(commands2.Subsystem):
         PICKUP_COMPLETE = 'AUTO_STRAFE_COMPLETE'  # solid blue
         RAINBOW = 'RAINBOW'
         INTAKE_ON = 'INTAKE_ON'
+        CALIBRATION_START = 'CALIBRATION_START'
+        CALIBRATION_SUCCESS = 'CALIBRATION_SUCCESS'
+        CALIBRATION_FAIL = 'CALIBRATION_FAIL'
         NONE = 'NONE'
 
     def __init__(self):
@@ -127,6 +130,30 @@ class Led(commands2.Subsystem):
                         #     led.setRGB(0, 0, 0)
                         # else:
                         led.setRGB(255, 40, 0)
+
+                    elif self.indicator == Led.Indicator.CALIBRATION_START:
+                        led.setRGB(0, 255, 0)
+
+                    elif self.indicator == Led.Indicator.CALIBRATION_SUCCESS:
+                        # flashing green
+                        freq = 1  # 10 /s > 2x /s
+                        cycle = math.floor(self.animation_counter / freq)
+
+                        if cycle % 2 == 0:
+                            led.setRGB(0, 0, 0)
+                        else:
+                            led.setRGB(0, 255, 0)
+
+                    elif self.indicator == Led.Indicator.CALIBRATION_FAIL:
+                        # flashing red
+                        freq = 1  # 10 /s > 2x /s
+                        cycle = math.floor(self.animation_counter / freq)
+
+                        if cycle % 2 == 0:
+                            led.setRGB(0, 0, 0)
+                        else:
+                            led.setRGB(255, 0, 0)
+
 
                 else:
                     if self.mode == Led.Mode.RING:
