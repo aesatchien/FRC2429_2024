@@ -7,7 +7,7 @@ from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
-    def __init__(self, container, shooter, rpm=3000, amp_rpm=2000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
+    def __init__(self, container, shooter, rpm=3500, amp_rpm=2000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
         super().__init__()
         self.setName('ShooterToggle')
         self.container = container
