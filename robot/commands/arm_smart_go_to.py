@@ -7,19 +7,27 @@ import constants
 
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
+from subsystems.intake import Intake
+from subsystems.indexer import Indexer
+from subsystems.shooter import Shooter
 from subsystems.led import Led
 
 from commands.arm_move import ArmMove
+from commands.intake_toggle import IntakeToggle
 from commands2 import WaitCommand
 
 class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, desired_position: str, wait_for_finish=False) -> None:
+    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, intake: Intake,
+                 shooter: Shooter, indexer: Indexer, desired_position: str, wait_for_finish=False) -> None:
         super().__init__()
         self.setName('Arm smart go to')  # change this to something appropriate for this command
         self.container = container
         self.upper_crank = upper_crank
         self.lower_crank = lower_crank
+        self.intake = intake
+        self.shooter = shooter
+        self.indexer = indexer
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         if not self.desired_position in ['intake', 'shoot', 'amp']: raise ValueError
@@ -31,7 +39,8 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             self.container.led.set_indicator(Led.Indicator.READY_SHOOT)
 
             # add with timeouts on these wait until commands
-            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True)
+            command = (IntakeToggle(container=self, intake=self.intake, force='off')
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
         elif self.desired_position == 'intake':
@@ -43,7 +52,8 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         elif self.desired_position == 'amp':
             self.container.led.set_indicator(Led.Indicator.AMP)
 
-            command = (ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=True)
+            command = (IntakeToggle(container=self, intake=self.intake, force='off')
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['amp']['upper'], absolute=True)))
 
         commands2.CommandScheduler.getInstance().schedule(command)
