@@ -29,7 +29,7 @@ class RunIntakeReverseByTrigger(commands2.CommandBase):  # change the name for y
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:
-        desired_voltage_intake = -self.controller.getLeftTriggerAxis() * 4
+        desired_voltage_intake = -self.controller.getLeftTriggerAxis() * 12
         desired_indexer = -self.controller.getLeftTriggerAxis() / 3 # set_indexer seems to take a value from 0 to 1 instead of volts
         desired_voltage_shooter = -self.controller.getLeftTriggerAxis() * 2
         # 4v intake 4v indexer 2 shooter
