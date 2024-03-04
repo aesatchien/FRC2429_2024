@@ -18,8 +18,8 @@ from commands2 import WaitCommand
 
 class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, intake: Intake,
-                 shooter: Shooter, indexer: Indexer, desired_position: str, wait_for_finish=False) -> None:
+    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, intake: Intake=None,
+                 shooter: Shooter=None, indexer: Indexer=None, desired_position: str=None, wait_for_finish=False) -> None:
         super().__init__()
         self.setName('Arm smart go to')  # change this to something appropriate for this command
         self.container = container
