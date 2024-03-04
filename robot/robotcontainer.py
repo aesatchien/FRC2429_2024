@@ -1,14 +1,12 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
 import math
-import time, enum
+import time
 import wpilib
 import commands2
-import wpimath.geometry
 from commands2.button import CommandXboxController
 
 # pathplanner
-from pathplannerlib.path import PathPlannerPath
-from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.auto import NamedCommands
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
@@ -33,25 +31,17 @@ from autonomous.shoot_and_drive_out import ShootAndDriveOut
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
-from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
-from autonomous.drive_swerve_point_trajectory import DriveSwervePointTrajectory
-from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.intake_toggle import IntakeToggle
-from commands.arm_coast import CrankArmCoast
 from commands.arm_move import ArmMove
 from commands.arm_smart_go_to import ArmSmartGoTo
-from commands.arm_joystick_control import ArmJoystickControl
-from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
-from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
-from commands.gaslight_crank_encoders import GaslightCrankEncoders
+from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
-# import os
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -175,7 +165,7 @@ class RobotContainer:
         self.co_trigger_lb.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
-        self.co_trigger_l_trigger.whileTrue(RunIntakeReverseByTrigger(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
+        self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
 
         #bind crank arm
@@ -266,7 +256,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
-        wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
+        # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
