@@ -15,7 +15,7 @@ from commands.gyro_reset import GyroReset
 from commands.arm_cycle import ArmCycle
 from commands.arm_move import ArmMove
 from commands.arm_coast import CrankArmCoast
-from commands.intake_toggle import IntakeToggle
+from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 
 class PlaybackAuto(commands2.CommandBase):
@@ -97,7 +97,7 @@ class PlaybackAuto(commands2.CommandBase):
 
         if current_inputs['driver_controller']['button']['RB'] and not previous_inputs['driver_controller']['button'][
             'RB']:
-            commands2.CommandScheduler.getInstance().schedule(IntakeToggle(container=self.container, intake=self.container.intake))
+            commands2.CommandScheduler.getInstance().schedule(AcquireNoteToggle(container=self.container, intake=self.container.intake))
 
         # if current_inputs['driver_controller']['button']['Back'] and not previous_inputs['driver_controller']['button'][
         #     'Back']:

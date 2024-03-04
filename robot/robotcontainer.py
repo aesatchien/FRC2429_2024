@@ -32,7 +32,7 @@ from autonomous.shoot_and_drive_out import ShootAndDriveOut
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
 from commands.led_toggle import LedToggle
-from commands.intake_toggle import IntakeToggle
+from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.arm_move import ArmMove
 from commands.arm_smart_go_to import ArmSmartGoTo
 from commands.indexer_toggle import IndexerToggle
@@ -140,8 +140,8 @@ class RobotContainer:
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
         self.trigger_a.onTrue(commands2.ConditionalCommand(
-                                onTrue=IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'),
-                                onFalse=IntakeToggle(container=self,intake=self.intake, rpm=1000, force='off'),
+                                onTrue=AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='on'),
+                                onFalse=AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='off'),
                                 condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
@@ -162,7 +162,7 @@ class RobotContainer:
         self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
 
-        self.co_trigger_lb.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
+        self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='off'))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
@@ -205,7 +205,7 @@ class RobotContainer:
         print("!! Registering commands !!")
         NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
         NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
-        NamedCommands.registerCommand('Toggle intake', IntakeToggle(self, self.intake))
+        NamedCommands.registerCommand('Toggle intake', AcquireNoteToggle(self, self.intake))
 
     def get_arm_mode(self):
         return self.arm_mode
@@ -249,8 +249,8 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('UpperCrankMoveDown', ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=None))
         wpilib.SmartDashboard.putData('LowerCrankMoveUp', ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=None))
         wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
-        wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
-        wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
+        wpilib.SmartDashboard.putData('IntakeOn', AcquireNoteToggle(container=self, intake=self.intake, force='on'))
+        wpilib.SmartDashboard.putData('IntakeOff', AcquireNoteToggle(container=self, intake=self.intake, force='off'))
         wpilib.SmartDashboard.putData('IndexerOn', IndexerToggle(container=self, indexer=self.indexer, force='on'))
         wpilib.SmartDashboard.putData('IndexerOff', IndexerToggle(container=self, indexer=self.indexer, force='off'))
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))

@@ -10,15 +10,14 @@ class Intake(Subsystem):
         super().__init__()
         self.setName('Intake')
         self.counter = 0
-        self.current_limit = 35
 
         motor_type = rev.CANSparkMax.MotorType.kBrushless
-        self.intake_motor_left = rev.CANSparkMax(constants.k_intake_neo_port, motor_type)
-        self.intake_motor_left.setInverted(True)
+        self.motor = rev.CANSparkMax(constants.k_intake_neo_port, motor_type)
+        self.motor.setInverted(True)
 
-        self.encoder = self.intake_motor_left.getEncoder()
+        self.encoder = self.motor.getEncoder()
 
-        self.intake_controller = self.intake_motor_left.getPIDController()
+        self.intake_controller = self.motor.getPIDController()
         self.intake_controller.setP(0)
 
         self.intake_enabled = False
@@ -52,24 +51,6 @@ class Intake(Subsystem):
             self.stop_intake()
         else:
             self.set_intake_motor(rpm)
-
-    def set_pids(self, burn_flash=True):
-        self.error_dict = {}
-        i = 0
-        self.error_dict.update({'kP0_' + str(i): self.intake_controller.setP(self.PID_dict_vel['kP'], 0)})
-        self.error_dict.update({'kI0_' + str(i): self.intake_controller.setI(self.PID_dict_vel['kI'], 0)})
-        self.error_dict.update(
-            {'kIz0_' + str(i): self.intake_controller.setIZone(self.PID_dict_vel['kIz'], 0)})
-        self.error_dict.update({'kD0_' + str(i): self.intake_controller.setD(self.PID_dict_vel['kD'], 0)})
-        self.error_dict.update(
-            {'kD0_' + str(i): self.intake_controller.setFF(self.PID_dict_vel['kFF'], 0)})
-        self.error_dict.update({'Accel0_' + str(i): self.intake_controller.setSmartMotionMaxVelocity(
-            self.smartmotion_maxvel, 0)})  #
-        self.error_dict.update(
-            {'Vel0_' + str(i): self.intake_controller.setSmartMotionMaxAccel(self.smartmotion_maxacc, 0)})
-
-        if burn_flash:
-            self.intake_motor_left.burnFlash()
 
     def periodic(self) -> None:
         self.counter += 1
