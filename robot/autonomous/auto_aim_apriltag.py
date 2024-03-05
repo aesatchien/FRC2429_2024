@@ -48,7 +48,7 @@ class AutoAimAprilTag(commands2.Command):  # change the name for your command
         if measurements_recorded and self.goodAprilTag is not None:
             # AutoTurn(self.goodAprilTag.getYaw()).schedule()
             alpha = self.goodAprilTag.getBestCameraToTarget().X()
-            beta = self.goodAprilTag.getBestCameraToTarget().Y()
+            beta = self.goodAprilTag.getBestCameraToTarget().Z()
 
             #constants; will keep here for now, but should be moved to constants file (if we decide to pursue this route for apriltag honing)
             k_h = 0.0 #vertical distance from the center of the apriltag to the bottom of the speaker's opening.
