@@ -8,7 +8,7 @@ from subsystems.indexer import Indexer
 from subsystems.shooter import Shooter
 
 
-class RunIntakeReverseByTrigger(commands2.CommandBase):  # change the name for your command
+class EjectAll(commands2.CommandBase):  # change the name for your command
     # When testing, make sure that an incoming shooter command will override it and it will let go of the shooter.
 
     def __init__(self, container, intake: Intake, indexer: Indexer, shooter: Shooter, controller: CommandXboxController) -> None:
@@ -30,7 +30,7 @@ class RunIntakeReverseByTrigger(commands2.CommandBase):  # change the name for y
 
     def execute(self) -> None:
         desired_voltage_intake = -self.controller.getLeftTriggerAxis() * 8
-        desired_indexer = -self.controller.getLeftTriggerAxis() / 3 # set_indexer seems to take a value from 0 to 1 instead of volts
+        desired_indexer = -self.controller.getLeftTriggerAxis() / 3  # set_indexer seems to take a value from 0 to 1 instead of volts
         desired_voltage_shooter = -self.controller.getLeftTriggerAxis() * 2
         # 4v intake 4v indexer 2 shooter
         self.intake.set_intake_motor_volts(desired_voltage_intake)

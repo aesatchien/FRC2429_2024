@@ -72,7 +72,7 @@ class Shooter(Subsystem):
         #self.flywheel_left_controller.setReference(self.shooter_voltage, rev.CANSparkFlex.ControlType.kVoltage, 0)
         #self.flywheel_right_controller.setReference(self.shooter_voltage, rev.CANSparkLowLevel.ControlType.kVoltage, 0)
         self.shooter_on = True
-        print(f'setting rpm to {rpm} {self.voltage}')
+        # print(f'setting rpm to {rpm} {self.voltage}')
         SmartDashboard.putBoolean('shooter_on', self.shooter_on)
 
     

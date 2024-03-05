@@ -1,8 +1,7 @@
 import commands2
 from wpilib import SmartDashboard
-from wpimath.controller import PIDController
 from photonlibpy.photonCamera import PhotonCamera
-from commands.auto_turn import AutoTurn
+from autonomous.auto_turn import AutoTurn
 
 from subsystems.swerve import Swerve
 import constants

@@ -38,9 +38,11 @@ class CameraWorker(QObject):
         self.running = True
         while self.running:
             if self.qtgui.qradiobutton_autoswitch.isChecked():  # auto determine which camera to show
+                pass
                 # shooter_on = self.qtgui.widget_dict['qlabel_shooter_indicator']['entry'].getBoolean(False)
-                elevator_low = self.qtgui.widget_dict['qlcd_elevator_height']['entry'].getDouble(100) < 100
-                url = self.qtgui.camera_dict['GroundCam'] if elevator_low else self.qtgui.camera_dict['ArmCam']
+                #elevator_low = self.qtgui.widget_dict['qlcd_elevator_height']['entry'].getDouble(100) < 100
+
+                url = self.qtgui.camera_dict['GroundCam'] if True else self.qtgui.camera_dict['ArmCam']
             else:
                 url = self.qtgui.camera_dict[self.qtgui.qcombobox_cameras.currentText()]  # figure out which url we want
             # stream = urllib.request.urlopen('http://10.24.29.12:1187/stream.mjpg')
@@ -56,7 +58,7 @@ class CameraWorker(QObject):
                 #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
                 # self.progress.emit(1)
             except Exception as e:
-                print(f'cv error: {e}m,lmmmmmmmmmmmmmmmmmmmmmmmmm,lm,lm,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,l,ll,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,m,l,l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,,lllll,,llllllll,ll,,,llll,lllll,llllll,,,ll,,,m,mmm,mmmm,l,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,m,lm,,,,,,,,mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm,mmmmmmmmmmmmmmmmmmmm')
+                print(f'cv error: {e}')
                 # should I stop the thread here? or just let the user fix it by restarting manually?
         self.finished.emit()
 
@@ -91,9 +93,9 @@ class Ui(QtWidgets.QMainWindow):
         self.camera_enabled = False
         self.thread = None
         self.camera_dict = {'ArmCam': 'http://10.24.29.12:1181/stream.mjpg',  # CJH messing with these to get photonvision 20240301
-                            'GroundCam': 'http://10.24.29.12:1182/stream.mjpg',
+                            'GroundCam': 'http://10.24.29.12:1181/stream.mjpg',
                             'Raw Arm': 'http://10.24.29.12:1181/stream.mjpg',
-                            'Raw Ground': 'http://10.24.29.12:1182/stream.mjpg'}
+                            'Raw Ground': 'http://10.24.29.12:1181/stream.mjpg'}
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
@@ -189,7 +191,7 @@ class Ui(QtWidgets.QMainWindow):
         # ToDo: check to see if the thread is running, then start again
 
         # check if server is running
-        if self.check_url(self.camera_dict['ArmCam']) or self.check_url('GroundCam'):
+        if self.check_url(self.camera_dict['ArmCam']) or self.check_url(self.camera_dict['GroundCam']):
             if self.thread is None:  # first time through we need to make the thread
                 self.thread = QThread()  # create a QThread object
                 self.worker = CameraWorker(qtgui=self)  # create a CameraWorker object, pass it the main gui

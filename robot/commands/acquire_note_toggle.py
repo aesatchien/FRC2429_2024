@@ -6,14 +6,14 @@ from subsystems.indexer import Indexer
 from subsystems.shooter import Shooter
 from subsystems.led import Led
 
-class IntakeToggle(commands2.CommandBase):
+class AcquireNoteToggle(commands2.CommandBase):
 
     def __init__(self, container, intake:Intake, rpm=1000, force=None, timeout=None) -> None:
         super().__init__()
         self.setName('IntakeToggle')
         self.intake = intake
-        self.indexer : Indexer = container.indexer
-        self.shooter : Shooter = container.shooter
+        self.indexer: Indexer = container.indexer
+        self.shooter: Shooter = container.shooter
         self.container = container
         self.rpm = rpm
         self.force = force
@@ -31,12 +31,10 @@ class IntakeToggle(commands2.CommandBase):
             self.container.led.set_indicator(Led.Indicator.INTAKE_ON)
             self.intake.set_intake_motor(self.rpm)
             self.indexer.set_indexer(1)
-            self.shooter.stop_shooter()
         elif self.force == 'off':
             self.container.led.set_indicator(Led.Indicator.KILL)
             self.intake.stop_intake()
             self.indexer.stop_indexer()
-            self.shooter.stop_shooter()
         else:
             if self.intake.intake_enabled:
                 self.container.led.set_indicator(Led.Indicator.NONE)
@@ -44,7 +42,9 @@ class IntakeToggle(commands2.CommandBase):
                 self.container.led.set_indicator(Led.Indicator.INTAKE_ON)
             self.intake.toggle_intake(self.rpm)
             self.indexer.toggle_indexer(power=1)
-            self.shooter.toggle_shooter()
+
+        # always stop the shooter no matter what you do here
+        self.shooter.stop_shooter()
 
 
     def execute(self) -> None:

@@ -1,14 +1,12 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
 import math
-import time, enum
+import time
 import wpilib
 import commands2
-import wpimath.geometry
 from commands2.button import CommandXboxController
 
 # pathplanner
-from pathplannerlib.path import PathPlannerPath
-from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.auto import NamedCommands
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
@@ -34,25 +32,17 @@ from autonomous.auto_climb_arm import AutoClimbArm
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
 from commands.gyro_reset import GyroReset
-from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
-from autonomous.drive_swerve_point_trajectory import DriveSwervePointTrajectory
-from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
-from commands.intake_toggle import IntakeToggle
-from commands.arm_coast import CrankArmCoast
+from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.arm_move import ArmMove
 from commands.arm_smart_go_to import ArmSmartGoTo
-from commands.arm_joystick_control import ArmJoystickControl
-from commands.indexer_by_joystick import IndexerByJoystick
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.record_auto import RecordAuto
-from commands.run_intake_reverse_by_trigger import RunIntakeReverseByTrigger
-from commands.gaslight_crank_encoders import GaslightCrankEncoders
+from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
-# import os
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -155,7 +145,11 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, rpm=1000, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
+        self.trigger_a.onTrue(AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='on'))
+        # self.trigger_a.onTrue(commands2.ConditionalCommand(
+        #                         onTrue=AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='on'),
+        #                         onFalse=AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='off'),
+        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
@@ -170,16 +164,16 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='amp'))
-        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='intake'))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
         self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
 
-        self.co_trigger_lb.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='off'))
+        self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, intake=self.intake, rpm=1000, force='off'))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
-        self.co_trigger_l_trigger.whileTrue(RunIntakeReverseByTrigger(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
+        self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
 
         self.co_trigger_back.onTrue(AutoClimbArm(self))
@@ -221,7 +215,7 @@ class RobotContainer:
         print("!! Registering commands !!")
         NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
         NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
-        NamedCommands.registerCommand('Toggle intake', IntakeToggle(self, self.intake))
+        NamedCommands.registerCommand('Toggle intake', AcquireNoteToggle(self, self.intake))
 
     def get_arm_mode(self):
         return self.arm_mode
@@ -265,14 +259,14 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('UpperCrankMoveDown', ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=None))
         wpilib.SmartDashboard.putData('LowerCrankMoveUp', ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=None))
         wpilib.SmartDashboard.putData('LowerCrankMoveDown', ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=None))
-        wpilib.SmartDashboard.putData('IntakeOn', IntakeToggle(container=self, intake=self.intake, force='on'))
-        wpilib.SmartDashboard.putData('IntakeOff', IntakeToggle(container=self, intake=self.intake, force='off'))
+        wpilib.SmartDashboard.putData('IntakeOn', AcquireNoteToggle(container=self, intake=self.intake, force='on'))
+        wpilib.SmartDashboard.putData('IntakeOff', AcquireNoteToggle(container=self, intake=self.intake, force='off'))
         wpilib.SmartDashboard.putData('IndexerOn', IndexerToggle(container=self, indexer=self.indexer, force='on'))
         wpilib.SmartDashboard.putData('IndexerOff', IndexerToggle(container=self, indexer=self.indexer, force='off'))
         wpilib.SmartDashboard.putData('ShooterOn', ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
-        wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
+        # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
