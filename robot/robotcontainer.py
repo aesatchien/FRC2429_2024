@@ -28,6 +28,7 @@ from autonomous.auto_shoot_cycle import AutoShootCycle
 from autonomous.playback_auto import PlaybackAuto
 from autonomous.aim_and_shoot import AimAndShoot
 from autonomous.shoot_and_drive_out import ShootAndDriveOut
+from autonomous.auto_climb_arm import AutoClimbArm
 # from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
 
 # commands
@@ -139,6 +140,7 @@ class RobotContainer:
         self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
         self.co_trigger_r_trigger = self.co_pilot_command_controller.rightTrigger(0.2)
         self.co_trigger_start = self.co_pilot_command_controller.start()
+        self.co_trigger_back = self.co_pilot_command_controller.back()
 
     def configure_swerve_bindings(self):
         #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
@@ -149,10 +151,11 @@ class RobotContainer:
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
-        self.trigger_a.onTrue(commands2.ConditionalCommand(
-                                onTrue=IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'),
-                                onFalse=IntakeToggle(container=self,intake=self.intake, rpm=1000, force='off'),
-                                condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        # self.trigger_a.onTrue(commands2.ConditionalCommand(
+        #                         onTrue=IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'),
+        #                         onFalse=IntakeToggle(container=self,intake=self.intake, rpm=1000, force='off'),
+        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        self.trigger_a.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
@@ -178,6 +181,8 @@ class RobotContainer:
 
         self.co_trigger_l_trigger.whileTrue(RunIntakeReverseByTrigger(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
+
+        self.co_trigger_back.onTrue(AutoClimbArm(self))
 
         #bind crank arm
         setpoints = False

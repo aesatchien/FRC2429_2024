@@ -33,7 +33,7 @@ class IntakeToggle(commands2.CommandBase):
             self.indexer.set_indexer(1)
             self.shooter.stop_shooter()
         elif self.force == 'off':
-            self.container.led.set_indicator(Led.Indicator.NONE)
+            self.container.led.set_indicator(Led.Indicator.KILL)
             self.intake.stop_intake()
             self.indexer.stop_indexer()
             self.shooter.stop_shooter()

@@ -42,7 +42,7 @@ k_right_servo_port = 1
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
 k_crank_presets = {
-    'intake': {'upper':-87, 'lower': 63},
+    'intake': {'upper':-87, 'lower': 65},  # was 63
     'shoot': {'upper': -50, 'lower':90},
     'amp': {'upper': 50, 'lower': 100},
 }
@@ -59,7 +59,7 @@ k_crank_arm_dict = {
     'max_angle': 115, 'min_angle': 60,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.895,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    'abs_encoder_zero_offset': 0.448,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal

@@ -25,6 +25,8 @@ class Led(commands2.Subsystem):
         CALIBRATION_START = 'CALIBRATION_START'
         CALIBRATION_SUCCESS = 'CALIBRATION_SUCCESS'
         CALIBRATION_FAIL = 'CALIBRATION_FAIL'
+        KILL = 'KILL'
+        SHOOTER_ON = 'SHOOTER_ON'
         NONE = 'NONE'
 
     def __init__(self):
@@ -130,6 +132,12 @@ class Led(commands2.Subsystem):
                         #     led.setRGB(0, 0, 0)
                         # else:
                         led.setRGB(255, 40, 0)
+
+                    elif self.indicator == Led.Indicator.SHOOTER_ON:
+                        led.setRGB(255, 255, 0)
+
+                    elif self.indicator == Led.Indicator.KILL:
+                        led.setRGB(200, 0, 255)
 
                     elif self.indicator == Led.Indicator.CALIBRATION_START:
                         led.setRGB(0, 255, 0)
