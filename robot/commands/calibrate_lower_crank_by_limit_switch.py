@@ -38,8 +38,8 @@ class CalibrateLowerCrankByLimitSwitch(commands2.CommandBase):  # change the nam
 
     def isFinished(self) -> bool:
         # DIO is true by default so we have to negate it
-        self.limit_reached = ((not self.lower_crank.get_limit_switch_state()) or
-                              self.lower_crank.get_current() > constants.k_lower_crank_current_where_jammed)
+        self.limit_reached = ((not self.lower_crank.get_limit_switch_state())) # or
+                            #  self.lower_crank.get_current() > constants.k_lower_crank_current_where_jammed)
         print(f"limit reached? {self.limit_reached} because have we reached the limit? {not self.lower_crank.get_limit_switch_state()} or the current is {self.lower_crank.get_current()}")
         return self.limit_reached
 
