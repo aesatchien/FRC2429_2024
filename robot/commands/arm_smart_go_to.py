@@ -18,16 +18,15 @@ from commands2 import WaitCommand
 
 class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, upper_crank: UpperCrankArmTrapezoidal, lower_crank: LowerCrankArmTrapezoidal, intake: Intake=None,
-                 shooter: Shooter=None, indexer: Indexer=None, desired_position: str=None, wait_for_finish=False) -> None:
+    def __init__(self, container, desired_position: str, wait_for_finish=False) -> None:
         super().__init__()
         self.setName('Arm smart go to')  # change this to something appropriate for this command
         self.container = container
-        self.upper_crank = upper_crank
-        self.lower_crank = lower_crank
-        self.intake = intake
-        self.shooter = shooter
-        self.indexer = indexer
+        self.upper_crank: UpperCrankArmTrapezoidal = self.container.shooter_arm
+        self.lower_crank: LowerCrankArmTrapezoidal = self.container.crank_arm
+        self.intake: Intake = self.container.intake
+        self.shooter: Shooter = self.container.shooter
+        self.indexer: Indexer = self.container.indexer
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         if not self.desired_position in ['intake', 'shoot', 'amp']: raise ValueError
@@ -39,7 +38,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             self.container.led.set_indicator(Led.Indicator.READY_SHOOT)
 
             # add with timeouts on these wait until commands
-            command = (AcquireNoteToggle(container=self, intake=self.intake, force='off')
+            command = (AcquireNoteToggle(container=self.container, intake=self.intake, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
@@ -52,7 +51,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         elif self.desired_position == 'amp':
             self.container.led.set_indicator(Led.Indicator.AMP)
 
-            command = (AcquireNoteToggle(container=self, intake=self.intake, force='off')
+            command = (AcquireNoteToggle(container=self.container, intake=self.intake, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['amp']['upper'], absolute=True)))
 

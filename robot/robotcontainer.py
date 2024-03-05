@@ -156,9 +156,9 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='amp'))
-        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, upper_crank=self.shooter_arm, lower_crank=self.crank_arm, desired_position='intake'))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
         self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=1000, force='on'))
 
