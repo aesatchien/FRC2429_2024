@@ -26,11 +26,11 @@ class AutoTurn(commands2.Command):  # change the name for your command
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
         self.rot_PID_controller.reset()
-        self.rot_PID_controller.setSetpoint(0) #sets robot's "0" to angle 0 (because we're turning relative to where the camera is looking at)
+        self.rot_PID_controller.setSetpoint(self.target_angle)
         # self.rot_PID_controller.setTolerance(0.5) #sets the tolerance to 0.5 degrees
 
     def execute(self) -> None:
-        desired_rotation = self.rot_PID_controller.calculate(self.target_angle, 0) # todo: shouldn't this be the measurement, not the setpoint?
+        desired_rotation = self.rot_PID_controller.calculate(self.drive.get_angle()) # todo: .get_angle() can return an angle beyond 360 degrees (continuous)--need to check if the PID controller accounts for that.
         self.drive.drive(0, 0, desired_rotation, fieldRelative=False, rate_limited=True)
         
     def isFinished(self) -> bool:
