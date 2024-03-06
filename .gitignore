@@ -46,3 +46,6 @@ var/
 *.egg
 robot/input_log.txt
 robot/input_log.json
+other_robots/swerve_base/autonomous/swerve_trajectory_planner.py
+other_robots/swerve_base/autonomous/ramsete_controller_trajectory_planner.py
+other_robots/swerve_base/autonomous/Autonomous-Pathing-Notes.md
