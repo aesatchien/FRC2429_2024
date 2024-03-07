@@ -47,7 +47,7 @@ class Indexer(Subsystem):
         return self.indexer_encoder.getVelocity()
 
     def toggle_indexer(self, power):
-        if self.indexer_voltage > power * 12:
+        if self.indexer_on:
             self.stop_indexer()
         else:
             self.set_indexer(power)
