@@ -29,11 +29,12 @@ class EjectAll(commands2.CommandBase):  # change the name for your command
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:
-        desired_voltage_intake = -self.controller.getLeftTriggerAxis() * 8
-        desired_indexer = -self.controller.getLeftTriggerAxis() / 3  # set_indexer seems to take a value from 0 to 1 instead of volts
-        desired_voltage_shooter = -self.controller.getLeftTriggerAxis() * 2
-        # 4v intake 4v indexer 2 shooter
-        self.intake.set_intake_motor_volts(desired_voltage_intake)
+        trigger_val = self.controller.getLeftTriggerAxis()
+        desired_intake = - trigger_val / 2  # set_intake takes a value from 0 to 1
+        desired_indexer = - trigger_val / 3  # set_indexer takes a value from 0 to 1 instead of volts
+        desired_voltage_shooter = - trigger_val * 2
+        # 6v intake 4v indexer 2V shooter
+        self.intake.set_intake(desired_intake)
         self.indexer.set_indexer(desired_indexer)
         self.shooter.set_flywheel(rpm=0, volts=desired_voltage_shooter, use_voltage=True)
 

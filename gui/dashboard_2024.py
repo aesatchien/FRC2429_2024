@@ -42,7 +42,7 @@ class CameraWorker(QObject):
                 # shooter_on = self.qtgui.widget_dict['qlabel_shooter_indicator']['entry'].getBoolean(False)
                 #elevator_low = self.qtgui.widget_dict['qlcd_elevator_height']['entry'].getDouble(100) < 100
 
-                url = self.qtgui.camera_dict['GroundCam'] if True else self.qtgui.camera_dict['ArmCam']
+                url = self.qtgui.camera_dict['Basecam'] if True else self.qtgui.camera_dict['Shootercam']
             else:
                 url = self.qtgui.camera_dict[self.qtgui.qcombobox_cameras.currentText()]  # figure out which url we want
             # stream = urllib.request.urlopen('http://10.24.29.12:1187/stream.mjpg')
@@ -92,10 +92,10 @@ class Ui(QtWidgets.QMainWindow):
         self.command_dict = {}
         self.camera_enabled = False
         self.thread = None
-        self.camera_dict = {'ArmCam': 'http://10.24.29.12:1181/stream.mjpg',  # CJH messing with these to get photonvision 20240301
-                            'GroundCam': 'http://10.24.29.12:1181/stream.mjpg',
-                            'Raw Arm': 'http://10.24.29.12:1181/stream.mjpg',
-                            'Raw Ground': 'http://10.24.29.12:1181/stream.mjpg'}
+        self.camera_dict = {'Basecam': 'http://10.24.29.12:1186/stream.mjpg',  # CJH messing with these to get photonvision 20240301
+                            'Shootercam': 'http://10.24.29.12:1187/stream.mjpg',
+                            'Raw Base': 'http://10.24.29.12:1181/stream.mjpg',
+                            'Raw Shooter': 'http://10.24.29.12:1182/stream.mjpg'}
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
@@ -191,7 +191,7 @@ class Ui(QtWidgets.QMainWindow):
         # ToDo: check to see if the thread is running, then start again
 
         # check if server is running
-        if self.check_url(self.camera_dict['ArmCam']) or self.check_url(self.camera_dict['GroundCam']):
+        if self.check_url(self.camera_dict['Basecam']) or self.check_url(self.camera_dict['Shootercam']):
             if self.thread is None:  # first time through we need to make the thread
                 self.thread = QThread()  # create a QThread object
                 self.worker = CameraWorker(qtgui=self)  # create a CameraWorker object, pass it the main gui
@@ -321,27 +321,31 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_indexer_on_indicator': {'widget': self.qlabel_indexer_on_indicator, 'nt': '/SmartDashboard/IndexerOn/running', 'command': '/SmartDashboard/IndexerOn/running'},
         'qlabel_shooter_off_indicator': {'widget': self.qlabel_shooter_off_indicator, 'nt': '/SmartDashboard/ShooterOff/running', 'command': '/SmartDashboard/ShooterOff/running'},
         'qlabel_shooter_on_indicator': {'widget': self.qlabel_shooter_on_indicator, 'nt': '/SmartDashboard/ShooterOn/running', 'command': '/SmartDashboard/ShooterOn/running'},
-        'qlabel_shooter_indicator': {'widget': self.qlabel_shooter_indicator,'nt': '/SmartDashboard/shooter_ready', 'command': None},
+        'qlabel_shooter_indicator': {'widget': self.qlabel_shooter_indicator,'nt': '/SmartDashboard/shooter_on', 'command': None, 'flash': True},
+        'qlabel_shoot_cycle_indicator': {'widget': self.qlabel_shoot_cycle_indicator, 'nt': '/SmartDashboard/AutoShootCycle/running', 'command': '/SmartDashboard/AutoShootCycle/running'},
+        'qlabel_indexer_indicator': {'widget': self.qlabel_indexer_indicator, 'nt': '/SmartDashboard/indexer_enabled', 'command': None, 'flash': True},
+        'qlabel_intake_indicator': {'widget': self.qlabel_intake_indicator, 'nt': '/SmartDashboard/intake_enabled', 'command': None, 'flash': True},
+
+
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
         'qlcd_upper_crank_angle': {'widget':self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
         'qlcd_lower_crank_angle': {'widget': self.qlcd_lower_crank_angle, 'nt': '/SmartDashboard/crank_arm_degrees', 'command': None},
-        'qlcd_indexer_speed': {'widget':self.qlcd_indexer_speed, 'nt':'/SmartDashboard/indexer_output', 'command': None},
+        'qlcd_indexer_speed': {'widget':self.qlcd_indexer_speed, 'nt': '/SmartDashboard/indexer_output', 'command': None},
+        'qlcd_intake_speed': {'widget':self.qlcd_intake_speed, 'nt': '/SmartDashboard/intake_output', 'command': None},
         'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
             # LEFTOVER TO SORT FROM 2023
         'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
         'qlabel_green_target_indicator': {'widget': self.qlabel_green_target_indicator, 'nt': '/SmartDashboard/green_targets_exist', 'command': '/SmartDashboard/AutoStrafeGreen/running'},
         'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': '/SmartDashboard/AutoStrafeTag/running'},
         'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
-        'qlabel_shoot_cycle_indicator': {'widget': self.qlabel_shoot_cycle_indicator, 'nt': '/SmartDashboard/AutoShootCycle/running', 'command': '/SmartDashboard/AutoShootCycle/running'},
         'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
                                         'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
                                         'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
-        'qlabel_manipulator_closed_indicator': {'widget': self.qlabel_manipulator_closed_indicator, 'nt': '/SmartDashboard/manipulator_closed', 'command': '/SmartDashboard/ManipulatorToggle/running'},
         # 'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
-        'hub_targets': {'widget': None, 'nt': '/ArmCam//green/targets', 'command': None},
-        'hub_rotation': {'widget': None, 'nt': '/ArmCam//green/rotation', 'command': None},
-        'hub_distance': {'widget': None, 'nt': '/ArmCam//green/distance', 'command': None},
+        'hub_targets': {'widget': None, 'nt': '/Basecam//orange/targets', 'command': None},
+        'hub_rotation': {'widget': None, 'nt': '/Basecam//orange/rotation', 'command': None},
+        'hub_distance': {'widget': None, 'nt': '/Basecam//orange/distance', 'command': None},
 
         }
 
@@ -368,6 +372,9 @@ class Ui(QtWidgets.QMainWindow):
         style_off = "border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb(200, 200, 200);"
         style_high = "border: 7px; border-radius: 15px; background-color:rgb(80, 235, 0); color:rgb(0, 0, 0);"
         style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
+        style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"
+        style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
+        style_flash = style_flash_on if self.counter % 10 < 5 else style_flash_off
 
         # update the connection indicator
         style = style_on if self.ntinst.isConnected() else style_off
@@ -381,6 +388,8 @@ class Ui(QtWidgets.QMainWindow):
                     # allow for a custom style in the widget
                     if 'style_on' in d.keys():
                         style = d['style_on'] if d['entry'].getBoolean(False) else d['style_off']
+                    elif 'flash' in d.keys():
+                        style = style_flash if (d['flash'] and d['entry'].getBoolean(False)) else style_off
                     else:
                         style = style_on if d['entry'].getBoolean(False) else style_off
                     d['widget'].setStyleSheet(style)
@@ -464,6 +473,7 @@ class Ui(QtWidgets.QMainWindow):
             msg = f'Current Updates/s : {100/(current_time - self.previous_time):.1f}'
             self.statusBar().showMessage(msg)
             self.previous_time = current_time
+
 
     def qt_tree_widget_nt_clicked(self, item):
         # send the clicked item from the tree to the filter for the nt selction combo box

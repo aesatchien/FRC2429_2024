@@ -1,20 +1,20 @@
 import commands2
 import wpilib
 from wpilib import SmartDashboard
-from subsystems.indexer import Indexer
+from subsystems.intake import Intake
 
-class IndexerToggle(commands2.CommandBase):
+class IntakeToggle(commands2.CommandBase):
 
-    def __init__(self, container, indexer:Indexer, power=1, force=None, timeout=None) -> None:
+    def __init__(self, container, intake:Intake, power=0.5, force=None, timeout=None) -> None:
         super().__init__()
         self.setName('IndexerToggle')
-        self.indexer = indexer
+        self.intake = intake
         self.container = container
         self.force = force
         self.power = power
         self.timeout = timeout
         self.timer = wpilib.Timer()
-        self.addRequirements(indexer)
+        self.addRequirements(intake)
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
@@ -23,11 +23,11 @@ class IndexerToggle(commands2.CommandBase):
         self.timer.restart()
 
         if self.force == 'on':
-            self.indexer.set_indexer(self.power)
+            self.intake.set_intake(self.power)
         elif self.force == 'off':
-            self.indexer.stop_indexer()
+            self.intake.stop_intake()
         else:
-            self.indexer.toggle_indexer(self.power)
+            self.intake.toggle_intake(self.power)
 
     def execute(self) -> None:
         pass

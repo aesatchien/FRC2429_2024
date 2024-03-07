@@ -83,6 +83,7 @@ class Shooter(Subsystem):
         #self.flywheel_right_controller.setReference(0, rev.CANSparkLowLevel.ControlType.kVoltage)
         self.shooter_on = False
         self.voltage = 0  # CJH for 2024 testing
+        self.rpm = 0
         SmartDashboard.putBoolean('shooter_on', self.shooter_on)
 
     def get_velocity(self):
@@ -107,7 +108,8 @@ class Shooter(Subsystem):
             # not too often
             SmartDashboard.putNumber('shooter_rpm', self.flywheel_left_encoder.getVelocity())
             SmartDashboard.putNumber('shooter_rpm_target', self.rpm)
-            self.at_velocity = math.fabs(self.get_velocity() - self.rpm) < 300  # need to figure out this tolerance
+            velocity = self.get_velocity()
+            self.at_velocity = math.fabs(velocity - self.rpm) < 300 and self.rpm > 100  # need to figure out this tolerance
             SmartDashboard.putBoolean('shooter_ready', self.at_velocity)
             SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
             SmartDashboard.putNumber('shooter_output', self.flywheel_lower_left.getAppliedOutput())
