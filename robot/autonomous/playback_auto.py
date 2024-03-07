@@ -97,7 +97,7 @@ class PlaybackAuto(commands2.CommandBase):
 
         if current_inputs['driver_controller']['button']['RB'] and not previous_inputs['driver_controller']['button'][
             'RB']:
-            commands2.CommandScheduler.getInstance().schedule(AcquireNoteToggle(container=self.container, intake=self.container.intake))
+            commands2.CommandScheduler.getInstance().schedule(AcquireNoteToggle(container=self.container))
 
         # if current_inputs['driver_controller']['button']['Back'] and not previous_inputs['driver_controller']['button'][
         #     'Back']:

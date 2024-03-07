@@ -1,35 +1,45 @@
 # give ourselves three possible actions for the shooter - stop, set, and cycle through a list (for testing)
 
 import commands2
+import wpilib
 from wpilib import SmartDashboard
 
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
-    def __init__(self, container, shooter, rpm=3500, amp_rpm=2000, auto_amp_slowdown=False, upper_crank: UpperCrankArmTrapezoidal=None, wait_for_spinup=False, force=None) -> None:
+    def __init__(self, container, shooter, rpm=3500, amp_rpm=2000, auto_amp_slowdown=False, wait_for_spinup=False, force=None, timeout=3) -> None:
         super().__init__()
         self.setName('ShooterToggle')
         self.container = container
         self.shooter = shooter
-        self.upper_crank = upper_crank
+        self.shooter_arm: UpperCrankArmTrapezoidal = self.container.shooter_arm
         self.rpm = rpm
         self.amp_rpm = amp_rpm
         self.auto_amp_slowdown = auto_amp_slowdown
         self.wait_for_spinup = wait_for_spinup
         self.force = force
         self.addRequirements(shooter)  # commandsv2 version of requirements
+        self.timer = wpilib.Timer()
+        self.timeout = timeout
 
     def initialize(self) -> None:
-        # give ourselves three possible actions
-        self.rpm = self.rpm if (not self.auto_amp_slowdown) or (self.upper_crank.get_angle() < 0) else self.amp_rpm
 
+        self.timer.restart()
+
+        # determine rpm based on shooter arm position
+        if self.auto_amp_slowdown and self.shooter_arm.get_angle() > 0:
+            rpm = self.amp_rpm
+        else:
+            rpm = self.rpm
+
+        # give ourselves three possible actions
         if self.force == 'on':
-            self.shooter.set_flywheel(self.rpm)
+            self.shooter.set_flywheel(rpm)
         elif self.force == 'off':
             self.shooter.stop_shooter()
         else:
-            self.shooter.toggle_shooter(self.rpm)
+            self.shooter.toggle_shooter(rpm)
         
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
@@ -41,7 +51,7 @@ class ShooterToggle(commands2.Command):
 
     def isFinished(self) -> bool:
         if self.wait_for_spinup:
-            return self.shooter.get_at_velocity()
+            return self.shooter.get_at_velocity() or self.timer.get() > self.timeout  # do not let this get stuck!
         if not self.wait_for_spinup:
             return True
 
