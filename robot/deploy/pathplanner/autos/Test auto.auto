@@ -16,6 +16,12 @@
           "data": {
             "pathName": "Command Testing"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto shoot cycle"
+          }
         }
       ]
     }

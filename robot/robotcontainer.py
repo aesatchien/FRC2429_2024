@@ -2,11 +2,12 @@
 import math
 import time
 import wpilib
-import commands2
+from commands2 import WaitCommand
 from commands2.button import CommandXboxController
+import os
 
 # pathplanner
-from pathplannerlib.auto import NamedCommands
+from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
@@ -215,6 +216,8 @@ class RobotContainer:
     def registerCommands(self):
         print("!! Registering commands !!")
         NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
+        NamedCommands.registerCommand('Move smartly to shoot position', ArmSmartGoTo(self, 'shoot', wait_for_finish=False))
+        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self))
         NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
         NamedCommands.registerCommand('Toggle intake', AcquireNoteToggle(self))
 
@@ -238,9 +241,14 @@ class RobotContainer:
         else:
             self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
 
+        # LHACK testing 3/7/24
+        self.autonomous_chooser.addOption('path with and then',
+                                          AutoBuilder.followPath(PathPlannerPath.fromPathFile(os.path.abspath('deploy/pathplanner/paths/Command Testing')))
+                                          .andThen(AutoShootCycle(self)))
+
         # Automatically get Pathplanner paths
 
-        try_path_planner = False
+        try_path_planner = True
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
 

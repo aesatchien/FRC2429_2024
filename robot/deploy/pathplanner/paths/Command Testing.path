@@ -49,27 +49,15 @@
   "eventMarkers": [
     {
       "name": "shoot preload",
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
         "data": {
           "commands": [
             {
-              "type": "wait",
-              "data": {
-                "waitTime": 1.0
-              }
-            },
-            {
               "type": "named",
               "data": {
-                "name": "Move shooter to next setpoint"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Toggle intake"
+                "name": "Move smartly to shoot position"
               }
             }
           ]
