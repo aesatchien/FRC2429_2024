@@ -1,10 +1,12 @@
 # give ourselves three possible actions for the shooter - stop, set, and cycle through a list (for testing)
+import math
 
 import commands2
 import wpilib
 from wpilib import SmartDashboard
 
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
+from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 
 class ShooterToggle(commands2.Command):
 
@@ -14,6 +16,7 @@ class ShooterToggle(commands2.Command):
         self.container = container
         self.shooter = shooter
         self.shooter_arm: UpperCrankArmTrapezoidal = self.container.shooter_arm
+        self.crank_arm: LowerCrankArmTrapezoidal = self.container.crank_arm
         self.rpm = rpm
         self.amp_rpm = amp_rpm
         self.auto_amp_slowdown = auto_amp_slowdown
@@ -28,7 +31,7 @@ class ShooterToggle(commands2.Command):
         self.timer.restart()
 
         # determine rpm based on shooter arm position
-        if self.auto_amp_slowdown and self.shooter_arm.get_angle() > 0:
+        if self.auto_amp_slowdown and (self.shooter_arm.get_angle() > 0 or self.crank_arm.get_angle() > math.pi / 2 + .05):
             rpm = self.amp_rpm
         else:
             rpm = self.rpm
