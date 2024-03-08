@@ -29,6 +29,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         self.indexer: Indexer = self.container.indexer
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
+        self.start_time = 0   # having some problems with this crashing...
         if not self.desired_position in ['intake', 'shoot', 'amp']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 

@@ -39,7 +39,7 @@ class ArmMove(commands2.Command):
 
     def isFinished(self) -> bool:
         if self.wait_to_finish:
-            print(f"Are we at goal? {self.arm.get_at_goal()}")
+            # print(f"Are we at goal? {self.arm.get_at_goal()}")
             return self.arm.get_at_goal()
         else:
             print("Called as fire-and-forget, returning true")

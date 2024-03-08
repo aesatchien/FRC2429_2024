@@ -240,7 +240,7 @@ border-radius: 7px;
 background-color:rgb(127, 127, 127);</string>
        </property>
        <property name="text">
-        <string>&lt;Cone or Cube&gt;</string>
+        <string>&lt;GAMEPIECE&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -812,77 +812,6 @@ background-color:rgb(0, 20, 250);</string>
       <property name="title">
        <string>Sensors</string>
       </property>
-      <widget class="QLabel2" name="qlabel_turret_calibration_indicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>262</y>
-         <width>161</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>MS Shell Dlg 2</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <italic>false</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: 7px;
-border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
-       </property>
-       <property name="text">
-        <string>Calibrate Lower Arm</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel2" name="qlabel_arm_calibration_indicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>227</y>
-         <width>161</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>MS Shell Dlg 2</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: 7px;
-border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
-       </property>
-       <property name="text">
-        <string>Calibrate Upper Arm</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_11">
        <property name="geometry">
         <rect>
@@ -942,7 +871,7 @@ background-color:rgb(0, 20, 250);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_green_target_indicator">
+      <widget class="QLabel2" name="qlabel_orange_target_indicator">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -968,9 +897,8 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>&lt;ORANGE
-TARGET
- DETECTED&gt;</string>
+        <string>NOTE
+DETECTED</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1005,9 +933,9 @@ border-radius: 7px;
 background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>&lt;APRIL
+        <string>APRIL
 TAG
- DETECTED&gt;</string>
+ DETECTED</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1097,74 +1025,6 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_cmd4_indicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>119</y>
-         <width>161</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: 7px;
-border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
-       </property>
-       <property name="text">
-        <string>&lt;CMD&gt;</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel2" name="qlabel_cmd5_indicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>153</y>
-         <width>161</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: 7px;
-border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
-       </property>
-       <property name="text">
-        <string>&lt;CMD&gt;</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::AutoText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
       <widget class="QLabel2" name="qlabel_cmd2_indicator">
        <property name="enabled">
         <bool>false</bool>
@@ -1199,14 +1059,11 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_cmd6_indicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+      <widget class="QLabel2" name="qlabel_align_to_target_indicator">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>187</y>
+         <y>120</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1214,6 +1071,41 @@ background-color:rgb(80, 235, 0);</string>
        <property name="font">
         <font>
          <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 7px;
+border-radius: 7px;
+background-color:rgb(127, 127, 127);</string>
+       </property>
+       <property name="text">
+        <string>&lt;Align To Target&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel2" name="qlabel_arm_calibration_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>160</y>
+         <width>161</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>11</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -1233,29 +1125,34 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_align_to_target_indicator">
+      <widget class="QLabel2" name="qlabel_turret_calibration_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>260</y>
+         <y>193</y>
          <width>161</width>
          <height>31</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>11</pointsize>
          <weight>75</weight>
+         <italic>false</italic>
          <bold>true</bold>
         </font>
        </property>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(127, 127, 127);</string>
+background-color:rgb(80, 235, 0);</string>
        </property>
        <property name="text">
-        <string>&lt;Align To Target&gt;</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

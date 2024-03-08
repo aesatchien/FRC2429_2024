@@ -325,7 +325,8 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_shoot_cycle_indicator': {'widget': self.qlabel_shoot_cycle_indicator, 'nt': '/SmartDashboard/AutoShootCycle/running', 'command': '/SmartDashboard/AutoShootCycle/running'},
         'qlabel_indexer_indicator': {'widget': self.qlabel_indexer_indicator, 'nt': '/SmartDashboard/indexer_enabled', 'command': None, 'flash': True},
         'qlabel_intake_indicator': {'widget': self.qlabel_intake_indicator, 'nt': '/SmartDashboard/intake_enabled', 'command': None, 'flash': True},
-
+        'qlabel_orange_target_indicator': {'widget': self.qlabel_orange_target_indicator, 'nt': '/SmartDashboard/orange_targets_exist', 'command': None},
+        'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': None},
 
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
@@ -335,10 +336,8 @@ class Ui(QtWidgets.QMainWindow):
         'qlcd_intake_speed': {'widget':self.qlcd_intake_speed, 'nt': '/SmartDashboard/intake_output', 'command': None},
         'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
             # LEFTOVER TO SORT FROM 2023
-        'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
-        'qlabel_green_target_indicator': {'widget': self.qlabel_green_target_indicator, 'nt': '/SmartDashboard/green_targets_exist', 'command': '/SmartDashboard/AutoStrafeGreen/running'},
-        'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': '/SmartDashboard/AutoStrafeTag/running'},
-        'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
+        #'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
+        #'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
         'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
                                         'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
                                         'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},

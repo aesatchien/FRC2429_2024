@@ -1,4 +1,6 @@
 import math
+
+import wpilib
 from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
@@ -47,6 +49,10 @@ class Intake(Subsystem):
 
     def periodic(self) -> None:
         self.counter += 1
-        SmartDashboard.putNumber('intake_output', self.motor.getAppliedOutput())
+        if self.counter % 25 == 0:
+            if wpilib.RobotBase.isReal():
+                SmartDashboard.putNumber('intake_output', 12 * self.motor.getAppliedOutput())
+            else:
+                SmartDashboard.putNumber('intake_output', self.motor.getAppliedOutput())
         # todo - show intake rpm
         #SmartDashboard.putBoolean('intake_enabled', self.intake_enabled)

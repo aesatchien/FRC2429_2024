@@ -6,13 +6,15 @@ import wpilib
 
 from commands2 import Subsystem
 from wpimath.filter import SlewRateLimiter
-from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.geometry import Pose2d, Rotation2d, Translation3d, Pose3d, Rotation3d
 from wpimath.kinematics import (ChassisSpeeds, SwerveModuleState, SwerveDrive4Kinematics, SwerveDrive4Odometry,)
+from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.controller import PIDController
 import navx
 import rev
 import pathplannerlib
 from pathplannerlib.path import PathPlannerTrajectory
+import ntcore
 
 import constants
 from .swervemodule_2429 import SwerveModule
@@ -85,6 +87,17 @@ class Swerve (Subsystem):
             dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
             initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
 
+        # 2024 - orphan the old odometry, now use the vision enabled version of odometry instead
+        self.pose_estimator = SwerveDrive4PoseEstimator(dc.kDriveKinematics,
+                                                        Rotation2d.fromDegrees(self.get_angle()),
+                                                        self.get_module_positions(),
+            initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
+
+        # get poses from NT
+        self.inst = ntcore.NetworkTableInstance.getDefault()
+        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Basecam/TAGS/tag1").subscribe([0]*8)
+        self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Basecam/tags/targets").subscribe(0)
+
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
         AutoBuilder.configureHolonomic(
             pose_supplier=self.get_pose,  # Robot pose supplier
@@ -107,13 +120,17 @@ class Swerve (Subsystem):
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        return self.odometry.getPose()
+        # return self.odometry.getPose()
+        return self.pose_estimator.getEstimatedPosition()
+
 
     def resetOdometry(self, pose: Pose2d) -> None:
         """Resets the odometry to the specified pose.
         :param pose: The pose to which to set the odometry.
         """
         self.odometry.resetPosition(
+            Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
+        self.pose_estimator.resetPosition(
             Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
 
     def drive(self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool, rate_limited: bool, keep_angle:bool=True) -> None:
@@ -304,9 +321,24 @@ class Swerve (Subsystem):
     def periodic(self) -> None:
 
         self.counter += 1
+
+        # send the current time to the dashboard
+        wpilib.SmartDashboard.putNumber('_timestamp', wpilib.Timer.getFPGATimestamp())
+        # update pose based on apriltags
+        use_apriltags = True  # probably need to make this a robot global that we can turn off and on, maybe in robot inits
+        if use_apriltags:
+            if self.apriltag_count_subscriber.get() > 0 :
+                # update pose from apriltags
+                tag_data = self.apriltag_pose_subscriber.get()  # 8 items - timestamp, id, tx ty tx rx ry rz
+                tx, ty, tz = tag_data[2], tag_data[3], tag_data[4]
+                rx, ry, rz = tag_data[5], tag_data[6], tag_data[7]
+                tag_pose = Pose3d(Translation3d(tx, ty, tz), Rotation3d(rx, ry, rz)).toPose2d()
+                self.pose_estimator.addVisionMeasurement(tag_pose, tag_data[0])
+
         # Update the odometry in the periodic block -
         if wpilib.RobotBase.isReal():
             self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+            self.pose_estimator.updateWithTime(wpilib.Timer.getFPGATimestamp() ,Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
         else:
             # sim is not updating the odometry right yet, not sure why since all the sparks should be set in the sim
             # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)

@@ -20,6 +20,7 @@ from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.indexer import Indexer
 from subsystems.shooter import Shooter
 from subsystems.climber import Climber
+from subsystems.vision import Vision
 
 # auto
 from autonomous.auto_shoot_cycle import AutoShootCycle
@@ -73,6 +74,7 @@ class RobotContainer:
             self.indexer = Indexer()
             self.shooter = Shooter()
             self.climber = Climber()
+            self.vision = Vision()
 
         self.registerCommands()
 
@@ -227,7 +229,7 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
-        self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(self, self.crank_arm, self.shooter_arm, self.drive))
+        self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm, drive=self.drive))
         self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
         # self.autonomous_chooser.addOption('Shoot and drive out LEFT', ShootAndDriveOutResetGyro(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm,
@@ -239,7 +241,6 @@ class RobotContainer:
             self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
 
         # Automatically get Pathplanner paths
-
         try_path_planner = False
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)

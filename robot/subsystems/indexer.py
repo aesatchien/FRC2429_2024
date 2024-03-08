@@ -1,4 +1,6 @@
 import math
+
+import wpilib
 from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
@@ -60,4 +62,7 @@ class Indexer(Subsystem):
             SmartDashboard.putNumber('indexer_rpm', self.indexer_encoder.getVelocity())
             # SmartDashboard.putBoolean('indexer_ready', self.indexer_encoder.getVelocity() > 1800)
             # SmartDashboard.putNumber('indexer_current', self.motor.getOutputCurrent())
-            SmartDashboard.putNumber('indexer_output', self.motor.getAppliedOutput())
+            if wpilib.RobotBase.isReal():
+                SmartDashboard.putNumber('indexer_output', 12 * self.motor.getAppliedOutput())
+            else:
+                SmartDashboard.putNumber('indexer_output', self.motor.getAppliedOutput())
