@@ -18,6 +18,7 @@ from pathplannerlib.path import PathConstraints, GoalEndState
 
 import os
 import typing
+from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
 from subsystems.swerve import Swerve
 from subsystems.swerve_constants import DriveConstants as dc
 from subsystems.swerve_constants import AutoConstants as ac
@@ -76,7 +77,12 @@ class PathPlannerConfiguration():
     
     # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
     def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float) -> commands2.Command:
+        if position_list["x"] == 0 and position_list["y"] == 0: #bezier curve generation requires the robot to move a non-zero distance.
+            return DriveSwerveAutoVelocity(swerve, 0).withTimeout(0.1) #stop
+        
         current_pose = swerve.get_pose()
+        print(current_pose)
+        print(position_list)
         #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
         delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(position_list["rotation"]))
 
