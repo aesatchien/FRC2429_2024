@@ -1,3 +1,9 @@
+#JS, LC, 3/7/24
+#Purpose: a file for path making functions (PathPlanner).
+#Problems:
+    # - on the sim, the robot seems to move to the right location using the "on_the_fly" bezier curve maker. However, changing the "rotation" parameter doesn't seem to be reflected in the sim.
+    # - a bezier curve has an n+1 degree, so it will always be some sort of curved path. Not efficient for straight paths.
+
 import math
 import commands2
 import wpilib

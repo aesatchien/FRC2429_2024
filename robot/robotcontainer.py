@@ -252,7 +252,7 @@ class RobotContainer:
         self.position_chooser.addOption("0, 2, 0", {"x": 0, "y": 2, "rotation": 0})
         self.position_chooser.addOption("2, 0, 0", {"x": 2, "y": 0, "rotation": 0})
         self.position_chooser.addOption("2, 2, 0", {"x": 2, "y": 2, "rotation": 90})        
-        self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.configure_path_manual(self.position_chooser.getSelected(), 0, 0).withTimeout(5))
+        self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.on_the_fly_path(self.position_chooser.getSelected(), 0, 0).withTimeout(5))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))

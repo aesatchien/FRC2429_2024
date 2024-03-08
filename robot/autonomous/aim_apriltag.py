@@ -1,3 +1,18 @@
+#J.S. 3/7/24
+# Purpose of this file is to rotate the drivetrain towards the apriltag while cranking the arm to the correct angle, and then shoot.
+    # ideally, this can be used in both teleop and auto.
+# - Pros: 
+    # - for teleop: single preset button for the robot to quickly score speaker notes.
+    # - for auto: the robot can accurately score speaker notes.
+# - Problems: 
+    # - quick movement of crank may cause the belt to slip or the robot to tip.
+    # - Unsure how photonlibrary sets the fx, fy, cx, and cy calibration values of the camera, as I never gave them these values, nor does it know what camera we're using (perhaps they're default values...?)
+    # - Unsure how photonlibrary knows the real size of the apriltag, as I never gave this value (seems necessary to determine the real position of the apriltag)
+    # - Usure if something will break if we move both upper and lower crank at the same time. But if we can, we should because that's faster.
+# - Questions: 
+#   - is "vertically up" 0 degrees of 90 degrees? Not sure how we defined it.
+
+
 import commands2
 from wpilib import SmartDashboard
 from photonlibpy.photonCamera import PhotonCamera
@@ -60,9 +75,11 @@ class AutoAimAprilTag(commands2.Command):  # change the name for your command
             y = beta + k_h + k_l - k_h_prime
             phi = math.atan2(y/x)
 
+            SmartDashboard("Detected (x,y,z) of apriltag (meters)", f"({alpha}, {self.goodAprilTag.getBestCameraToTarget().Y()}, {beta})")
+            SmartDashboard.putString("Target crank angle", f"{math.degrees(phi)} degrees")
+
             AutoTurn(self.goodAprilTag.getYaw()).schedule() #face/center onto the apriltag
             ArmMove(self.lower_crank, degrees=90, absolute=True).andThen(ArmMove(self.upper_crank, degrees=math.degrees(phi), absolute=True)).schedule() #angle the crank towards the speaker's opening
-            #todo: unsure if something will break if we move both upper and lower crank at the same time. But if we can, we should because that's faster.
             #todo: is "vertically straight" 90 degrees or 0 degrees?
         else:
             print("No AprilTag found")
