@@ -157,6 +157,13 @@ class RobotContainer:
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+
+        k_blue = True
+        amp_pose = constants.k_blue_amp if k_blue else constants.k_red_amp
+        speaker_pose = constants.k_blue_speaker if k_blue else constants.k_red_speaker
+
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0]-self.drive.get_pose().X(), "y": amp_pose[1]-self.drive.get_pose().Y(), "rotation": amp_pose[2]-self.drive.get_angle()}, 0))
+        
         if wpilib.RobotBase.isReal():
             pass
         #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
@@ -249,7 +256,7 @@ class RobotContainer:
 
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
-        self.autonomous_chooser.addOption("manual option", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": 2, "y": 2, "rotation": 0}, 0).withTimeout(5))
+        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
