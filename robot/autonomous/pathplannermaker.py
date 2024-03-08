@@ -75,8 +75,8 @@ class PathPlannerConfiguration():
         )
     
     # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
-    def on_the_fly_path(robot:Swerve, position_list:typing.Dict[str, float], final_velocity:float) -> commands2.Command:
-        current_pose = robot.get_pose()
+    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float) -> commands2.Command:
+        current_pose = swerve.get_pose()
         #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
         delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(position_list["rotation"]))
 
