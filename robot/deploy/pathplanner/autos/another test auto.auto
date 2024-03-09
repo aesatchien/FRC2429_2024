@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.8221644973960404,
-      "y": 7.096766946743594
+      "x": 2.3445732483476367,
+      "y": 5.843707436344972
     },
     "rotation": 0
   },
@@ -12,15 +12,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Command Testing"
+            "name": "Move smartly to shoot position"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Auto shoot cycle"
+            "pathName": "plain path"
           }
         }
       ]

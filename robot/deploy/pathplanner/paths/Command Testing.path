@@ -48,7 +48,7 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "shoot preload",
+      "name": "go to shoot position",
       "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
