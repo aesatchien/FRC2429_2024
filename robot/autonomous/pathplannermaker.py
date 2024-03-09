@@ -76,7 +76,7 @@ class PathPlannerConfiguration():
         )
     
     # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
-    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float) -> commands2.Command:
+    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float, speed_factor=1) -> commands2.Command:
         if position_list["x"] == 0 and position_list["y"] == 0: #bezier curve generation requires the robot to move a non-zero distance.
             return DriveSwerveAutoVelocity(swerve, 0).withTimeout(0.1) #stop
         
@@ -92,7 +92,7 @@ class PathPlannerConfiguration():
         bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
         path = PathPlannerPath(
             bezier_points,
-            PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
+            PathConstraints(ac.kMaxSpeedMetersPerSecond * speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * speed_factor),
             GoalEndState(final_velocity, Rotation2d.fromDegrees(position_list["rotation"]))
         )
         return AutoBuilder.followPath(path)
