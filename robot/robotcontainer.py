@@ -110,6 +110,7 @@ class RobotContainer:
         self.driver_command_controller = CommandXboxController(constants.k_driver_controller_port)  # 2024 way
         self.trigger_a = self.driver_command_controller.a()  # 2024 way
         self.trigger_b = self.driver_command_controller.b()
+        self.trigger_x = self.driver_command_controller.x()
         self.trigger_y = self.driver_command_controller.y()
         self.trigger_rb = self.driver_command_controller.rightBumper()
         self.trigger_start = self.driver_command_controller.start()
@@ -158,11 +159,14 @@ class RobotContainer:
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
 
-        k_blue = True
-        amp_pose = constants.k_blue_amp if k_blue else constants.k_red_amp
-        speaker_pose = constants.k_blue_speaker if k_blue else constants.k_red_speaker
-
-        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0]-self.drive.get_pose().X(), "y": amp_pose[1]-self.drive.get_pose().Y(), "rotation": amp_pose[2]-self.drive.get_angle()}, 0))
+        amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
+        speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
+        
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0]-self.drive.get_pose().X(), "y": amp_pose[1]-self.drive.get_pose().Y(), "rotation": amp_pose[2]-self.drive.get_angle()}, 0)
+                                 .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0]-self.drive.get_pose().X(), "y": speaker_pose[1]-self.drive.get_pose().Y(), "rotation": speaker_pose[2]-self.drive.get_angle()}, 0)
+                                 .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+        # For some reason, if I string an ArmSmartGoTo_1 with ArmSmartGoTo_2, the first one is skipped and the scheduler goes straight to the second command.
         
         if wpilib.RobotBase.isReal():
             pass
