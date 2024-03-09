@@ -120,8 +120,8 @@ class Swerve (Subsystem):
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        # return self.odometry.getPose()
-        return self.pose_estimator.getEstimatedPosition()
+        return self.odometry.getPose()
+        # return self.pose_estimator.getEstimatedPosition()
 
 
     def resetOdometry(self, pose: Pose2d) -> None:
