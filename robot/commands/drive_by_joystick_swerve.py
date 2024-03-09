@@ -40,18 +40,18 @@ class DriveByJoystickSwerve(commands2.Command):
 
     def execute(self) -> None:
         # setting a slow mode here - not sure if it's the best way
-        if self.debouncer.calculate(self.slow_mode_trigger.getAsBoolean()):  # holding down button 5 - LB
-            self.slowmode_history.append(constants.k_slowmode_multiplier)
-            slowmode_multiplier = constants.k_slowmode_multiplier
-        elif self.controller.getLeftTriggerAxis() > 0.5:  # squeezing the left axisbutton
-            self.slowmode_history.append(constants.k_slowmode_multiplier * 1.5)
-            slowmode_multiplier = constants.k_slowmode_multiplier * 1.5
-        else:
-            self.slowmode_history.append(1)
-            slowmode_multiplier = sum(self.slowmode_history) / len(self.slowmode_history)
+        # if self.debouncer.calculate(self.slow_mode_trigger.getAsBoolean()):  # holding down button 5 - LB
+        #     self.slowmode_history.append(constants.k_slowmode_multiplier)
+        #     slowmode_multiplier = constants.k_slowmode_multiplier
+        # elif self.controller.getLeftTriggerAxis() > 0.5:  # squeezing the left axisbutton
+        #     self.slowmode_history.append(constants.k_slowmode_multiplier * 1.5)
+        #     slowmode_multiplier = constants.k_slowmode_multiplier * 1.5
+        # else:
+        #     self.slowmode_history.append(1)
+        #     slowmode_multiplier = sum(self.slowmode_history) / len(self.slowmode_history)
+        # self.slowmode_history.pop(0)
 
-        self.slowmode_history.pop(0)
-
+        slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
             self.field_oriented = False
