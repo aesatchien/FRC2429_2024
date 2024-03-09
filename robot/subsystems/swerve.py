@@ -95,7 +95,7 @@ class Swerve (Subsystem):
 
         # get poses from NT
         self.inst = ntcore.NetworkTableInstance.getDefault()
-        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Basecam/TAGS/tag1").subscribe([0]*8)
+        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Basecam/poses/tag1").subscribe([0]*8)
         self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Basecam/tags/targets").subscribe(0)
 
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
@@ -120,8 +120,11 @@ class Swerve (Subsystem):
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        return self.odometry.getPose()
-        # return self.pose_estimator.getEstimatedPosition()
+        if wpilib.RobotBase.isReal():
+            return self.pose_estimator.getEstimatedPosition()
+        else:
+            return self.odometry.getPose()  # need to learn how to update sim with apriltag pose
+
 
 
     def resetOdometry(self, pose: Pose2d) -> None:
@@ -338,7 +341,7 @@ class Swerve (Subsystem):
         # Update the odometry in the periodic block -
         if wpilib.RobotBase.isReal():
             self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
-            self.pose_estimator.updateWithTime(wpilib.Timer.getFPGATimestamp() ,Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+            self.pose_estimator.updateWithTime(wpilib.Timer.getFPGATimestamp(), Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
         else:
             # sim is not updating the odometry right yet, not sure why since all the sparks should be set in the sim
             # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)

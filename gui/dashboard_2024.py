@@ -36,21 +36,24 @@ class CameraWorker(QObject):
     def run(self):
         """Blocking task that may take a long time to run"""
         self.running = True
+        old_url = ''  # need to see if we switch cameras
         while self.running:
             if self.qtgui.qradiobutton_autoswitch.isChecked():  # auto determine which camera to show
-                pass
+                # pass
                 # shooter_on = self.qtgui.widget_dict['qlabel_shooter_indicator']['entry'].getBoolean(False)
                 #elevator_low = self.qtgui.widget_dict['qlcd_elevator_height']['entry'].getDouble(100) < 100
-
                 url = self.qtgui.camera_dict['Basecam'] if True else self.qtgui.camera_dict['Shootercam']
             else:
                 url = self.qtgui.camera_dict[self.qtgui.qcombobox_cameras.currentText()]  # figure out which url we want
+
             # stream = urllib.request.urlopen('http://10.24.29.12:1187/stream.mjpg')
             # get and display image
-            cap = cv2.VideoCapture(url)
-            if not cap.isOpened():
-                print("Cannot open stream")
-                return
+            if url != old_url:  # try to only do this if we switch streams
+                cap = cv2.VideoCapture(url)
+                if not cap.isOpened():
+                    print("Cannot open stream")
+                    return
+            old_url = url
             try:
                 ret, frame = cap.read()
                 pixmap = self.qtgui.convert_cv_qt(frame, self.qtgui.qlabel_camera_view)
@@ -87,7 +90,7 @@ class Ui(QtWidgets.QMainWindow):
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
-        self.refresh_time = 50  # milliseconds before refreshing
+        self.refresh_time = 40  # milliseconds before refreshing
         self.widget_dict = {}
         self.command_dict = {}
         self.camera_enabled = False
