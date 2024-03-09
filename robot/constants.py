@@ -43,7 +43,7 @@ k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
 k_crank_presets = {
     'intake': {'upper':-87, 'lower': 65},  # was 63
-    'shoot': {'upper': -50, 'lower':90},
+    'shoot': {'upper': -40, 'lower':90},
     'amp': {'upper': 50, 'lower': 100},
 }
 
