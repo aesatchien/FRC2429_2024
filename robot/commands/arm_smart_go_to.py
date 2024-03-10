@@ -20,7 +20,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
     def __init__(self, container, desired_position: str, wait_for_finish=False) -> None:
         super().__init__()
-        self.setName('Arm smart go to')  # change this to something appropriate for this command
+        self.setName('ArmSmartGoTo')  # change this to something appropriate for this command
         self.container = container
         self.upper_crank: UpperCrankArmTrapezoidal = self.container.shooter_arm
         self.lower_crank: LowerCrankArmTrapezoidal = self.container.crank_arm
@@ -30,7 +30,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         self.start_time = 0   # having some problems with this crashing...
-        if not self.desired_position in ['intake', 'shoot', 'amp']: raise ValueError
+        if not self.desired_position in ['intake', 'shoot', 'amp', 'low_amp']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
@@ -55,6 +55,15 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['amp']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['amp']['upper'], absolute=True)))
+
+        elif self.desired_position == 'low_amp':
+            self.container.led.set_indicator(Led.Indicator.AMP)
+
+            command = (AcquireNoteToggle(container=self.container, force='off')
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['low_amp']['lower'], absolute=True, wait_to_finish=True))
+                       .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['low_amp']['upper'], absolute=True)))
+        else:
+            pass  # should throw an error
 
         commands2.CommandScheduler.getInstance().schedule(command)
 
