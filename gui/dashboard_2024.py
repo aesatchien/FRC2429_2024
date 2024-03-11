@@ -26,11 +26,12 @@ from ntcore import NetworkTableType, NetworkTableInstance
 class CameraWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
-    frames = 0
+
 
     def __init__(self, qtgui):
         super().__init__()
         self.qtgui = qtgui
+        self.frames = 0
 
     def stop(self):
         self.running = False
@@ -96,11 +97,12 @@ class Ui(QtWidgets.QMainWindow):
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
-        self.refresh_time = 66  # milliseconds before refreshing
+        self.refresh_time = 40  # milliseconds before refreshing
         self.previous_frames = 0
         self.widget_dict = {}
         self.command_dict = {}
         self.camera_enabled = False
+        self.worker = None
         self.thread = None
         self.camera_dict = {'Basecam': 'http://10.24.29.12:1186/stream.mjpg',  # CJH messing with these to get photonvision 20240301
                             'Shootercam': 'http://10.24.29.12:1187/stream.mjpg',
@@ -480,7 +482,7 @@ class Ui(QtWidgets.QMainWindow):
         if self.counter % 100 == 0:  # display an FPS
             current_time = time.time()
             time_delta = current_time - self.previous_time
-            frames = self.worker.frames
+            frames = self.worker.frames if self.worker is not None else 0
 
             msg = f'Current Gui Updates/s : {100/(time_delta):.1f}, Camera updates/s : {(frames-self.previous_frames)/time_delta:.1f}'
             self.statusBar().showMessage(msg)
