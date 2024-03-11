@@ -161,6 +161,7 @@ class RobotContainer:
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+        self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
 
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
@@ -183,10 +184,11 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_y.onTrue(LedToggle(container=self))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))

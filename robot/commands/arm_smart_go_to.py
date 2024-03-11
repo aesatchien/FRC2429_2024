@@ -30,7 +30,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         self.start_time = 0   # having some problems with this crashing...
-        if not self.desired_position in ['intake', 'shoot', 'amp', 'low_amp', 'bottom']: raise ValueError
+        if not self.desired_position in ['intake', 'shoot', 'low_shoot','amp', 'low_amp', 'bottom']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
@@ -42,6 +42,15 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
+
+        elif self.desired_position == 'low_shoot':
+            self.container.led.set_indicator(Led.Indicator.READY_SHOOT)
+
+            # add with timeouts on these wait until commands
+            command = (AcquireNoteToggle(container=self.container, force='off')
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True, wait_to_finish=True))
+                       .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True)))
+
 
         elif self.desired_position == 'intake':
             self.container.led.set_indicator(Led.Indicator.INTAKE)
