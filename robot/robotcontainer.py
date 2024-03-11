@@ -2,11 +2,12 @@
 import math
 import time
 import wpilib
-import commands2
+from commands2 import WaitCommand
 from commands2.button import CommandXboxController
+import os
 
 # pathplanner
-from pathplannerlib.auto import NamedCommands
+from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
@@ -46,6 +47,7 @@ from commands.record_auto import RecordAuto
 from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
+from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -159,7 +161,6 @@ class RobotContainer:
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
-        self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
 
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
@@ -182,10 +183,10 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))  # has amp and low amp now
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position= 'bottom'))
+        self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
@@ -231,9 +232,17 @@ class RobotContainer:
 
     def registerCommands(self):
         print("!! Registering commands !!")
-        NamedCommands.registerCommand('Wait 1 second', DriveWait(self, 1))
-        NamedCommands.registerCommand('Move shooter to next setpoint', ArmMove(container=self, arm=self.shooter_arm, direction='up'))
-        NamedCommands.registerCommand('Toggle intake', AcquireNoteToggle(self))
+        NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
+        NamedCommands.registerCommand('Go to intake', GoToIntake(self))
+        NamedCommands.registerCommand('Go to amp', GoToAmp(self))
+
+        NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
+                                                                              absolute=True, wait_to_finish=True))
+        NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],
+                                                                                absolute=True, wait_to_finish=True))
+
+        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_intake=False))
+        NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
 
     def get_arm_mode(self):
         return self.arm_mode
@@ -247,16 +256,14 @@ class RobotContainer:
         self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm, drive=self.drive))
         self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
         self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
-        # self.autonomous_chooser.addOption('Shoot and drive out LEFT', ShootAndDriveOutResetGyro(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm,
-        #                                                                                         drive=self.drive,
-        #                                                                                         finish_angle=120))
         if wpilib.RobotBase.isReal():
             self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
         else:
             self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
 
         # Automatically get Pathplanner paths
-        try_path_planner = False
+
+        try_path_planner = True
         if try_path_planner:
             PathPlannerMaker.configure_paths(self.autonomous_chooser)
 
