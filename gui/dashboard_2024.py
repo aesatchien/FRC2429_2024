@@ -16,6 +16,7 @@ from PyQt5.QtCore import Qt, QTimer, QEvent, QThread, QObject, pyqtSignal
 
 import qlabel2
 
+
 from ntcore import NetworkTableType, NetworkTableInstance
 
 #print(f'Initializing GUI ...', flush=True)
@@ -25,6 +26,7 @@ from ntcore import NetworkTableType, NetworkTableInstance
 class CameraWorker(QObject):
     finished = pyqtSignal()
     progress = pyqtSignal(int)
+    frames = 0
 
     def __init__(self, qtgui):
         super().__init__()
@@ -48,7 +50,7 @@ class CameraWorker(QObject):
 
             # stream = urllib.request.urlopen('http://10.24.29.12:1187/stream.mjpg')
             # get and display image
-            if url != old_url:  # try to only do this if we switch streams
+            if True or url != old_url:  # try to only do this if we switch streams - seems to cause a lot of errors
                 cap = cv2.VideoCapture(url)
                 if not cap.isOpened():
                     print("Cannot open stream")
@@ -56,8 +58,12 @@ class CameraWorker(QObject):
             old_url = url
             try:
                 ret, frame = cap.read()
+                self.frames += 1
                 pixmap = self.qtgui.convert_cv_qt(frame, self.qtgui.qlabel_camera_view)
                 self.qtgui.qlabel_camera_view.setPixmap(pixmap)
+                self.qtgui.qlabel_camera_view: QtWidgets.QLabel
+                #self.qtgui.qlabel_camera_view.repaint()
+                #self.qtgui.qlabel_camera_view.repaint()
                 #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
                 # self.progress.emit(1)
             except Exception as e:
@@ -90,7 +96,8 @@ class Ui(QtWidgets.QMainWindow):
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
-        self.refresh_time = 40  # milliseconds before refreshing
+        self.refresh_time = 66  # milliseconds before refreshing
+        self.previous_frames = 0
         self.widget_dict = {}
         self.command_dict = {}
         self.camera_enabled = False
@@ -472,10 +479,13 @@ class Ui(QtWidgets.QMainWindow):
         self.counter += 1
         if self.counter % 100 == 0:  # display an FPS
             current_time = time.time()
-            msg = f'Current Updates/s : {100/(current_time - self.previous_time):.1f}'
+            time_delta = current_time - self.previous_time
+            frames = self.worker.frames
+
+            msg = f'Current Gui Updates/s : {100/(time_delta):.1f}, Camera updates/s : {(frames-self.previous_frames)/time_delta:.1f}'
             self.statusBar().showMessage(msg)
             self.previous_time = current_time
-
+            self.previous_frames = frames
 
     def qt_tree_widget_nt_clicked(self, item):
         # send the clicked item from the tree to the filter for the nt selction combo box
