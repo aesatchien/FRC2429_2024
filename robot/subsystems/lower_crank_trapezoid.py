@@ -44,8 +44,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # ------------   2429 Additions to the template's __init__  ------------
         self.setName(self.config['name'])
         self.counter = 0
-        self.max_angle = self.config['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
-        self.min_angle = self.config['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
+        self.max_angle = math.radians(self.config['max_angle'])   # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
+        self.min_angle = math.radians(self.config['min_angle'])   # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
 
         # initialize the motors and keep a list of them for configuration later
@@ -118,8 +118,11 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.at_goal = True
         self.error = 0
         self.limit_switch_state = self.limit_switch.get()
-        self.enable()  # enable if using, disable if testing angles
-        self.enabled = True
+
+        if self.goal > self.min_angle and self.goal < self.max_angle:
+            self.enable_arm()
+        else:
+            self.disable_arm()
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
@@ -141,12 +144,18 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         # ------------   2429 Additions to the template  ------------
 
     def enable_arm(self):  # built-in function of the subsystem - turns on continuous motion profiling
-        self.enable()
+        self.enable()  # call the underlying enable / disable
         self.enabled = True
+        wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_enabled', self.enabled)
 
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
-        self.disable()
+        self.disable()  # call the underlying enable / disable
+        self.disable()  # call the underlying enable / disable
         self.enabled = False
+        wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_enabled', self.enabled)
+
+    def is_enabled(self):
+        return self.enabled
 
     def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()

@@ -109,11 +109,19 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     # ------------   2429 Additions to the template  ------------
 
-    def enable_arm(self):   # built-in function of the subsystem - turns on continuous motion profiling
-        self.enable()
+    def enable_arm(self):  # built-in function of the subsystem - turns on continuous motion profiling
+        self.enable()  # call the underlying enable / disable
+        self.enabled = True
+        wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_enabled', self.enabled)
 
     def disable_arm(self):  # built-in function of the subsystem - turns off continuous motion profiling
-        self.disable()
+        self.disable()  # call the underlying enable / disable
+        self.disable()  # call the underlying enable / disable
+        self.enabled = False
+        wpilib.SmartDashboard.putBoolean(f'{self.getName()}_is_enabled', self.enabled)
+
+    def is_enabled(self):
+        return self.enabled
 
     def move_degrees(self, degrees: float, silent=False) -> None:  # way to bump up and down for testing
         current_angle = self.get_angle()
