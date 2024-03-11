@@ -41,26 +41,29 @@ k_left_servo_port = 0
 k_right_servo_port = 1
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
+
+
+# ------------------- Intake -------------------
+k_intake_neo_port = 5  # CAN ID
+
+#cranks
 k_crank_presets = {
     'intake': {'upper':-87, 'lower': 65},  # was 63
     'shoot': {'upper': -40, 'lower':90},
     'amp': {'upper': 50, 'lower': 100},
     'low_amp': {'upper': -87, 'lower': 108},
+    'bottom': {'upper': -87, 'lower': 40},
 }
-
-# ------------------- Intake -------------------
-k_intake_neo_port = 5  # CAN ID
-
 # ------------------- Lower CRANK -------------------
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 3  # 553 (maxplanetary) * 3 (pulley) = 225
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
     'name': 'crank_arm',
-    'max_angle': 115, 'min_angle': 52,
+    'max_angle': 106, 'min_angle': 40,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.3356,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    'abs_encoder_zero_offset': 0.227,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -80,7 +83,7 @@ k_PID_dict_vel_lower_crank_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':
 # The most "folded" the lower crank can be while still allowing the upper crank to do whatever it likes
 k_min_lower_crank_angle_where_deploying_upper_crank_safe_rad = math.radians(80)
 k_lower_crank_limit_switch_channel = 9
-k_lower_crank_position_when_limit_switch_true_rad = math.radians(53)
+k_lower_crank_position_when_limit_switch_true_rad = math.radians(42)
 k_lower_crank_current_where_jammed = 20
 
 # ------------------- Top CRANK -------------------
