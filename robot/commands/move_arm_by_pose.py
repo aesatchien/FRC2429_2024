@@ -47,19 +47,17 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
         elif len(distances) == 1:
             greater_distance = lesser_distance = distances[0]
         else:
-            greater_distance = distances[
-                -1]  # If we're further than the furthest known distance, keep the slope between the last 2 distances
+            greater_distance = distances[-1]  # If we're further than the furthest known distance, keep the slope between the last 2 distances
             lesser_distance = distances[-2]
 
-            for known_distance, idx in enumerate(distances):
+            for idx, known_distance in enumerate(distances):
                 if known_distance > distance_to_speaker:
                     if idx > 0:
                         greater_distance = distances[idx]
                         lesser_distance = distances[idx - 1]
                     else:
                         greater_distance = distances[1]
-                        lesser_distance = distances[
-                            0]  # If we're closer than the closest known distance, keep the slope between the first 2 distances
+                        lesser_distance = distances[0]  # If we're closer than the closest known distance, keep the slope between the first 2 distances
                     break
 
         # We have the 2 points to interpolate between, so interpolate!
