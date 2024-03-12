@@ -19,8 +19,9 @@ import ntcore
 import constants
 from .swervemodule_2429 import SwerveModule
 from .swerve_constants import DriveConstants as dc
+from .swerve_constants import AutoConstants as ac
 
-from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.auto import AutoBuilder, PathPlannerAuto, PathPlannerPath
 from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
 
 class Swerve (Subsystem):
@@ -97,10 +98,11 @@ class Swerve (Subsystem):
         self.inst = ntcore.NetworkTableInstance.getDefault()
         self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Basecam/poses/tag1").subscribe([0]*8)
         self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Basecam/tags/targets").subscribe(0)
+        self.use_apriltags = True
 
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
         AutoBuilder.configureHolonomic(
-            pose_supplier=self.get_pose,  # Robot pose supplier
+            pose_supplier=self.get_pose_no_tag,  # Robot pose supplier. No ussage of apriltag pose estimation when following a PathPlannerPath
             reset_pose=self.resetOdometry,  # Method to reset odometry (will be called if your auto has a starting pose)
             robot_relative_speeds_supplier=self.get_relative_speeds,  # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             robot_relative_output=self.drive_robot_relative,  # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
@@ -114,18 +116,20 @@ class Swerve (Subsystem):
             should_flip_path=self.flip_path,
             drive_subsystem=self  # Reference to this subsystem to set requirements
         )
+        # self.automated_path = None
 
     def get_pose(self, report=False) -> Pose2d:
         # return the pose of the robot  TODO: update the dashboard here?
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        if wpilib.RobotBase.isReal():
+        if wpilib.RobotBase.isReal() and self.use_apriltags:
             return self.pose_estimator.getEstimatedPosition()
         else:
             return self.odometry.getPose()  # need to learn how to update sim with apriltag pose
-
-
+        
+    def get_pose_no_tag(self) -> Pose2d:
+        return self.odometry.getPose()
 
     def resetOdometry(self, pose: Pose2d) -> None:
         """Resets the odometry to the specified pose.
@@ -270,6 +274,12 @@ class Swerve (Subsystem):
         for idx, m in enumerate(self.swerve_modules):
             m.setDesiredState(desiredStates[idx])
 
+    def set_use_apriltags(self, use_apriltags):
+        self.use_apriltags = use_apriltags
+
+    # def set_automated_path(self, path:PathPlannerPath):
+    #     self.automated_path = path
+
     def resetEncoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
         [m.resetEncoders() for m in self.swerve_modules]
@@ -320,6 +330,12 @@ class Swerve (Subsystem):
             # ADD adjustment.
             self.gyro.setAngleAdjustment(adjustment)
         self.keep_angle = 0
+    
+    def get_use_apriltags(self):
+        return self.use_apriltags
+
+    # def get_automated_path(self):
+    #     return self.automated_path
 
     def periodic(self) -> None:
 
@@ -328,8 +344,7 @@ class Swerve (Subsystem):
         # send the current time to the dashboard
         wpilib.SmartDashboard.putNumber('_timestamp', wpilib.Timer.getFPGATimestamp())
         # update pose based on apriltags
-        use_apriltags = True  # probably need to make this a robot global that we can turn off and on, maybe in robot inits
-        if use_apriltags:
+        if self.use_apriltags:
             if self.apriltag_count_subscriber.get() > 0 :
                 # update pose from apriltags
                 tag_data = self.apriltag_pose_subscriber.get()  # 8 items - timestamp, id, tx ty tx rx ry rz
