@@ -34,7 +34,7 @@ class AcquireNoteToggle(commands2.CommandBase):
             self.intake.set_intake(power=self.intake_power)
             self.indexer.set_indexer(power=self.indexer_power)
         elif self.force == 'off':
-            self.container.led.set_indicator(Led.Indicator.KILL)
+            # self.container.led.set_indicator(Led.Indicator.KILL)
             self.intake.stop_intake()
             self.indexer.stop_indexer()
         else:

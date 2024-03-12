@@ -194,6 +194,7 @@ class RobotContainer:
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
+        # self.co_trigger_lb.onTrue(set_indicator_with_timeout(Led.Indicator.KILL))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
