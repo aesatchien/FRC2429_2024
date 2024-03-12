@@ -13,17 +13,16 @@ from pathlib import Path
 import pickle
 from datetime import datetime
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
-from pathplannerlib.auto import AutoBuilder, PathPlannerPath, PathPlannerAuto
+from pathplannerlib.auto import PathPlannerPath, PathPlannerAuto
 from pathplannerlib.path import PathConstraints, GoalEndState
 
 import os
 import typing
 from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
-from subsystems.swerve import Swerve
+from subsystems.swerve import Swerve, AutoBuilder
 from subsystems.swerve_constants import DriveConstants as dc
 from subsystems.swerve_constants import AutoConstants as ac
 import constants
-from subsystems.swerve_constants import AutoConstants as ac
 
 class PathPlannerConfiguration():
 
@@ -55,17 +54,6 @@ class PathPlannerConfiguration():
                 else:
                     autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
 
-
-        # for ix, file_name in enumerate(file_names):
-        #     file_name = os.path.splitext(file_name)[0] # Get the name of the trajectory, not the .path extension
-        #     if ix == 0:
-        #         print("FILE NAME", file_name)
-        #         autonomous_chooser.setDefaultOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
-        #     else:
-        #         print("FILE NAME", file_name)
-        #         autonomous_chooser.addOption(file_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(file_name)).withTimeout(10))
-
-
     # This is a method that will create a path from (0,0) to the desired position.
     def configure_path_manual(position_list:typing.Dict[str, float], final_velocity:float, distance_to_rotate:float) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
@@ -76,42 +64,23 @@ class PathPlannerConfiguration():
         )
     
     # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
-    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float, speed_factor=1) -> commands2.Command:
+    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float, speed_factor=1, fast_turn=True) -> commands2.Command:
         if position_list["x"] == 0 and position_list["y"] == 0: #bezier curve generation requires the robot to move a non-zero distance.
             return DriveSwerveAutoVelocity(swerve, 0).withTimeout(0.1) #stop
-        
-        current_pose = swerve.get_pose()
-        print(current_pose)
-        print(position_list)
+        current_pose = swerve.get_pose_no_tag()
+
+        position_list = {"x": position_list["x"] - current_pose.X(), "y": position_list["y"] - current_pose.Y(), "rotation": position_list["rotation"] - swerve.get_angle()}
+
         #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
-        delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(position_list["rotation"]))
+        delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(0))
 
         start_pose = Pose2d(current_pose.translation(), current_pose.rotation())
         end_pose = start_pose.transformBy(delta_pose)
 
         bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
-        path = PathPlannerPath(
+        path = PathPlannerPath( #assumes holonomic drivetrain.
             bezier_points,
             PathConstraints(ac.kMaxSpeedMetersPerSecond * speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * speed_factor),
-            GoalEndState(final_velocity, Rotation2d.fromDegrees(position_list["rotation"]))
+            GoalEndState(final_velocity, Rotation2d.fromDegrees(position_list["rotation"]), rotateFast=fast_turn)
         )
         return AutoBuilder.followPath(path)
-    
-    #Not quite sure how to get the sendable chooser to update.
-    # def on_the_fly_path(robot:Swerve, position_chooser:wpilib.SendableChooser, final_velocity:float) -> commands2.Command:
-    #     desired_pos = position_chooser.getSelected()
-        
-    #     current_pose = robot.get_pose()
-    #     #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
-    #     delta_pose = Transform2d(Translation2d(desired_pos["x"], desired_pos["y"]), Rotation2d.fromDegrees(desired_pos["rotation"]))
-
-    #     start_pose = Pose2d(current_pose.translation(), current_pose.rotation())
-    #     end_pose = start_pose.transformBy(delta_pose)
-
-    #     bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
-    #     path = PathPlannerPath(
-    #         bezier_points,
-    #         PathConstraints(ac.kMaxSpeedMetersPerSecond, ac.kMaxAccelerationMetersPerSecondSquared, ac.kMaxAngularSpeedRadiansPerSecond, ac.kMaxAngularSpeedRadiansPerSecondSquared),
-    #         GoalEndState(final_velocity, Rotation2d.fromDegrees(desired_pos["rotation"]))
-    #     )
-    #     return AutoBuilder.followPath(path)
