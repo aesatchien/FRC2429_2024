@@ -116,7 +116,7 @@ class Swerve (Subsystem):
             should_flip_path=self.flip_path,
             drive_subsystem=self  # Reference to this subsystem to set requirements
         )
-        # self.automated_path = None
+        self.automated_path = None
 
     def get_pose(self, report=False) -> Pose2d:
         # return the pose of the robot  TODO: update the dashboard here?
@@ -277,8 +277,8 @@ class Swerve (Subsystem):
     def set_use_apriltags(self, use_apriltags):
         self.use_apriltags = use_apriltags
 
-    # def set_automated_path(self, path:PathPlannerPath):
-    #     self.automated_path = path
+    def set_automated_path(self, path:PathPlannerPath):
+        self.automated_path = path
 
     def resetEncoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
@@ -334,8 +334,8 @@ class Swerve (Subsystem):
     def get_use_apriltags(self):
         return self.use_apriltags
 
-    # def get_automated_path(self):
-    #     return self.automated_path
+    def get_automated_path(self):
+        return self.automated_path
 
     def periodic(self) -> None:
 

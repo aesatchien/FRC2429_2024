@@ -11,7 +11,7 @@ from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration
-from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
+from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand, AutomatedPath
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -171,13 +171,12 @@ class RobotContainer:
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
         amp_pose = constants.k_blue_amp
         speaker_pose = constants.k_blue_speaker
-        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
+        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        # For some reason, if I string an ArmSmartGoTo_1 with ArmSmartGoTo_2, the first one is skipped and the scheduler goes straight to the second command.
-        
-
+        # self.trigger_x.whileTrue(AutomatedPath(self, self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, final_velocity=0, speed_factor=0.5, fast_turn=True))
+       
         if wpilib.RobotBase.isReal():
             pass
         #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))

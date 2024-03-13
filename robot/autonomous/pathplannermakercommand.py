@@ -18,8 +18,10 @@
         # self.addCommands(CreatePath) <-- stores PathPlannerPath path in a variable in Swerve.py
         # self.addCommands(AutoBuilder.followPath(drive.get_path()))
         # self.addCommands(TurnOnAprilTags)
+        # Note: I tried this at the bottom, and now the robot simply stops moving :(
 
 import commands2
+from commands2.command import Command
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 from pathplannerlib.auto import PathPlannerPath
@@ -43,6 +45,7 @@ class PathPlannerConfigurationCommand(commands2.Command):  # change the name for
         self.speed_factor = speed_factor
         self.fast_turn = fast_turn
         self.addRequirements(self.drive)  # commandsv2 version of requirements
+        self.counter = 0
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
@@ -63,31 +66,45 @@ class PathPlannerConfigurationCommand(commands2.Command):  # change the name for
         end_pose = start_pose.transformBy(delta_pose)
 
         bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
-        self.path = PathPlannerPath( #assumes holonomic drivetrain.
+        path = PathPlannerPath( #assumes holonomic drivetrain.
             bezier_points,
             PathConstraints(ac.kMaxSpeedMetersPerSecond * self.speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * self.speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * self.speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * self.speed_factor),
             GoalEndState(self.final_velocity, Rotation2d.fromDegrees(self.position_list["rotation"]))
         )
-        self.path.preventFlipping = True
+        path.preventFlipping = True
+
+        self.drive.set_automated_path(path)
 
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert",
-                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")        
+
 
     def execute(self) -> None:
         pass
 
     def isFinished(self) -> bool:
-        pass
+        return True
     
     def end(self, interrupted: bool) -> None:
-        AutoBuilder.followPath(self.path).schedule()
-
-        self.drive.set_use_apriltags(True)
-
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
         SmartDashboard.putString(f"alert",
                                  f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        
+class AutomatedPath(commands2.SequentialCommandGroup):
+    def __init__(self, container, drive:Swerve, position_list, final_velocity=0, speed_factor=1, fast_turn=True) -> None:
+        super().__init__()
+        self.setName('AutomatedPath')  # change this to something appropriate for this command
+
+        # back up indexer, turn on shooter, wait, fire indexer full speed into,
+        self.addCommands(PathPlannerConfigurationCommand(container=container, swerve=drive, position_list=position_list, final_velocity=final_velocity, speed_factor=speed_factor, fast_turn=fast_turn))
+        if drive.get_automated_path() is not None:
+            print("PATH MADE")
+            self.addCommands(AutoBuilder.followPath(drive.get_automated_path()))
+            self.addCommands(commands2.RunCommand(lambda: drive.set_use_apriltags(True), drive))
+
+        else:
+            print("AUTOMATED PATH NOT MADE")
