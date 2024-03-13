@@ -42,6 +42,9 @@ class Climber(Subsystem):
         # toggle state
         self.climber_enable = False
         self.servos_open = False
+
+        self.open_servos() #Drew wanted servoes to be "open" on startup - JS
+        
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
     def set_climber(self, left_volts, right_volts):
