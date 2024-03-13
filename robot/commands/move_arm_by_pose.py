@@ -12,11 +12,11 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
         super().__init__()
         self.setName('Move arm by pose')  # change this to something appropriate for this command
         self.container = container
-        # Meters and degrees
+        # Meters and degrees. todo: tune
         self.distance_angle_lookup_table = {
-            0: 45,
-            1: 40,
-            2: 30
+            1.2: 56,
+            1.5: 47,
+            2: 41
         }
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 

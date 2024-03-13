@@ -48,12 +48,12 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-87, 'lower': 60},  # was 63
+    'intake': {'upper':-95, 'lower': 60},  # was 63
     'shoot': {'upper': -40, 'lower':90},
-    'low_shoot': {'upper':-87, 'lower': 45},
+    'low_shoot': {'upper':-95, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
-    'low_amp': {'upper': -87, 'lower': 108},
-    'bottom': {'upper': -87, 'lower': 40},
+    'low_amp': {'upper': -95, 'lower': 108},
+    'bottom': {'upper': -95, 'lower': 40},
 }
 # ------------------- Lower CRANK -------------------
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 3  # 553 (maxplanetary) * 3 (pulley) = 225
@@ -97,7 +97,7 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -88,  # was -79 before Q7
+    'max_angle': 109, 'min_angle': -105,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.368,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
