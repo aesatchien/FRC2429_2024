@@ -48,11 +48,12 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-87, 'lower': 65},  # was 63
+    'intake': {'upper':-95, 'lower': 60},  # was 63
     'shoot': {'upper': -40, 'lower':90},
+    'low_shoot': {'upper':-95, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
-    'low_amp': {'upper': -87, 'lower': 108},
-    'bottom': {'upper': -87, 'lower': 40},
+    'low_amp': {'upper': -95, 'lower': 108},
+    'bottom': {'upper': -95, 'lower': 40},
 }
 # ------------------- Lower CRANK -------------------
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 3  # 553 (maxplanetary) * 3 (pulley) = 225
@@ -63,7 +64,7 @@ k_crank_arm_dict = {
     'max_angle': 106, 'min_angle': 40,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.227,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    'abs_encoder_zero_offset': 0.746,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -96,7 +97,7 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -88,  # was -79 before Q7
+    'max_angle': 109, 'min_angle': -105,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
     'abs_encoder_zero_offset':  0.368,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
@@ -150,5 +151,5 @@ k_blue_amp = [1.9, 7.74, 90] #(x, y, rotation)
 k_red_amp = [14.75, 7.74, 90] #(x, y, rotation)
 
 # --------------  SPEAKER POSITIONS  ---------------
-k_blue_speaker = [1.95, 5.555, 180] #(x, y, rotation)
-k_red_speaker = [15.1, 5.555, 0] #(x, y, rotation)
+k_blue_speaker = [1, 5.555, 180] #(x, y, rotation)
+k_red_speaker = [15.6, 5.555, 0] #(x, y, rotation)

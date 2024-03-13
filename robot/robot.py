@@ -76,4 +76,3 @@ class MyRobot(commands2.TimedCommandRobot):
         # DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
         # DriverStationSim.notifyNewData()
 
-

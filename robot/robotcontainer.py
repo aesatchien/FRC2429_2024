@@ -10,7 +10,8 @@ import os
 from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
 
 import constants
-from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
+from autonomous.pathplannermaker import PathPlannerConfiguration
+from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -48,6 +49,7 @@ from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
 from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
+from commands.move_arm_by_pose import MoveArmByPose
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -124,6 +126,7 @@ class RobotContainer:
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
+        self.co_trigger_left_stick_y = self.co_pilot_command_controller.axisGreaterThan(axis=1, threshold=0.5)
         self.co_trigger_a = self.co_pilot_command_controller.a()  # 2024 way
         self.co_trigger_b = self.co_pilot_command_controller.b()
         self.co_trigger_y = self.co_pilot_command_controller.y()
@@ -161,18 +164,20 @@ class RobotContainer:
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+        self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
 
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
         amp_pose = constants.k_blue_amp
         speaker_pose = constants.k_blue_speaker
-        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0]-self.drive.get_pose().X(), "y": amp_pose[1]-self.drive.get_pose().Y(), "rotation": amp_pose[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0]-self.drive.get_pose().X(), "y": speaker_pose[1]-self.drive.get_pose().Y(), "rotation": speaker_pose[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # For some reason, if I string an ArmSmartGoTo_1 with ArmSmartGoTo_2, the first one is skipped and the scheduler goes straight to the second command.
         
+
         if wpilib.RobotBase.isReal():
             pass
         #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
@@ -183,19 +188,20 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_y.onTrue(LedToggle(container=self))
+        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
+        # self.co_trigger_lb.onTrue(set_indicator_with_timeout(Led.Indicator.KILL))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
-
-        self.co_trigger_back.onTrue(AutoClimbArm(self))
 
         #bind crank arm
         setpoints = False
@@ -206,12 +212,14 @@ class RobotContainer:
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-20, direction='down'))
         else:
             direction = None
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=15, direction=direction))
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-15, direction=direction))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=10, direction=direction))
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
+            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction=direction)) # was 15 and -15
+            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction=direction))
+            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=2.5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-2.5, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
+        self.co_trigger_back.onTrue(AutoClimbArm(self))
+
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
@@ -230,11 +238,20 @@ class RobotContainer:
 
         # bind LED
 
+    def set_automated_path(self, command : PathPlannerPath):
+        self.autonomous_command = command
+
+    def get_automated_path(self) -> PathPlannerPath:
+        if self.autonomous_command is not None:
+            return self.autonomous_command
+        return None
+
     def registerCommands(self):
         print("!! Registering commands !!")
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
+        NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(self))
 
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
@@ -271,7 +288,8 @@ class RobotContainer:
 
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
-        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfigurationCommand(self, self.drive, {"x": constants.k_blue_amp[0], "y": constants.k_blue_amp[1], "rotation": constants.k_blue_amp[2]}, 0, speed_factor=0.5, fast_turn=True))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
