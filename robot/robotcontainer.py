@@ -49,6 +49,7 @@ from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
 from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
+from commands.move_arm_by_pose import MoveArmByPose
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -125,6 +126,7 @@ class RobotContainer:
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
+        self.co_trigger_left_stick_y = self.co_pilot_command_controller.axisGreaterThan(axis=1, threshold=0.5)
         self.co_trigger_a = self.co_pilot_command_controller.a()  # 2024 way
         self.co_trigger_b = self.co_pilot_command_controller.b()
         self.co_trigger_y = self.co_pilot_command_controller.y()
@@ -186,10 +188,11 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
         # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
@@ -199,8 +202,6 @@ class RobotContainer:
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
-
-        self.co_trigger_back.onTrue(AutoClimbArm(self))
 
         #bind crank arm
         setpoints = False
@@ -217,6 +218,8 @@ class RobotContainer:
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-10, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
+        self.co_trigger_back.onTrue(AutoClimbArm(self))
+
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
@@ -248,6 +251,7 @@ class RobotContainer:
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
+        NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(self))
 
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
