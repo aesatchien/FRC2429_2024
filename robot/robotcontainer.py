@@ -10,7 +10,8 @@ import os
 from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
 
 import constants
-from autonomous.pathplannermaker import PathPlannerConfiguration  # all the constants except for swerve
+from autonomous.pathplannermaker import PathPlannerConfiguration
+from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -170,12 +171,13 @@ class RobotContainer:
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
         amp_pose = constants.k_blue_amp
         speaker_pose = constants.k_blue_speaker
-        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0]-self.drive.get_pose().X(), "y": amp_pose[1]-self.drive.get_pose().Y(), "rotation": amp_pose[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0]-self.drive.get_pose().X(), "y": speaker_pose[1]-self.drive.get_pose().Y(), "rotation": speaker_pose[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.5, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # For some reason, if I string an ArmSmartGoTo_1 with ArmSmartGoTo_2, the first one is skipped and the scheduler goes straight to the second command.
         
+
         if wpilib.RobotBase.isReal():
             pass
         #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
@@ -195,6 +197,7 @@ class RobotContainer:
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
+        # self.co_trigger_lb.onTrue(set_indicator_with_timeout(Led.Indicator.KILL))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
@@ -234,6 +237,14 @@ class RobotContainer:
         # use that trigger command to call something like intake drive by trigger if the trigger is greater than sometbing
 
         # bind LED
+
+    def set_automated_path(self, command : PathPlannerPath):
+        self.autonomous_command = command
+
+    def get_automated_path(self) -> PathPlannerPath:
+        if self.autonomous_command is not None:
+            return self.autonomous_command
+        return None
 
     def registerCommands(self):
         print("!! Registering commands !!")
@@ -277,7 +288,8 @@ class RobotContainer:
 
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
-        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
+        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfigurationCommand(self, self.drive, {"x": constants.k_blue_amp[0], "y": constants.k_blue_amp[1], "rotation": constants.k_blue_amp[2]}, 0, speed_factor=0.5, fast_turn=True))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))
