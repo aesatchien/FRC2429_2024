@@ -1,5 +1,5 @@
 import commands2
-import robotpy_apriltag
+import math
 from wpilib import SmartDashboard, DriverStation
 from wpimath.geometry import Translation2d
 
@@ -12,7 +12,7 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
         super().__init__()
         self.setName('Move arm by pose')  # change this to something appropriate for this command
         self.container = container
-        # Meters and degrees- todo: move to constants?
+        # Meters and degrees
         self.distance_angle_lookup_table = {
             0: 45,
             1: 40,
@@ -66,7 +66,7 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
 
         interpolated = self.distance_angle_lookup_table[lesser_distance] + m * (distance_to_speaker - lesser_distance)
 
-        self.container.crank_arm.set_goal(interpolated)
+        self.container.crank_arm.set_goal(math.radians(interpolated))
 
         return
 

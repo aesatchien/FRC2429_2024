@@ -14,6 +14,7 @@ import wpilib.simulation as simlib
 from pyfrc.physics.core import PhysicsInterface
 from wpimath.kinematics import SwerveDrive4Kinematics, SwerveModuleState, SwerveModulePosition
 import wpimath.geometry as geo
+import hal
 import rev
 from pyfrc.physics.units import units
 
@@ -112,6 +113,9 @@ class PhysicsEngine:
         :param tm_diff: The amount of time that has passed since the last
                         time that this function was called
         """
+
+        # Not sure why this is necessary but it is- LHACK 3/12/24
+        simlib.DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue3)
 
         # Simulate the drivetrain (only front motors used because read should be in sync)
         ##lf_motor = self.lf_motor.getSpeed()

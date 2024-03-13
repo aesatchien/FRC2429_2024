@@ -240,6 +240,7 @@ class RobotContainer:
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
+        NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(self))
 
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))

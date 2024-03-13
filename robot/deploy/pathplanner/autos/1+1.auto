@@ -12,15 +12,35 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Go to shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto shoot cycle"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move arm by pose"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Auto shoot cycle"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -42,27 +62,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Acquire note toggle"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Go to shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto shoot cycle"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Go to intake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Move arm by pose"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Auto shoot cycle"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]
