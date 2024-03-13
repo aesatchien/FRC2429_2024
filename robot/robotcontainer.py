@@ -155,7 +155,7 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_a.onTrue(AcquireNoteToggle(container=self, force='on'))
+        self.trigger_a.onTrue(AcquireNoteToggle(container=self))
         # self.trigger_a.onTrue(commands2.ConditionalCommand(
         #                         onTrue=AcquireNoteToggle(container=self, force='on'),
         #                         onFalse=AcquireNoteToggle(container=self, force='off'),
