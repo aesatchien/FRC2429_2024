@@ -43,7 +43,7 @@ class Climber(Subsystem):
         self.climber_enable = False
         self.servos_open = False
 
-        self.open_servos() #Drew wanted servoes to be "open" on startup - JS
+        self.close_servos() #Drew wanted servoes to be "closed" on startup - JS
         
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
@@ -99,3 +99,5 @@ class Climber(Subsystem):
             # SmartDashboard.putBoolean('climber_ready', self.left_winch_encoder.getVelocity() > 1800)
             SmartDashboard.putNumber('climber_current', self.left_winch.getOutputCurrent())
             SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
+            SmartDashboard.putNumber("right servo angle", self.right_servo.getAngle())
+            SmartDashboard.putNumber("left servo angle", self.left_servo.getAngle())
