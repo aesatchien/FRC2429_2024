@@ -25,6 +25,7 @@ class Led(commands2.Subsystem):
         CALIBRATION_START = 'CALIBRATION_START'
         CALIBRATION_SUCCESS = 'CALIBRATION_SUCCESS'
         CALIBRATION_FAIL = 'CALIBRATION_FAIL'
+        CLIMB = 'CLIMB'
         KILL = 'KILL'
         SHOOTER_ON = 'SHOOTER_ON'
         NONE = 'NONE'
@@ -155,6 +156,16 @@ class Led(commands2.Subsystem):
                             led.setRGB(0, 0, 0)
                         else:
                             led.setRGB(255, 0, 0)
+
+                    elif self.indicator == Led.Indicator.CLIMB:
+                        # flashing pink
+                        freq = 1  # 10 /s > 2x /s
+                        cycle = math.floor(self.animation_counter / freq)
+
+                        if cycle % 2 == 0:
+                            led.setRGB(0, 0, 0)
+                        else:
+                            led.setRGB(255, 192, 203)
 
 
                 else:

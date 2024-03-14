@@ -218,6 +218,7 @@ class RobotContainer:
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
         self.co_trigger_back.onTrue(AutoClimbArm(self))
+        self.co_trigger_back.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5).schedule())
 
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))

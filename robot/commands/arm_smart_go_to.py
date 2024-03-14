@@ -18,6 +18,9 @@ from commands2 import WaitCommand
 
 class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
+    # note: wait_for_finish doesn't work since the subsystem's goal doesn't seem to update immediately.
+    # for certain pairs of setpoints, it works...
+
     def __init__(self, container, desired_position: str, wait_for_finish=False) -> None:
         super().__init__()
         self.setName('ArmSmartGoTo')  # change this to something appropriate for this command
@@ -39,7 +42,6 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         if self.desired_position == 'shoot':
             self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
 
-            # add with timeouts on these wait until commands
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
@@ -47,7 +49,6 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         elif self.desired_position == 'low_shoot':
             self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
 
-            # add with timeouts on these wait until commands
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True)))
