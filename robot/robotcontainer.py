@@ -50,6 +50,7 @@ from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankBy
 from commands.arm_coast import CrankArmCoast
 from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
 from commands.move_arm_by_pose import MoveArmByPose
+from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 
 # autonomous
 from autonomous.drive_wait import DriveWait
@@ -187,7 +188,10 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        # self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
+
+        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
+        self.co_trigger_left_stick_y.whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
