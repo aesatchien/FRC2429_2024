@@ -31,6 +31,7 @@ class DriveAndAutoAimChassis(commands2.Command):
         self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.rotation_pid = PIDController(4, 0, 0) # Values taken from pathplanner's in the swerve subsystem
+        self.rotation_pid.enableContinuousInput(-math.pi, math.pi)
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
@@ -59,8 +60,8 @@ class DriveAndAutoAimChassis(commands2.Command):
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
         desired_angle = translation_robot_to_speaker.angle()
-        self.rotation_pid.setSetpoint(desired_angle.degrees())
-        raw_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().degrees())
+        self.rotation_pid.setSetpoint(desired_angle.radians())
+        raw_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
