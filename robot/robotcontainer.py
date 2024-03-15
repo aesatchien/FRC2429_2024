@@ -187,7 +187,7 @@ class RobotContainer:
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
+        # self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
@@ -205,20 +205,21 @@ class RobotContainer:
         #bind crank arm
         setpoints = False
         if setpoints:
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction='up'))
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction='down'))
+            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
+            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
             self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=20, direction='up'))
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-20, direction='down'))
         else:
             direction = None
             self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction=direction)) # was 15 and -15
             self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction=direction))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=2.5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-2.5, direction=direction))
+            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
+
+        # self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5)
         self.co_trigger_back.onTrue(AutoClimbArm(self))
-        self.co_trigger_back.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5).schedule())
 
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
