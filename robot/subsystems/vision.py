@@ -13,20 +13,22 @@ class Vision(SubsystemBase):
         self.counter = 0
         self.ntinst = NetworkTableInstance.getDefault()
 
-
         self.camera_dict = {'orange': {}, 'tags': {}}
         self.camera_values = {}
 
-        self.basecam_table = NetworkTableInstance.getDefault().getTable('Basecam')
+        self.ringcam_table = NetworkTableInstance.getDefault().getTable('Cam_Ringcam')  # lifecam for rings
+        self.tagcam_table = NetworkTableInstance.getDefault().getTable('Cam_Tagcam')  # logitech for tags
 
         for key in self.camera_dict.keys():  # colors on top
-            self.camera_dict[key].update({'id_entry': self.basecam_table.getDoubleTopic(f"{key}/id").subscribe(0)})
-            self.camera_dict[key].update({'targets_entry': self.basecam_table.getDoubleTopic(f"{key}/targets").subscribe(0)})
-            self.camera_dict[key].update({'distance_entry': self.basecam_table.getDoubleTopic(f"{key}/distance").subscribe(0)})
-            self.camera_dict[key].update({'strafe_entry': self.basecam_table.getDoubleTopic(f"{key}/strafe").subscribe(0)})
-            self.camera_dict[key].update({'rotation_entry': self.basecam_table.getDoubleTopic(f"{key}/rotation").subscribe(0)})
+            table = self.ringcam_table if key == 'orange' else self.tagcam_table
+            self.camera_dict[key].update({'id_entry': table.getDoubleTopic(f"{key}/id").subscribe(0)})
+            self.camera_dict[key].update({'targets_entry': table.getDoubleTopic(f"{key}/targets").subscribe(0)})
+            self.camera_dict[key].update({'distance_entry': table.getDoubleTopic(f"{key}/distance").subscribe(0)})
+            self.camera_dict[key].update({'strafe_entry': table.getDoubleTopic(f"{key}/strafe").subscribe(0)})
+            self.camera_dict[key].update({'rotation_entry': table.getDoubleTopic(f"{key}/rotation").subscribe(0)})
             self.camera_values[key] = {}
             self.camera_values[key].update({'id': 0, 'targets': 0, 'distance': 0, 'rotation': 0, 'strafe': 0})
+
 
     def target_available(self, target):
         if target == 'tags':
@@ -66,7 +68,7 @@ class Vision(SubsystemBase):
         self.counter += 1
 
         # update x times a second
-        if self.counter % 20 == 0:
+        if self.counter % 10 == 0:
             if wpilib.RobotBase.isSimulation():
                 SmartDashboard.putNumber('match_time', wpilib.Timer.getFPGATimestamp())
             else:

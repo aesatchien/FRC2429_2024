@@ -45,7 +45,7 @@ class CameraWorker(QObject):
                 # pass
                 # shooter_on = self.qtgui.widget_dict['qlabel_shooter_indicator']['entry'].getBoolean(False)
                 #elevator_low = self.qtgui.widget_dict['qlcd_elevator_height']['entry'].getDouble(100) < 100
-                url = self.qtgui.camera_dict['Basecam'] if True else self.qtgui.camera_dict['Shootercam']
+                url = self.qtgui.camera_dict['Ringcam'] if True else self.qtgui.camera_dict['Tagcam']
             else:
                 url = self.qtgui.camera_dict[self.qtgui.qcombobox_cameras.currentText()]  # figure out which url we want
 
@@ -104,10 +104,10 @@ class Ui(QtWidgets.QMainWindow):
         self.camera_enabled = False
         self.worker = None
         self.thread = None
-        self.camera_dict = {'Basecam': 'http://10.24.29.12:1186/stream.mjpg',  # CJH messing with these to get photonvision 20240301
-                            'Shootercam': 'http://10.24.29.12:1187/stream.mjpg',
-                            'Raw Base': 'http://10.24.29.12:1181/stream.mjpg',
-                            'Raw Shooter': 'http://10.24.29.12:1182/stream.mjpg'}
+        self.camera_dict = {'Ringcam': 'http://10.24.29.12:1187/stream.mjpg',
+                            'Tagcam': 'http://10.24.29.12:1186/stream.mjpg',
+                            'Raw Ring': 'http://10.24.29.12:1182/stream.mjpg',
+                            'Raw Tag': 'http://10.24.29.12:1181/stream.mjpg'}
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
@@ -203,7 +203,7 @@ class Ui(QtWidgets.QMainWindow):
         # ToDo: check to see if the thread is running, then start again
 
         # check if server is running
-        if self.check_url(self.camera_dict['Basecam']) or self.check_url(self.camera_dict['Shootercam']):
+        if self.check_url(self.camera_dict['Ringcam']) or self.check_url(self.camera_dict['Tagcam']):
             if self.thread is None:  # first time through we need to make the thread
                 self.thread = QThread()  # create a QThread object
                 self.worker = CameraWorker(qtgui=self)  # create a CameraWorker object, pass it the main gui
@@ -354,9 +354,9 @@ class Ui(QtWidgets.QMainWindow):
                                         'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
                                         'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
         # 'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
-        'hub_targets': {'widget': None, 'nt': '/Basecam//orange/targets', 'command': None},
-        'hub_rotation': {'widget': None, 'nt': '/Basecam//orange/rotation', 'command': None},
-        'hub_distance': {'widget': None, 'nt': '/Basecam//orange/distance', 'command': None},
+        'hub_targets': {'widget': None, 'nt': '/Ringcam//orange/targets', 'command': None},
+        'hub_rotation': {'widget': None, 'nt': '/Ringcam//orange/rotation', 'command': None},
+        'hub_distance': {'widget': None, 'nt': '/Ringcam//orange/distance', 'command': None},
 
         }
 

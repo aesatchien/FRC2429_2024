@@ -1680,7 +1680,7 @@ background-color:rgb(0, 20, 250);</string>
      <string>Autoswitch</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="qt_button_reconnect">

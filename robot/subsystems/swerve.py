@@ -96,8 +96,8 @@ class Swerve (Subsystem):
 
         # get poses from NT
         self.inst = ntcore.NetworkTableInstance.getDefault()
-        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Basecam/poses/tag1").subscribe([0]*8)
-        self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Basecam/tags/targets").subscribe(0)
+        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Cam_Tagcam/poses/tag1").subscribe([0]*8)
+        self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Cam_Tagcam/tags/targets").subscribe(0)
         self.use_apriltags = True
 
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
