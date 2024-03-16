@@ -16,8 +16,8 @@ class Vision(SubsystemBase):
         self.camera_dict = {'orange': {}, 'tags': {}}
         self.camera_values = {}
 
-        self.ringcam_table = NetworkTableInstance.getDefault().getTable('Cam_Ringcam')  # lifecam for rings
-        self.tagcam_table = NetworkTableInstance.getDefault().getTable('Cam_Tagcam')  # logitech for tags
+        self.ringcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Ringcam')  # lifecam for rings
+        self.tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Tagcam')  # logitech for tags
 
         for key in self.camera_dict.keys():  # colors on top
             table = self.ringcam_table if key == 'orange' else self.tagcam_table

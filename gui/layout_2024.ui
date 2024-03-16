@@ -892,7 +892,7 @@ TAG
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;NOTE&gt;
@@ -940,7 +940,7 @@ background-color:rgb(80, 235, 0);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;CMD&gt;</string>
@@ -974,7 +974,7 @@ background-color:rgb(80, 235, 0);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;CMD&gt;</string>
@@ -1008,7 +1008,7 @@ background-color:rgb(80, 235, 0);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;CMD&gt;</string>
@@ -1039,7 +1039,7 @@ background-color:rgb(80, 235, 0);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(127, 127, 127);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;Align To Target&gt;</string>
@@ -1074,7 +1074,7 @@ background-color:rgb(127, 127, 127);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;CMD&gt;</string>
@@ -1110,7 +1110,7 @@ background-color:rgb(80, 235, 0);</string>
        <property name="styleSheet">
         <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
         <string>&lt;CMD&gt;</string>
