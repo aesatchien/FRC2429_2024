@@ -16,11 +16,9 @@ from PyQt5.QtCore import Qt, QTimer, QEvent, QThread, QObject, pyqtSignal
 
 import qlabel2
 
-
 from ntcore import NetworkTableType, NetworkTableInstance
 
 #print(f'Initializing GUI ...', flush=True)
-
 
 # Worker class for the video thread
 class CameraWorker(QObject):
@@ -32,6 +30,8 @@ class CameraWorker(QObject):
         super().__init__()
         self.qtgui = qtgui
         self.frames = 0
+        self.previous_read_time = 0
+        self.max_fps = 30
 
     def stop(self):
         self.running = False
@@ -51,25 +51,29 @@ class CameraWorker(QObject):
 
             # stream = urllib.request.urlopen('http://10.24.29.12:1187/stream.mjpg')
             # get and display image
-            if True or url != old_url:  # try to only do this if we switch streams - seems to cause a lot of errors
+            if url != old_url:  # try to only do this if we switch streams - seems to cause a lot of errors / increases bandwidth
                 cap = cv2.VideoCapture(url)
                 if not cap.isOpened():
                     print("Cannot open stream")
                     return
             old_url = url
-            try:
-                ret, frame = cap.read()
-                self.frames += 1
-                pixmap = self.qtgui.convert_cv_qt(frame, self.qtgui.qlabel_camera_view)
-                self.qtgui.qlabel_camera_view.setPixmap(pixmap)
-                self.qtgui.qlabel_camera_view: QtWidgets.QLabel
-                #self.qtgui.qlabel_camera_view.repaint()
-                #self.qtgui.qlabel_camera_view.repaint()
-                #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
-                # self.progress.emit(1)
-            except Exception as e:
-                print(f'cv error: {e}')
-                # should I stop the thread here? or just let the user fix it by restarting manually?
+
+            now = time.time()
+            if now - self.previous_read_time > 1 / self.max_fps:
+                try:
+                    ret, frame = cap.read()
+                    self.frames += 1
+                    pixmap = self.qtgui.convert_cv_qt(frame, self.qtgui.qlabel_camera_view)
+                    self.qtgui.qlabel_camera_view.setPixmap(pixmap)
+                    self.qtgui.qlabel_camera_view: QtWidgets.QLabel
+                    #self.qtgui.qlabel_camera_view.repaint()
+                    #self.qtgui.qlabel_camera_view.repaint()
+                    #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
+                    # self.progress.emit(1)
+                    self.previous_read_time = now
+                except Exception as e:
+                    print(f'cv error: {e}')
+                    # should I stop the thread here? or just let the user fix it by restarting manually?
         self.finished.emit()
 
 class Ui(QtWidgets.QMainWindow):
@@ -177,7 +181,7 @@ class Ui(QtWidgets.QMainWindow):
 
     def check_url(self, url):
         try:
-            code = urllib.request.urlopen(url, timeout=0.1).getcode()
+            code = urllib.request.urlopen(url, timeout=0.2).getcode()
             print(f'return code is {code}')
             if code == 200:
                 return True
@@ -479,7 +483,7 @@ class Ui(QtWidgets.QMainWindow):
 
 
         self.counter += 1
-        if self.counter % 100 == 0:  # display an FPS
+        if self.counter % 80 == 0:  # display an FPS every 2s or so
             current_time = time.time()
             time_delta = current_time - self.previous_time
             frames = self.worker.frames if self.worker is not None else 0
