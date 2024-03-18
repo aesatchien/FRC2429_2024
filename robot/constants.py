@@ -61,10 +61,11 @@ k_lower_crank_gear_ratio = 5 * 5 * 3 * 4.44  # 553 (maxplanetary) * 4.44 (pulley
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
     'name': 'crank_arm',
-    'max_angle': 114, 'min_angle': 40,
+    'max_angle': 116, 'min_angle': 40,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.550,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    # WANT 90 DEGREES TO BE ABOUT 0.7 ON THE ENCODER - GIVES HIGHEST RANGE FOR US
+    'abs_encoder_zero_offset': 0.720,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -105,7 +106,7 @@ k_shooter_arm_dict = {
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
     'k_MaxVelocityRadPerSecond': 2.5,
     'k_MaxAccelerationRadPerSecSquared': 2.5,
-    'k_kSVolts': 0.3,  # not estimated by recalc, so we have to make something up
+    'k_kSVolts': 0.5,  # was 0.3 before chain # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio
     'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
