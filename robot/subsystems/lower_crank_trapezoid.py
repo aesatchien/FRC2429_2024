@@ -124,6 +124,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
                 self.enable_arm()
             else:
                 self.disable_arm()
+                print(f'arm out of allowed range disabling')
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
@@ -171,7 +172,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def configure_motors(self):
         # move motor configuration out of __init__
-        self.motor.setInverted(False)  # current motor (facing left) CW moves crank arm positive
+        # self.motor.setInverted(False)  # chain motor (facing left) CW moves crank arm positive
+        self.motor.setInverted(True)  # gear motor (facing left) CW reverses big gear and moves crank arm NEGATIVE
 
         for spark in self.sparks:
             spark.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)

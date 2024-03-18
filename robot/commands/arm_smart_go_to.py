@@ -50,8 +50,8 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
 
             command = (AcquireNoteToggle(container=self.container, force='off')
-                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True, wait_to_finish=True))
-                       .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True)))
+                       .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True)))
 
 
         elif self.desired_position == 'intake':

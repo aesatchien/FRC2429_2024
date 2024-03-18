@@ -48,23 +48,23 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-95, 'lower': 60},  # was 63
+    'intake': {'upper':-84, 'lower': 60},  # was 63
     'shoot': {'upper': -40, 'lower':90},
-    'low_shoot': {'upper':-95, 'lower': 45},
+    'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
-    'low_amp': {'upper': -95, 'lower': 108},
-    'bottom': {'upper': -95, 'lower': 40},
+    'low_amp': {'upper': -84, 'lower': 108},
+    'bottom': {'upper': -84, 'lower': 40},
 }
 # ------------------- Lower CRANK -------------------
-k_lower_crank_gear_ratio = 5 * 5 * 3 * 3  # 553 (maxplanetary) * 3 (pulley) = 225
+k_lower_crank_gear_ratio = 5 * 5 * 3 * 4.44  # 553 (maxplanetary) * 4.44 (pulley) = 333
 # trapezoidal system constants - estimated from reca.lc/arm
 # using 300:1 reduction and one motor, 20in and 20lbs, 95% efficiency
 k_crank_arm_dict = {
     'name': 'crank_arm',
-    'max_angle': 106, 'min_angle': 40,
+    'max_angle': 114, 'min_angle': 40,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
-    'abs_encoder_zero_offset': 0.746,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    'abs_encoder_zero_offset': 0.550,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -97,9 +97,9 @@ k_top_crank_abs_encoder_position_conversion_factor = 2 * math.pi  # shooter cran
 # using 100:1 reduction and two motors, 12in and 15lbs, 95% efficiency
 k_shooter_arm_dict = {
     'name': 'upper_arm',
-    'max_angle': 109, 'min_angle': -105,  # was -79 before Q7
+    'max_angle': 109, 'min_angle': -95,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset':  0.368,  # 0.45, # 0.420,  # makes horizontal 0
+    'abs_encoder_zero_offset':  0.522,  # 0.45, # 0.420,  # makes horizontal 0
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -109,7 +109,7 @@ k_shooter_arm_dict = {
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio
     'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
-    'k_kP': 1.2  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+    'k_kP': 0.6  # was 1.2 before chain  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
 }
 # velocity and acceleration targets will be in radians per second, and remember SmartMotion no good for position slot
 k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':0, 'kArbFF':0,
@@ -133,7 +133,7 @@ k_indexer_neo_port = 12
 
 # ------------------- LED -------------------
 k_led_pwm_port = 9
-k_led_count = 26
+k_led_count = 44  # 26 old
 
 # ------------------- CAMERA -------------------
 k_camera_name = "camera name" # todo: this is just a placeholder 2/28/24 LHACK
