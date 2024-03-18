@@ -100,7 +100,7 @@ k_shooter_arm_dict = {
     'name': 'upper_arm',
     'max_angle': 109, 'min_angle': -95,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset':  0.522,  # 0.45, # 0.420,  # makes horizontal 0
+    'abs_encoder_zero_offset':  0.550,  # 0.45, # 0.420,  # makes horizontal 0 with no position factor
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
@@ -110,7 +110,7 @@ k_shooter_arm_dict = {
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio
     'k_kAVoltSecondSquaredPerRad': 0.02 / 2, # cuts in half with two motors
-    'k_kP': 0.6  # was 1.2 before chain  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
+    'k_kP': 1.2  # was 1.2 before chain  # if we use radians, then it's this much power per radian of error (1 would be 100% power per 180 degrees)
 }
 # velocity and acceleration targets will be in radians per second, and remember SmartMotion no good for position slot
 k_PID_dict_pos_shooter_arm = {'kP': k_shooter_arm_dict['k_kP'], 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':0, 'kArbFF':0,
