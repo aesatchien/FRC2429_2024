@@ -70,7 +70,6 @@ class PathPlannerConfiguration():
         current_pose = swerve.get_pose_no_tag()
 
         position_list = {"x": position_list["x"] - current_pose.X(), "y": position_list["y"] - current_pose.Y(), "rotation": position_list["rotation"] - swerve.get_angle()}
-
         #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
         delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(0))
 

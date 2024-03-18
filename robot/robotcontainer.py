@@ -177,7 +177,8 @@ class RobotContainer:
         self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # self.trigger_x.whileTrue(AutomatedPath(self, self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, final_velocity=0, speed_factor=0.5, fast_turn=True))
-       
+        # self.trigger_x.onTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": self.drive.get_pose().X(), "y": self.drive.get_pose().Y() + 1, "rotation": self.drive.get_angle()}, 0, speed_factor=0.25, fast_turn=True))
+
         if wpilib.RobotBase.isReal():
             pass
         #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
