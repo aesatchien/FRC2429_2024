@@ -27,7 +27,7 @@ class AutoClimbArm(commands2.SequentialCommandGroup):
                               timeout=None),
                 ArmMove(container=self.container, arm=self.container.crank_arm, degrees=90, absolute=True,
                         wait_to_finish=True),
-                ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=30, absolute=True,
+                ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=-4, absolute=True,
                 wait_to_finish=True)
             )
         ))
