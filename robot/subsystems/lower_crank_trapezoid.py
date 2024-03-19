@@ -120,7 +120,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.limit_switch_state = self.limit_switch.get()
 
         if wpilib.RobotBase.isReal():
-            if self.goal > self.min_angle and self.goal < self.max_angle:
+            tol = math.radians(4)  # let the crank arm enable if we are within 4 degrees of the limits
+            if self.goal > (self.min_angle - tol) and self.goal < (self.max_angle + tol):
                 self.enable_arm()
             else:
                 self.disable_arm()
@@ -265,7 +266,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.setGoal(self.goal)
 
     def get_at_goal(self) -> bool:
-        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # update it before returning it
+        tolerance = 4  # updated from 2 to 4 - 20240319 CJH
+        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(tolerance)  # update it before returning it
         return self.at_goal
 
     def get_limit_switch_state(self) -> bool:

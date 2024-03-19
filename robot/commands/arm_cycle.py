@@ -46,7 +46,7 @@ class ArmCycle(commands2.Command):
         else:
             self.active_mode = list(self.crank_presets.keys())[counter % len(self.crank_presets)]
 
-        self.container.arm_mode = self.active_mode
+        self.container.arm_configuration = self.active_mode
 
         self.upper_desired_position = self.crank_presets[self.active_mode]['upper']
         self.lower_desired_position = self.crank_presets[self.active_mode]['lower']

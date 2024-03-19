@@ -19,5 +19,6 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=1))  # this is a bad timeout
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
         self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='off'))
+
         if go_to_shoot:  # This only works in teleop.  3/13/14 lhack we don't use this anymore since only our shooter position (and not intake position) lets us go under the stage
             self.addCommands(ArmSmartGoTo(container=self.container, desired_position='low_shoot'))

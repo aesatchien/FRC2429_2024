@@ -25,7 +25,7 @@ class AcquireNoteToggle(commands2.CommandBase):
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s with force {self.force}**", flush=True)
+        print(f"** Started {self.getName()} at {self.start_time} s with force {self.force}**", flush=True)
 
         self.timer.restart()
 
@@ -61,8 +61,10 @@ class AcquireNoteToggle(commands2.CommandBase):
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
-        print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
-        SmartDashboard.putString(f"alert", f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        print_end_message = False
+        if print_end_message:
+            print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
+            SmartDashboard.putString(f"alert", f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
 
 
 

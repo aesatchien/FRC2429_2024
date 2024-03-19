@@ -32,6 +32,7 @@ from autonomous.playback_auto import PlaybackAuto
 from autonomous.aim_and_shoot import AimAndShoot
 from autonomous.shoot_and_drive_out import ShootAndDriveOut
 from autonomous.auto_climb_arm import AutoClimbArm
+from autonomous.auto_climb_arm_2 import AutoClimbArm2
 # from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
 
 # commands
@@ -71,6 +72,9 @@ class RobotContainer:
 
         self.start_time = time.time()
 
+        # set the default arm position - will use this to control shot speed.  Need this before the arm subsystems...
+        self.arm_configuration = 'intake'
+
         # The robot's subsystems
         self.drive = Swerve()
 
@@ -83,8 +87,6 @@ class RobotContainer:
             self.shooter = Shooter()
             self.climber = Climber()
             self.vision = Vision()
-
-        self.registerCommands()
 
         # set up driving
         self.configure_driver_joystick()
@@ -102,10 +104,11 @@ class RobotContainer:
 
         self.initialize_dashboard()
 
-        self.arm_mode = 'intake'
         # arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
         # self.led.setDefaultCommand(LedLoop(container=self))
+
+        self.registerCommands()
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
@@ -150,7 +153,6 @@ class RobotContainer:
         #direction = 'forwards', decide_by_turret = False).withTimeout(0.5))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
-
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
@@ -227,7 +229,7 @@ class RobotContainer:
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
 
         # self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5)
-        self.co_trigger_back.onTrue(AutoClimbArm(self))
+        self.co_trigger_back.onTrue(AutoClimbArm2(self))
 
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
@@ -270,8 +272,10 @@ class RobotContainer:
         NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=True))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
 
-    def get_arm_mode(self):
-        return self.arm_mode
+    def get_arm_configuration(self):
+        return self.arm_configuration
+    def set_arm_configuration(self, configuration):
+        self.arm_configuration = configuration  # shoot, intake, amp, trap, etc
 
     def initialize_dashboard(self):
         PathPlannerMaker = PathPlannerConfiguration()
