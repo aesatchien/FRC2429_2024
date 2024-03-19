@@ -216,7 +216,8 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def get_at_goal(self) -> bool:
         # Update at_goal before returning it
-        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)
+        tolerance = 4  # degrees  # updated from 2 to 4 - 20240319 CJH
+        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(tolerance)
         return self.at_goal
 
     def periodic(self) -> None:

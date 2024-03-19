@@ -38,6 +38,7 @@ class Climber(Subsystem):
 
         self.left_servo = wpilib.Servo(constants.k_left_servo_port)
         self.right_servo = wpilib.Servo(constants.k_right_servo_port)
+        self.trap_servo = wpilib.Servo(constants.k_trap_servo_port)
 
         # toggle state
         self.climber_enable = False
@@ -85,10 +86,25 @@ class Climber(Subsystem):
         # and 10 is the "closed" position -LHACK
         self.left_servo.setAngle(103)
         self.right_servo.setAngle(10)
+        self.servos_open = True
 
     def close_servos(self):
         self.left_servo.setAngle(10)
         self.right_servo.setAngle(103)
+        self.servos_open = False
+
+    def deploy_trap_servo(self):
+        # self.trap_servo.set(1)
+        self.trap_servo.setAngle(120)
+
+    def stow_trap_servo(self):
+        self.trap_servo.set(0)
+
+    def toggle_trap_servo(self):
+        if self.trap_servo.get() > 0.5:
+            self.stow_trap_servo()
+        else:
+            self.deploy_trap_servo()
 
     def periodic(self) -> None:
 

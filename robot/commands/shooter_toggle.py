@@ -1,6 +1,5 @@
 # give ourselves three possible actions for the shooter - stop, set, and cycle through a list (for testing)
 import math
-
 import commands2
 import wpilib
 from wpilib import SmartDashboard
@@ -30,11 +29,18 @@ class ShooterToggle(commands2.Command):
 
         self.timer.restart()
 
-        # determine rpm based on shooter arm position
-        if self.auto_amp_slowdown and (self.shooter_arm.get_angle() > 0 or self.crank_arm.get_angle() > math.pi / 2 + .05):
+        # try to set the shot based on the last arm configuration set  - CJH update 20240319
+        arm_configuration:str = self.container.get_arm_configuration()
+        if 'amp' in arm_configuration.lower() or 'trap' in arm_configuration.lower():
             rpm = self.amp_rpm
         else:
             rpm = self.rpm
+
+        # determine rpm based on shooter arm position - deprecated 20240319 CJH
+        # if self.auto_amp_slowdown and (self.shooter_arm.get_angle() > 0 or self.crank_arm.get_angle() > math.pi / 2 + .05):
+        #     rpm = self.amp_rpm
+        # else:
+        #     rpm = self.rpm
 
         # give ourselves three possible actions
         if self.force == 'on':
@@ -46,7 +52,7 @@ class ShooterToggle(commands2.Command):
         
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Firing {self.getName()} with force={self.force} at {self.start_time} s **", flush=True)
+        print("\n" + f"** Firing {self.getName()} with force={self.force} and rpm {rpm} at {self.start_time} s **", flush=True)
         # SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:

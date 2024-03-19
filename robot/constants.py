@@ -39,6 +39,7 @@ k_follower_winch_neo_port =4
 k_left_winch_neo_port = 3
 k_left_servo_port = 0
 k_right_servo_port = 1
+k_trap_servo_port = 2
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
 
@@ -48,12 +49,13 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-84, 'lower': 60},  # was 63
-    'shoot': {'upper': -40, 'lower':90},
+    'intake': {'upper':-70, 'lower': 60},  # was 63
+    'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
     'low_amp': {'upper': -84, 'lower': 108},
     'bottom': {'upper': -84, 'lower': 40},
+    'climb_second': {'upper':12, 'lower':90}
 }
 # ------------------- Lower CRANK -------------------
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 4.44  # 553 (maxplanetary) * 4.44 (pulley) = 333
@@ -64,6 +66,7 @@ k_crank_arm_dict = {
     'max_angle': 116, 'min_angle': 40,
     'motor_can_id': 7, 'follower_can_id': 6,
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
+    'crank_gearbox_ratio': 80/18,  # This is the new gear ratio on the bottom crank
     # WANT 90 DEGREES TO BE ABOUT 0.7 ON THE ENCODER - GIVES HIGHEST RANGE FOR US
     'abs_encoder_zero_offset': 0.720,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder

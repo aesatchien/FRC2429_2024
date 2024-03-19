@@ -9,7 +9,8 @@ import math
 
 class ArmMove(commands2.Command):
 
-    def __init__(self, container, arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5, direction=None, absolute=False, wait_to_finish=True) -> None:
+    def __init__(self, container, arm: Union[UpperCrankArmTrapezoidal,LowerCrankArmTrapezoidal], degrees=5,
+                 direction=None, absolute=False, wait_to_finish=True) -> None:
         super().__init__()
         self.setName(f'{arm.getName()}_Move')
         self.container = container
@@ -48,7 +49,7 @@ class ArmMove(commands2.Command):
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
-        print(f"** {message} {self.getName()} at {end_time:.1f} s at {self.arm.get_angle()} after {end_time - self.start_time:.1f} s **")
+        print(f"** {message} {self.getName()} at {end_time:.1f} s at {math.degrees(self.arm.get_angle()):.1f} deg after {end_time - self.start_time:.1f} s **")
         SmartDashboard.putString(f"alert", f"** {message} {self.getName()} at {end_time:.1f} s at {self.arm.get_angle()} after {end_time - self.start_time:.1f} s **")
 
     def print_start_message(self):

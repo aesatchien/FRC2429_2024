@@ -85,9 +85,9 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         read_offset_from_file = False
         if read_offset_from_file:
             with open('abs_encoder_data.json', 'r') as abs_encoder_data:
-                position_to_set_encoder = 2 * math.pi * (initial_position - json.load(abs_encoder_data)) / 3
+                position_to_set_encoder = 2 * math.pi * (initial_position - json.load(abs_encoder_data)) / self.config['crank_gearbox_ratio']
         else:
-            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians, the 3 is to account for the gear ratio
+            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / self.config['crank_gearbox_ratio']  # this is in radians, the 3 is to account for the gear ratio
             position_to_set_encoder = absolute_offset_from_90 + math.pi/2
         self.spark_encoder.setPosition(position_to_set_encoder)  # convert absolute encoder to a spot near pi/2 radians
 
@@ -120,7 +120,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.limit_switch_state = self.limit_switch.get()
 
         if wpilib.RobotBase.isReal():
-            if self.goal > self.min_angle and self.goal < self.max_angle:
+            tol = math.radians(4)  # let the crank arm enable if we are within 4 degrees of the limits
+            if self.goal > (self.min_angle - tol) and self.goal < (self.max_angle + tol):
                 self.enable_arm()
             else:
                 self.disable_arm()
@@ -265,7 +266,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.setGoal(self.goal)
 
     def get_at_goal(self) -> bool:
-        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(2)  # update it before returning it
+        tolerance = 4  # updated from 2 to 4 - 20240319 CJH
+        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(tolerance)  # update it before returning it
         return self.at_goal
 
     def get_limit_switch_state(self) -> bool:
