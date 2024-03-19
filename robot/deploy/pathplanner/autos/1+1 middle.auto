@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.2788871226815193,
-      "y": 5.539225686154654
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -58,7 +52,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1+1 middle path"
+            "pathName": "Go to middle ring"
           }
         },
         {
@@ -72,25 +66,18 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Auto shoot cycle"
-                      }
-                    }
-                  ]
+                  "pathName": "Go to middle subwoofer side"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto shoot cycle"
           }
         }
       ]

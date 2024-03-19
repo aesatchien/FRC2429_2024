@@ -156,42 +156,40 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_a.onTrue(AcquireNoteToggle(container=self))
         # self.trigger_a.onTrue(commands2.ConditionalCommand(
         #                         onTrue=AcquireNoteToggle(container=self, force='on'),
         #                         onFalse=AcquireNoteToggle(container=self, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        amp_pose = constants.k_blue_amp
+        speaker_pose = constants.k_blue_speaker
+
+        self.trigger_a.onTrue(AcquireNoteToggle(container=self))
+        self.trigger_x.whileTrue(MoveArmByPose(self))
+        self.trigger_x.whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric,
+                                                        rate_limited=constants.k_rate_limited))
+        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
+
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
 
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
-        amp_pose = constants.k_blue_amp
-        speaker_pose = constants.k_blue_speaker
-        self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
-                                 # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+        # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
+
+        # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # self.trigger_x.whileTrue(AutomatedPath(self, self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, final_velocity=0, speed_factor=0.5, fast_turn=True))
         # self.trigger_x.onTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": self.drive.get_pose().X(), "y": self.drive.get_pose().Y() + 1, "rotation": self.drive.get_angle()}, 0, speed_factor=0.25, fast_turn=True))
-
-        if wpilib.RobotBase.isReal():
-            pass
-        #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
-        # else:
-        #     self.trigger_start.onTrue(RecordAuto(self, 'input_log.json'))
 
     def bind_copilot_buttons(self):
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-
-        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
-        self.co_trigger_left_stick_y.whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
 
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))

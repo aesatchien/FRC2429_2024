@@ -59,8 +59,7 @@ class DriveAndAutoAimChassis(commands2.Command):
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
         desired_angle = translation_robot_to_speaker.angle()
-        self.rotation_pid.setSetpoint(desired_angle.radians())
-        raw_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
+        self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards speaker since we shoot like that
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
@@ -68,7 +67,7 @@ class DriveAndAutoAimChassis(commands2.Command):
         # not all swerves are the same - some require inversion of drive and or turn motors
         desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
         desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
-        desired_rot = self.input_transform(1.0 * raw_rot) * max_angular
+        desired_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
