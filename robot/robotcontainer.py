@@ -165,7 +165,7 @@ class RobotContainer:
         #                         onTrue=AcquireNoteToggle(container=self, force='on'),
         #                         onFalse=AcquireNoteToggle(container=self, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_b.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
+        self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
