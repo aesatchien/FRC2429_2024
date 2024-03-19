@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7050561319382253,
-        "y": 6.581490138729208
+        "x": 0.6816344588466624,
+        "y": 4.496961233580098
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5013930170513672,
-        "y": 6.581490138729208
+        "x": 2.1923323732481426,
+        "y": 4.614069599032952
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3282835181932833,
-        "y": 7.003080254377342
+        "x": 2.520235796530025,
+        "y": 3.9582627524691882
       },
       "prevControl": {
-        "x": 2.3282835181932833,
-        "y": 7.003080254377342
+        "x": 3.0200183314234157,
+        "y": 3.9516866664837496
       },
       "nextControl": {
-        "x": 4.328283518193283,
-        "y": 7.003080254377342
+        "x": 1.63021221905063,
+        "y": 3.9699735890149688
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.290597959227301,
-        "y": 5.58606903233778
+        "x": 0.6816344588466624,
+        "y": 4.496961233580098
       },
       "prevControl": {
-        "x": 2.3461985003371213,
-        "y": 5.58606903233778
+        "x": 1.181634458846662,
+        "y": 3.6309358297956598
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,16 +46,16 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.5,
       "rotationDegrees": 0,
-      "rotateFast": true
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "Start moving arm by pose",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 1.15,
       "command": {
         "type": "sequential",
         "data": {
@@ -79,13 +79,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 2.245742565894971,
+    "rotation": -58.49573328164192,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Leo",
+  "folder": null,
   "previewStartingState": {
-    "rotation": 60.0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

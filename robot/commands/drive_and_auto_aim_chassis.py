@@ -16,7 +16,6 @@ from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveAndAutoAimChassis(commands2.Command):
     def __init__(self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
-        # TODO: sanjith would like his joystick to directly adjust heading so if he puts his stick at 45 deg the robot will go to 45 deg
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
@@ -50,7 +49,7 @@ class DriveAndAutoAimChassis(commands2.Command):
             self.field_oriented = True
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
-        max_angular = 1 * slowmode_multiplier
+        max_angular = 0.5 # * slowmode_multiplier
 
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
             translation_origin_to_speaker = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
@@ -84,7 +83,7 @@ class DriveAndAutoAimChassis(commands2.Command):
                           fieldRelative= self.field_oriented, rate_limited=self.rate_limited)
         else:
             self.swerve.drive(xSpeed=desired_fwd,ySpeed=desired_strafe, rot=desired_rot,
-                              fieldRelative= self.field_oriented, rate_limited=self.rate_limited, keep_angle=True)
+                              fieldRelative= self.field_oriented, rate_limited=True, keep_angle=True)
 
     def end(self, interrupted: bool) -> None:
         # probably should leave the wheels where they are?
