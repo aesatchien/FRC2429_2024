@@ -49,12 +49,13 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-75, 'lower': 55},  # was 63
-    'shoot': {'upper': -20, 'lower':90}, # used to be -40 but changed it for climb
+    'intake': {'upper':-70, 'lower': 60},  # was 63
+    'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
     'low_amp': {'upper': -84, 'lower': 108},
     'bottom': {'upper': -84, 'lower': 40},
+    'climb_second': {'upper':12, 'lower':90}
 }
 # ------------------- Lower CRANK -------------------
 k_lower_crank_gear_ratio = 5 * 5 * 3 * 4.44  # 553 (maxplanetary) * 4.44 (pulley) = 333

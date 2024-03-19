@@ -21,7 +21,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
     # note: wait_for_finish doesn't work since the subsystem's goal doesn't seem to update immediately.
     # for certain pairs of setpoints, it works...
 
-    def __init__(self, container, desired_position: str, wait_for_finish=False) -> None:
+    def __init__(self, container, desired_position: str, wait_for_finish=False, timeout = None) -> None:
         super().__init__()
         self.setName('ArmSmartGoTo')  # change this to something appropriate for this command
         self.container = container
@@ -34,7 +34,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         self.start_time = 0   # having some problems with this crashing...
-        if not self.desired_position in ['intake', 'shoot', 'low_shoot','amp', 'low_amp', 'bottom']: raise ValueError
+        if not self.desired_position in ['intake', 'shoot', 'low_shoot','amp', 'low_amp', 'bottom', 'climb_second']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
@@ -45,6 +45,14 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['shoot']['lower'], absolute=True, wait_to_finish=True))
                        .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
+
+        elif self.desired_position == 'climb_second':
+            # self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
+
+            command = (AcquireNoteToggle(container=self.container, force='off')
+                       .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['climb_second']['lower'], absolute=True, wait_to_finish=True))
+                       .andThen(ArmMove(container=self.container, arm=self.upper_crank, degrees=constants.k_crank_presets['climb_second']['upper'], absolute=True)))
+
 
         elif self.desired_position == 'low_shoot':
             self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
