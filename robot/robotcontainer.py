@@ -1,6 +1,8 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
 import math
 import time
+
+import commands2
 import wpilib
 from commands2 import WaitCommand
 from commands2.button import CommandXboxController
@@ -161,6 +163,7 @@ class RobotContainer:
         #                         onTrue=AcquireNoteToggle(container=self, force='on'),
         #                         onFalse=AcquireNoteToggle(container=self, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        self.trigger_b.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
@@ -264,7 +267,7 @@ class RobotContainer:
         NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],
                                                                                 absolute=True, wait_to_finish=True))
 
-        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_intake=False))
+        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=True))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
 
     def get_arm_mode(self):

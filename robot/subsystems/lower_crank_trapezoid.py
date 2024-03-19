@@ -85,9 +85,9 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         read_offset_from_file = False
         if read_offset_from_file:
             with open('abs_encoder_data.json', 'r') as abs_encoder_data:
-                position_to_set_encoder = 2 * math.pi * (initial_position - json.load(abs_encoder_data)) / 3
+                position_to_set_encoder = 2 * math.pi * (initial_position - json.load(abs_encoder_data)) / self.config['crank_gearbox_ratio']
         else:
-            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / 3  # this is in radians, the 3 is to account for the gear ratio
+            absolute_offset_from_90 = 2 * math.pi * (initial_position - self.config['abs_encoder_zero_offset']) / self.config['crank_gearbox_ratio']  # this is in radians, the 3 is to account for the gear ratio
             position_to_set_encoder = absolute_offset_from_90 + math.pi/2
         self.spark_encoder.setPosition(position_to_set_encoder)  # convert absolute encoder to a spot near pi/2 radians
 

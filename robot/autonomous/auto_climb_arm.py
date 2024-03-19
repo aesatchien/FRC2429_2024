@@ -4,6 +4,7 @@ import constants
 from commands.indexer_toggle import IndexerToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
+from commands.arm_smart_go_to import ArmSmartGoTo
 from subsystems.led import Led
 
 class AutoClimbArm(commands2.SequentialCommandGroup):
@@ -25,10 +26,7 @@ class AutoClimbArm(commands2.SequentialCommandGroup):
             commands2.SequentialCommandGroup(
                 IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on',
                               timeout=None),
-                ArmMove(container=self.container, arm=self.container.crank_arm, degrees=90, absolute=True,
-                        wait_to_finish=True),
-                ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=-4, absolute=True,
-                wait_to_finish=True)
+                ArmSmartGoTo(container=self.container, desired_position='shoot')
             )
         ))
 
