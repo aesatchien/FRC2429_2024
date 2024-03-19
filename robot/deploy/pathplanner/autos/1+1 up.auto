@@ -6,78 +6,21 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Move arm by pose"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Auto shoot cycle"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "name": "Shoot preload"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Go to intake"
+            "name": "Intake near ring 1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Acquire note toggle"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Go to up ring"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Move arm by pose"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Go to up subwoofer side"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto shoot cycle"
+            "name": "Go to ampside and shoot"
           }
         }
       ]

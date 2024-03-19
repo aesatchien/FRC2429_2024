@@ -1,17 +1,14 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
-import math
 import time
 import wpilib
-from commands2 import WaitCommand
 from commands2.button import CommandXboxController
-import os
 
 # pathplanner
-from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
+from pathplannerlib.auto import NamedCommands, PathPlannerPath
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration
-from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand, AutomatedPath
+from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -30,6 +27,7 @@ from autonomous.playback_auto import PlaybackAuto
 from autonomous.aim_and_shoot import AimAndShoot
 from autonomous.shoot_and_drive_out import ShootAndDriveOut
 from autonomous.auto_climb_arm import AutoClimbArm
+from autonomous.auto_commands import *
 # from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
 
 # commands
@@ -44,11 +42,9 @@ from commands.intake_toggle import IntakeToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
-from commands.record_auto import RecordAuto
 from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
-from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 
@@ -252,6 +248,19 @@ class RobotContainer:
 
     def registerCommands(self):
         print("!! Registering commands !!")
+        for near_far in ['near', 'far']:
+            if near_far == 'near':
+                for near_ring_num in range(1, 4):
+                    NamedCommands.registerCommand(f'Intake {near_far} ring {near_ring_num}', GetRing(self, near_ring_num, near_far))
+            # else:
+            #     for far_ring_num in range(1, 6):
+            #         NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
+
+        for speaker_side in ['ampside', 'middle', 'sourceside']:
+            NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
+
+        NamedCommands.registerCommand('Shoot preload', ShootPreload(self, 1))
+
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
