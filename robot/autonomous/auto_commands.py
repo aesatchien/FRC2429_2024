@@ -39,7 +39,7 @@ class GoToSpeakerAndShoot(commands2.SequentialCommandGroup):
             )
         )
 
-        self.addCommands(AutoShootCycle(self.container, go_to_intake=False))
+        self.addCommands(AutoShootCycle(self.container))
 
 class ShootPreload(commands2.SequentialCommandGroup):
     def __init__(self, container, time_to_aim) -> None:

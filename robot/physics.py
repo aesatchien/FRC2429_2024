@@ -115,7 +115,7 @@ class PhysicsEngine:
         """
 
         # Not sure why this is necessary but it is- LHACK 3/12/24
-        simlib.DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
+        simlib.DriverStationSim.setAllianceStationId(hal.AllianceStationID.kRed2)
 
         # Simulate the drivetrain (only front motors used because read should be in sync)
         ##lf_motor = self.lf_motor.getSpeed()
