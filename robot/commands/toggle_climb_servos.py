@@ -5,16 +5,23 @@ from subsystems.climber import Climber
 
 class ToggleClimbServos(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, climber) -> None:
+    def __init__(self, container, climber, force=None) -> None:
         super().__init__()
         self.setName('Toggle climb servos')  # change this to something appropriate for this command
         self.container = container
         self.climber = climber
+        self.force = force
         self.addRequirements(self.climber)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
-        self.servo_state = self.climber.toggle_climber_servos()
+        if self.force=='on':
+            self.climber.open_servos()
+        elif self.force=='off':
+            self.climber.close_servos()
+        elif self.force == None:
+            self.servo_state = self.climber.toggle_climber_servos()
+
         self.start_time = round(self.container.get_enabled_time(), 2)
         print(f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert",

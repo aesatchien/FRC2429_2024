@@ -9,7 +9,9 @@ from commands.shooter_toggle import ShooterToggle
 from commands.arm_move import ArmMove
 from commands.arm_smart_go_to import ArmSmartGoTo
 from commands.toggle_climb_servos import ToggleClimbServos
+from commands.run_climber import RunClimber
 from subsystems.led import Led
+
 
 class AutoClimbArm2(commands2.Command):  # try to auto climb
 
@@ -56,14 +58,24 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
                             ArmMove(container=self.container, arm=self.container.shooter_arm,
                                         degrees=20, absolute=True, wait_to_finish=True),
                                     DriveSwerveAutoVelocity(self.container, self.container.drive, -0.2, 'forwards').withTimeout(1.5),
-                                    ToggleClimbServos(self.container, self.container.climber),
+                                    ToggleClimbServos(self.container, self.container.climber, force='on'),
                                     IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='off', timeout=1),
                         )
                        )
 
         elif self.stage == 3:  # third part of climb - climb up a bit, lower shooter, set crank?
-            command = commands2.PrintCommand("Nothing to do in stage 3 yet - Sanjith should climb a bit")
-
+            # command = commands2.PrintCommand("Nothing to do in stage 3 yet - Sanjith should climb a bit")
+            command = commands2.ParallelCommandGroup(
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
+                commands2.SequentialCommandGroup(
+                    RunClimber(container=self.container, climber=self.container.climber, left_volts=3, right_volts=3).withTimeout(2.0),
+                    ArmMove(container=self.container, arm=self.container.shooter_arm,
+                            degrees=0, absolute=True, wait_to_finish=True),
+                    ArmMove(container=self.container, arm=self.container.crank_arm,
+                            degrees=100, absolute=True, wait_to_finish=True),
+                    ToggleClimbServos(self.container, self.container.climber, force='off'),
+                )
+            )
         elif self.stage == 4:  # last part of climb - deploy trap opener, shoot
             command = commands2.ParallelCommandGroup(
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
