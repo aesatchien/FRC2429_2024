@@ -1,4 +1,5 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
+import math
 import time
 
 import commands2
@@ -156,10 +157,10 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        # self.trigger_a.onTrue(commands2.ConditionalCommand(
-        #                         onTrue=AcquireNoteToggle(container=self, force='on'),
-        #                         onFalse=AcquireNoteToggle(container=self, force='off'),
-        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        self.trigger_a.onTrue(commands2.ConditionalCommand(
+                                onTrue=AcquireNoteToggle(container=self, force='on'),
+                                onFalse=AcquireNoteToggle(container=self, force='off'),
+                                condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
         self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,
                                                                        field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
@@ -277,7 +278,7 @@ class RobotContainer:
         NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],
                                                                                 absolute=True, wait_to_finish=True))
 
-        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=True))
+        NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=False))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
 
     def get_arm_configuration(self):
