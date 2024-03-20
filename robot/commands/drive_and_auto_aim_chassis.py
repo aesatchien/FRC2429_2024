@@ -8,7 +8,7 @@ import wpilib
 from subsystems.swerve import Swerve  # allows us to access the definitions
 from wpilib import SmartDashboard
 from commands2.button import CommandXboxController
-from wpimath.geometry import Translation2d
+from wpimath.geometry import Translation2d, Rotation2d
 from wpimath.filter import Debouncer
 from wpimath.controller import PIDController
 import constants
@@ -16,7 +16,6 @@ from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveAndAutoAimChassis(commands2.Command):
     def __init__(self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
-        # TODO: sanjith would like his joystick to directly adjust heading so if he puts his stick at 45 deg the robot will go to 45 deg
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
@@ -50,7 +49,7 @@ class DriveAndAutoAimChassis(commands2.Command):
             self.field_oriented = True
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
-        max_angular = 1 * slowmode_multiplier
+        max_angular = 1.5 * slowmode_multiplier
 
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
             translation_origin_to_speaker = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
@@ -59,17 +58,19 @@ class DriveAndAutoAimChassis(commands2.Command):
 
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
-        desired_angle = translation_robot_to_speaker.angle()
-        self.rotation_pid.setSetpoint(desired_angle.radians())
-        raw_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
+        desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
+        self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards speaker since we shoot like that
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
         # SO IF IT DOES NOT DRIVE CORRECTLY THAT WAY, CHECK KINEMATICS, THEN INVERSION OF DRIVE/ TURNING MOTORS
         # not all swerves are the same - some require inversion of drive and or turn motors
+        pid_output = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
+        # The inner one clamps the PID output; the outer one clamps the total output considering that max_angular can get >1
+        desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * max_angular, db_low=0)
         desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
         desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
-        desired_rot = self.input_transform(1.0 * raw_rot) * max_angular
+        # desired_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
@@ -84,7 +85,7 @@ class DriveAndAutoAimChassis(commands2.Command):
                           fieldRelative= self.field_oriented, rate_limited=self.rate_limited)
         else:
             self.swerve.drive(xSpeed=desired_fwd,ySpeed=desired_strafe, rot=desired_rot,
-                              fieldRelative= self.field_oriented, rate_limited=self.rate_limited, keep_angle=True)
+                              fieldRelative= self.field_oriented, rate_limited=True, keep_angle=True)
 
     def end(self, interrupted: bool) -> None:
         # probably should leave the wheels where they are?

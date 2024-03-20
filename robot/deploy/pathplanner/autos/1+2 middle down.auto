@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot preload"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake near ring 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Go to middle and shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake near ring 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Go to middle and shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

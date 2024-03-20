@@ -1,19 +1,16 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
-import math
 import time
 
 import commands2
 import wpilib
-from commands2 import WaitCommand
 from commands2.button import CommandXboxController
-import os
 
 # pathplanner
-from pathplannerlib.auto import NamedCommands, AutoBuilder, PathPlannerPath
+from pathplannerlib.auto import NamedCommands, PathPlannerPath
 
 import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration
-from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand, AutomatedPath
+from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -32,6 +29,7 @@ from autonomous.playback_auto import PlaybackAuto
 from autonomous.aim_and_shoot import AimAndShoot
 from autonomous.shoot_and_drive_out import ShootAndDriveOut
 from autonomous.auto_climb_arm import AutoClimbArm
+from autonomous.auto_commands import *
 from autonomous.auto_climb_arm_2 import AutoClimbArm2
 # from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
 
@@ -47,11 +45,9 @@ from commands.intake_toggle import IntakeToggle
 from commands.shooter_toggle import ShooterToggle
 from commands.run_climber import RunClimber
 from commands.toggle_climb_servos import ToggleClimbServos
-from commands.record_auto import RecordAuto
 from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
-from commands.arm_preset_go_tos import GoToShoot, GoToIntake, GoToAmp
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 
@@ -160,16 +156,20 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_a.onTrue(AcquireNoteToggle(container=self))
         # self.trigger_a.onTrue(commands2.ConditionalCommand(
         #                         onTrue=AcquireNoteToggle(container=self, force='on'),
         #                         onFalse=AcquireNoteToggle(container=self, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
+        self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,
+                                                                       field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+
         self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
 
@@ -181,22 +181,17 @@ class RobotContainer:
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+                                 # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+        # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
+
+        # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
         # self.trigger_x.whileTrue(AutomatedPath(self, self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, final_velocity=0, speed_factor=0.5, fast_turn=True))
         # self.trigger_x.onTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": self.drive.get_pose().X(), "y": self.drive.get_pose().Y() + 1, "rotation": self.drive.get_angle()}, 0, speed_factor=0.25, fast_turn=True))
-
-        if wpilib.RobotBase.isReal():
-            pass
-        #     self.trigger_start.onTrue(RecordAuto(self, "/home/lvuser/input_log.json"))
-        # else:
-        #     self.trigger_start.onTrue(RecordAuto(self, 'input_log.json'))
 
     def bind_copilot_buttons(self):
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
         # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-
-        self.co_trigger_left_stick_y.whileTrue(MoveArmByPose(self))
-        self.co_trigger_left_stick_y.whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
 
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
@@ -259,6 +254,19 @@ class RobotContainer:
 
     def registerCommands(self):
         print("!! Registering commands !!")
+        for near_far in ['near', 'far']:
+            if near_far == 'near':
+                for near_ring_num in range(1, 4):
+                    NamedCommands.registerCommand(f'Intake {near_far} ring {near_ring_num}', GetRing(self, near_ring_num, near_far))
+            # else:
+            #     for far_ring_num in range(1, 6):
+            #         NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
+
+        for speaker_side in ['ampside', 'middle', 'sourceside']:
+            NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
+
+        NamedCommands.registerCommand('Shoot preload', ShootPreload(self, 1))
+
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))

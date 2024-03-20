@@ -194,15 +194,10 @@ class Swerve (Subsystem):
         self.setModuleStates(desired_states)
 
     def flip_path(self):  # pathplanner needs a function to see if it should mirror a path
-        if wpilib.RobotBase.isReal():
-            if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue:
-                return False
-            else:
-                return True
-        else:
-            # TODO - figure out how to set us to blue by default
+        if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue:
             return False
-
+        else:
+            return True
 
     def follow_pathplanner_trajectory_command(self, trajectory:PathPlannerTrajectory, is_first_path:bool):
         #from pathplannerlib.path import PathPlannerPath
