@@ -84,9 +84,9 @@ class Swerve (Subsystem):
 
         # Odometry class for tracking robot pose
         # when we boot should we always be at zero angle?
-        self.odometry = SwerveDrive4Odometry(
-            dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
-            initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
+        # self.odometry = SwerveDrive4Odometry(
+        #     dc.kDriveKinematics, Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),
+        #     initialPose=Pose2d(constants.k_start_x, constants.k_start_y, Rotation2d.fromDegrees(self.get_angle())))
 
         # 2024 - orphan the old odometry, now use the vision enabled version of odometry instead
         self.pose_estimator = SwerveDrive4PoseEstimator(dc.kDriveKinematics,
@@ -102,7 +102,7 @@ class Swerve (Subsystem):
 
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
         AutoBuilder.configureHolonomic(
-            pose_supplier=self.get_pose_no_tag,  # Robot pose supplier. No ussage of apriltag pose estimation when following a PathPlannerPath
+            pose_supplier=self.get_pose,  # Robot pose supplier. No ussage of apriltag pose estimation when following a PathPlannerPath
             reset_pose=self.resetOdometry,  # Method to reset odometry (will be called if your auto has a starting pose)
             robot_relative_speeds_supplier=self.get_relative_speeds,  # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             robot_relative_output=self.drive_robot_relative,  # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
@@ -123,20 +123,20 @@ class Swerve (Subsystem):
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        if wpilib.RobotBase.isReal() and self.use_apriltags:
+        if self.use_apriltags:
             return self.pose_estimator.getEstimatedPosition()
-        else:
-            return self.odometry.getPose()  # need to learn how to update sim with apriltag pose
+        # else:
+        #     return self.odometry.getPose()  # need to learn how to update sim with apriltag pose
         
-    def get_pose_no_tag(self) -> Pose2d:
-        return self.odometry.getPose()
+    # def get_pose_no_tag(self) -> Pose2d:
+    #     return self.odometry.getPose()
 
     def resetOdometry(self, pose: Pose2d) -> None:
         """Resets the odometry to the specified pose.
         :param pose: The pose to which to set the odometry.
         """
-        self.odometry.resetPosition(
-            Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
+        # self.odometry.resetPosition(
+        #     Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
         self.pose_estimator.resetPosition(
             Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(), pose)
 
@@ -199,24 +199,24 @@ class Swerve (Subsystem):
         else:
             return True
 
-    def follow_pathplanner_trajectory_command(self, trajectory:PathPlannerTrajectory, is_first_path:bool):
-        #from pathplannerlib.path import PathPlannerPath
-        #from pathplannerlib.commands import FollowPathWithEvents, FollowPathHolonomic
-        #from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
+    # def follow_pathplanner_trajectory_command(self, trajectory:PathPlannerTrajectory, is_first_path:bool):
+    #     #from pathplannerlib.path import PathPlannerPath
+    #     #from pathplannerlib.commands import FollowPathWithEvents, FollowPathHolonomic
+    #     #from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
 
-        # copy of pathplannerlib's method for returning a swervecommand, with an optional odometry reset
-        # using the first pose of the trajectory
-        if is_first_path:
-            reset_cmd = commands2.InstantCommand(self.resetOdometry(trajectory.getInitialTargetHolonomicPose()))
-        else:
-            reset_cmd = commands2.InstantCommand()
+    #     # copy of pathplannerlib's method for returning a swervecommand, with an optional odometry reset
+    #     # using the first pose of the trajectory
+    #     if is_first_path:
+    #         reset_cmd = commands2.InstantCommand(self.resetOdometry(trajectory.getInitialTargetHolonomicPose()))
+    #     else:
+    #         reset_cmd = commands2.InstantCommand()
 
-        # useful stuff controller.PPHolonomicDriveController, controller.PIDController, auto.FollowPathHolonomic
-        swerve_controller_cmd = None
+    #     # useful stuff controller.PPHolonomicDriveController, controller.PIDController, auto.FollowPathHolonomic
+    #     swerve_controller_cmd = None
 
-        cmd = commands2.SequentialCommandGroup(reset_cmd, swerve_controller_cmd)
+    #     cmd = commands2.SequentialCommandGroup(reset_cmd, swerve_controller_cmd)
 
-        return cmd
+    #     return cmd
     # -------------- END PATHPLANNER STUFF
 
     def perform_keep_angle(self, xSpeed, ySpeed, rot):  # update rotation if we are drifting when trying to drive straight
@@ -350,11 +350,12 @@ class Swerve (Subsystem):
 
         # Update the odometry in the periodic block -
         if wpilib.RobotBase.isReal():
-            self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+            # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
             self.pose_estimator.updateWithTime(wpilib.Timer.getFPGATimestamp(), Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
         else:
             # sim is not updating the odometry right yet, not sure why since all the sparks should be set in the sim
             # self.odometry.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions(),)
+            self.pose_estimator.update(Rotation2d.fromDegrees(self.get_angle()), self.get_module_positions())
             pose = self.get_pose()
             wpilib.SmartDashboard.putNumberArray('real_robot_pose', [pose.x, pose.y, pose.rotation().degrees()])
 
