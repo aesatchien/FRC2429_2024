@@ -32,6 +32,7 @@ class GoToSpeakerAndShoot(commands2.SequentialCommandGroup):
 
         if not side in ['ampside', 'middle', 'sourceside']: raise ValueError('Invalid side of speaker!')
 
+        self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
         self.addCommands(
             commands2.ParallelRaceGroup(
                 MoveArmByPose(self.container),
@@ -47,6 +48,7 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.setName(f'Shoot preload after waiting {time_to_aim} seconds')
         self.container = container
 
+        self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
         self.addCommands(
             commands2.ParallelRaceGroup(
                 MoveArmByPose(self.container),
