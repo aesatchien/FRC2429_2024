@@ -85,6 +85,8 @@ class RobotContainer:
             self.climber = Climber()
             self.vision = Vision()
 
+        self.registerCommands()
+
         # set up driving
         self.configure_driver_joystick()
         self.configure_swerve_bindings()
@@ -104,8 +106,6 @@ class RobotContainer:
         # arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
         # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
         # self.led.setDefaultCommand(LedLoop(container=self))
-
-        self.registerCommands()
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
