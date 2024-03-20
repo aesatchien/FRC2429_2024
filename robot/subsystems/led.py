@@ -90,7 +90,7 @@ class Led(commands2.Subsystem):
                         if cycle % 2 == 0:
                             led.setRGB(0, 0, 0)
                         else:
-                            led.setRGB(255, 255, 255)
+                            led.setRGB(0, 255, 0)
 
                     elif self.indicator == Led.Indicator.AMP:
                         # solid red
@@ -129,7 +129,7 @@ class Led(commands2.Subsystem):
                         led.setRGB(255, 40, 0)
 
                     elif self.indicator == Led.Indicator.SHOOTER_ON:
-                        led.setRGB(255, 255, 0)
+                        led.setRGB(0, 255, 0)
 
                     elif self.indicator == Led.Indicator.KILL:
                         led.setRGB(200, 0, 255)
