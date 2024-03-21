@@ -21,7 +21,12 @@ class Climber(Subsystem):
         motor_type = rev.CANSparkMax.MotorType.kBrushless
         self.left_winch = rev.CANSparkMax(constants.k_left_winch_neo_port, motor_type)
         self.follower_winch = rev.CANSparkMax(constants.k_follower_winch_neo_port, motor_type)
-        # self.follower_winch.follow(self.left_winch)
+        # self.follower_winch.follow
+
+        for spark in [self.left_winch, self.follower_winch]:
+            spark.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
+            if constants.k_burn_flash:
+                spark.burnFlash()
 
         self.left_winch.setInverted(True)
         self.follower_winch.setInverted(False)
