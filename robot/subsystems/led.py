@@ -30,11 +30,15 @@ class Led(commands2.Subsystem):
         SHOOTER_ON = 'SHOOTER_ON'
         NONE = 'NONE'
 
+        POLKA = 'POLKA' # black and white spots looping around led string
+
     def __init__(self):
         super().__init__()
         self.setName('Led')
         self.counter = 0
         self.animation_counter = 0
+
+        self.polka_counter = 1
 
         self.led_count = constants.k_led_count
         self.led_strip = AddressableLED(constants.k_led_pwm_port)
@@ -46,8 +50,10 @@ class Led(commands2.Subsystem):
         self.led_strip.setData(self.led_data)
         self.led_strip.start()
 
-        self.mode = Led.Mode.RING
-        self.indicator = Led.Indicator.NONE
+        self.mode = self.Mode.RING
+
+        #self.indicator = Led.Indicator.NONE
+        self.indicator = Led.Indicator.POLKA
 
     def set_mode(self, mode: Mode) -> None:
         self.prev_mode = self.mode
@@ -79,6 +85,8 @@ class Led(commands2.Subsystem):
 
             for i in range(constants.k_led_count):
                 led = self.led_data[i]
+
+                self.polka_counter *= -1
 
                 # check if there is an indicator, and override
                 if self.indicator != Led.Indicator.NONE:
@@ -167,6 +175,12 @@ class Led(commands2.Subsystem):
                         else:
                             led.setRGB(255, 192, 203)
 
+                    elif self.indicator == Led.Indicator.POLKA:
+                        # circling white and black spots
+                        if self.polka_counter == 1:
+                            led.setRGB(0, 0, 0)
+                        else:
+                            led.setRGB(255, 255, 255)
 
                 else:
                     if self.mode == Led.Mode.RING:
@@ -177,14 +191,9 @@ class Led(commands2.Subsystem):
                         # solid purple
                         led.setRGB(255, 0, 255)
 
+
             self.led_strip.setData(self.led_data)
 
         self.counter += 1
-
-
-
-
-
-
 
 
