@@ -190,8 +190,10 @@ class Swerve (Subsystem):
 
     def drive_robot_relative(self, chassis_speeds):
         # required for the pathplanner lib's pathfollowing based on chassis speeds
-        desired_states = dc.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
-        self.setModuleStates(desired_states)
+        swerveModuleStates = dc.kDriveKinematics.toSwerveModuleStates(chassis_speeds)
+        swerveModuleStates = SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, dc.kMaxTotalSpeed)
+        for state, module in zip(swerveModuleStates, self.swerve_modules):
+            module.setDesiredState(state)
 
     def flip_path(self):  # pathplanner needs a function to see if it should mirror a path
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue:

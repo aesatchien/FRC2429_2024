@@ -52,7 +52,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Get near ring 2"
+            "pathName": "Get red near ring 2"
           }
         },
         {
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to middle speaker side"
+                  "pathName": "Go to middle red speaker side"
                 }
               }
             ]
