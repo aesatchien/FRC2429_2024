@@ -182,6 +182,9 @@ class Led(commands2.Subsystem):
                         else:
                             led.setRGB(255, 255, 255)
 
+                        if i == 0:
+                            self.polka_counter *= -1
+
                 else:
                     if self.mode == Led.Mode.RING:
                         # solid orange
