@@ -292,13 +292,13 @@ class RobotContainer:
         # populate autonomous routines
         self.autonomous_chooser = wpilib.SendableChooser()
         # Manually add our own
-        self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm, drive=self.drive))
-        self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
-        self.autonomous_chooser.addOption('Drive wait', DriveWait(self, 2))
-        if wpilib.RobotBase.isReal():
-            self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
-        else:
-            self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
+        # self.autonomous_chooser.setDefaultOption('Shoot and drive out', ShootAndDriveOut(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm, drive=self.drive))
+        # self.autonomous_chooser.addOption('Aim and shoot', AimAndShoot(container=self, lower_arm=self.crank_arm, upper_arm=self.shooter_arm))
+        self.autonomous_chooser.setDefaultOption('Drive wait', DriveWait(self, 2))
+        # if wpilib.RobotBase.isReal():
+        #     self.autonomous_chooser.addOption('Playback auto', PlaybackAuto(self, "/home/lvuser/input_log.json"))
+        # else:
+        #     self.autonomous_chooser.addOption('Playback auto: Sim edition', PlaybackAuto(self, 'input_log.json'))
 
         # Automatically get Pathplanner paths
 
@@ -311,7 +311,7 @@ class RobotContainer:
         self.position_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
         # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
-        self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfigurationCommand(self, self.drive, {"x": constants.k_blue_amp[0], "y": constants.k_blue_amp[1], "rotation": constants.k_blue_amp[2]}, 0, speed_factor=0.5, fast_turn=True))
+        # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfigurationCommand(self, self.drive, {"x": constants.k_blue_amp[0], "y": constants.k_blue_amp[1], "rotation": constants.k_blue_amp[2]}, 0, speed_factor=0.5, fast_turn=True))
 
         # put commands that we want to call from the dashboard - IDE has problems w/ CommandBase vs Command
         wpilib.SmartDashboard.putData('GyroReset', GyroReset(self, swerve=self.drive))

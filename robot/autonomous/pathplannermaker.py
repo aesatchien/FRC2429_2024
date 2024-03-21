@@ -44,15 +44,17 @@ class PathPlannerConfiguration():
             pure_name = os.path.splitext(file_name)[0]
             extension = os.path.splitext(file_name)[1]
             if extension == '.path':
-                if ix == 0:
-                    autonomous_chooser.setDefaultOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
-                else:
-                    autonomous_chooser.addOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
+                # if ix == 0:
+                #     autonomous_chooser.setDefaultOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
+                # else:
+                #     autonomous_chooser.addOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
+                pass
             elif extension == '.auto':
-                if ix == 0:
-                    autonomous_chooser.setDefaultOption(pure_name, PathPlannerAuto(pure_name))
-                else:
-                    autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
+                # if ix == 0:
+                #     autonomous_chooser.setDefaultOption(pure_name, PathPlannerAuto(pure_name))
+                # else:
+                #     autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
+                autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
 
     # This is a method that will create a path from (0,0) to the desired position.
     def configure_path_manual(position_list:typing.Dict[str, float], final_velocity:float, distance_to_rotate:float) -> commands2.Command:
