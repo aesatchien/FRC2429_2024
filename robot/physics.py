@@ -159,7 +159,7 @@ class PhysicsEngine:
 
         # TODO - why does this not take care of itself if I just update the simmed SPARK's position?
         swerve_positions = [SwerveModulePosition(distance=dist, angle=m.angle) for m, dist in zip(module_states, self.distances)]
-        self.robot.container.drive.odometry.update(pose.rotation(), swerve_positions)
+        self.robot.container.drive.pose_estimator.update(pose.rotation(), swerve_positions)
 
         wpilib.SmartDashboard.putNumberArray('sim_pose', [self.x, self.y, self.theta])
         wpilib.SmartDashboard.putNumberArray('drive_pose', [self.x, self.y, self.theta])  # need this for 2429 python dashboard to update

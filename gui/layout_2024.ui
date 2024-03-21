@@ -876,9 +876,9 @@ TAG
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>190</y>
+         <y>180</y>
          <width>141</width>
-         <height>81</height>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -897,6 +897,39 @@ background-color:rgb(180,180,180);</string>
        <property name="text">
         <string>&lt;NOTE&gt;
 &lt;CAPTURED&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="qlabel_shot_distance">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>230</y>
+         <width>161</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MS Shell Dlg 2</family>
+         <pointsize>14</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 7px;
+border-radius: 7px;
+background-color:rgb(0, 0, 0);
+color:rgb(230,230,230);</string>
+       </property>
+       <property name="text">
+        <string>SHOT DIST: </string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1551,7 +1584,7 @@ background-color:rgb(10, 10, 227);</string>
     <property name="styleSheet">
      <string notr="true">border: 7px;
 border-radius: 7px;
-background-color:rgb(80, 235, 0);</string>
+background-color:rgb(180, 180,180);</string>
     </property>
     <property name="text">
      <string>NT Connected</string>
@@ -1648,7 +1681,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>184</y>
+      <y>218</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -1661,7 +1694,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>214</y>
+      <y>248</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -1671,7 +1704,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>164</y>
+      <y>198</y>
       <width>110</width>
       <height>17</height>
      </rect>
@@ -1687,7 +1720,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>124</y>
+      <y>158</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -1700,7 +1733,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>96</y>
+      <y>130</y>
       <width>110</width>
       <height>23</height>
      </rect>
@@ -1737,6 +1770,39 @@ background-color:rgb(0, 20, 250);</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="qlabel_alliance_indicator">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>100</y>
+      <width>110</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>MS Shell Dlg 2</family>
+      <pointsize>8</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 7px;
+border-radius: 7px;
+background-color:rgb(0, 0, 0);
+color:rgb(230,230,230);</string>
+    </property>
+    <property name="text">
+     <string>Alliance</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::AutoText</enum>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
    <zorder>tabWidget</zorder>
    <zorder>qt_text_status</zorder>
    <zorder>tabWidget_2</zorder>
@@ -1749,6 +1815,7 @@ background-color:rgb(0, 20, 250);</string>
    <zorder>qt_button_reconnect</zorder>
    <zorder>qt_button_test</zorder>
    <zorder>qlabel_camera_view</zorder>
+   <zorder>qlabel_alliance_indicator</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

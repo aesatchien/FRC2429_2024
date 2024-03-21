@@ -324,6 +324,9 @@ class Ui(QtWidgets.QMainWindow):
         'qcombobox_autonomous_routines': {'widget':self.qcombobox_autonomous_routines, 'nt':r'/SmartDashboard/autonomous routines/options', 'command':None, 'selected': r'/SmartDashboard/autonomous routines/selected'},
         'qlabel_nt_connected': {'widget': self.qlabel_nt_connected, 'nt': None, 'command': None},
         'qlabel_matchtime': {'widget': self.qlabel_matchtime, 'nt': '/SmartDashboard/match_time', 'command': None},
+        'qlabel_alliance_indicator': {'widget': self.qlabel_alliance_indicator, 'nt': '/FMSInfo/IsRedAlliance', 'command': None,
+                                            'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 0); color:rgb(200, 200, 200);",
+                                            'style_off': "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 225); color:rgb(200, 200, 200);"},
         'qlabel_camera_view': {'widget': self.qlabel_camera_view, 'nt': None, 'command': None},  # does this do anything? - can't remember
             # COMMANDS
         'qlabel_navx_reset_indicator': {'widget': self.qlabel_navx_reset_indicator, 'nt': '/SmartDashboard/GyroReset/running', 'command': '/SmartDashboard/GyroReset/running'},
@@ -389,10 +392,11 @@ class Ui(QtWidgets.QMainWindow):
         style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
         style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"
         style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
-        style_flash = style_flash_on if self.counter % 10 < 5 else style_flash_off
+        style_flash = style_flash_on if self.counter % 10 < 5 else style_flash_off  # get things to blink
 
         # update the connection indicator
-        style = style_on if self.ntinst.isConnected() else style_off
+        style_disconnected = "border: 7px; border-radius: 7px; background-color:rgb(180, 180, 180); color:rgb(0, 0, 0);"
+        style = style_on if self.ntinst.isConnected() else style_disconnected
         self.widget_dict['qlabel_nt_connected']['widget'].setStyleSheet(style)
 
         # update all labels tied to NT entries
@@ -480,6 +484,27 @@ class Ui(QtWidgets.QMainWindow):
         # self.qlabel_robot.move(int(-bot_width / 2 + width * drive_pose[0] / x_lim), int(-bot_height / 2 + height * (1 - drive_pose[1] / y_lim)))
         self.qlabel_robot.move(int(-new_size/2 + width * drive_pose[0] / x_lim ), int(-new_size/2 + height * (1 - drive_pose[1] / y_lim)))
         ## print(f'Pose X:{drive_pose[0]:2.2f} Pose Y:{drive_pose[1]:2.2f} Pose R:{drive_pose[2]:2.2f}', end='\r', flush=True)
+
+        # update the 2024 shot distance indicator
+        best_distance = 2  # is 2m our best distance?
+        tolerance = 0.4
+        speaker_blue = (0, 5.56)
+        speaker_red = (16.54, 5.56)
+        speaker = speaker_red if self.widget_dict['qlabel_alliance_indicator']['entry'].getBoolean(False) else speaker_blue
+        shot_distance = np.sqrt((speaker[0]-drive_pose[0])**2 + (speaker[1]-drive_pose[1])**2)  # robot to speaker center
+        if shot_distance <= best_distance - tolerance:  # too close
+            shot_style = "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 0); color:rgb(200, 200, 200);"  # bright red
+        elif shot_distance > best_distance - tolerance and shot_distance < best_distance + tolerance:  # just right?
+            grey_val = int(225 * np.abs(best_distance-shot_distance))  # make it a more saturated green
+            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+            shot_style = f"border: 7px; border-radius: 7px; background-color:rgb({grey_val}, {int(225-grey_val)}, {grey_val}); color:rgb{text_color};"
+        elif shot_distance >= best_distance + tolerance:
+            shot_style = "border: 7px; border-radius: 7px; background-color:rgb(180, 180, 180); color:rgb(200, 200, 200);"
+        else:
+            shot_style = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(200, 200, 200);"
+        self.qlabel_shot_distance: QtWidgets.QLabel
+        self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}')
+        self.qlabel_shot_distance.setStyleSheet(shot_style)
 
 
         self.counter += 1
