@@ -53,7 +53,7 @@ class MyRobot(commands2.TimedCommandRobot):
         """This function is called periodically during autonomous"""
 
     def teleopInit(self) -> None:
-        self.container.led.set_indicator(Led.Indicator.NONE)
+        self.container.led.set_indicator(Led.Indicator.POLKA)
         self.container.set_start_time()  # putting this after the scheduler is bad
 
         # This makes sure that the autonomous stops running when

@@ -143,8 +143,8 @@ k_led_count = 44  # 26 old
 k_camera_name = "camera name" # todo: this is just a placeholder 2/28/24 LHACK
 
 # --------------  SIMULATION AND FIELD INITIALIZATION  ---------------
-k_start_x = 5.2  # eventually this will have to be set by the autonomous choices
-k_start_y = 3.85
+k_start_x = 1.26  # eventually this will have to be set by the autonomous choices
+k_start_y = 7.08
 
 # --------------  HELPER FUNCTIONS  ---------------
 def clamp(value: float, bottom: float, top: float) -> float:

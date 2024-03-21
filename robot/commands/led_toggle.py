@@ -25,6 +25,7 @@ class LedToggle(commands2.Command):
             self.container.led.indicator.RAINBOW,
             self.container.led.indicator.INTAKE_ON,
             self.container.led.indicator.NONE,
+            self.container.led.indicator.POLKA
         ]
 
     def runsWhenDisabled(self) -> bool:
