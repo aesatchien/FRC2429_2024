@@ -85,6 +85,7 @@ class RobotContainer:
             self.climber = Climber()
             self.vision = Vision()
 
+        # this has to stay immediately after subsystem definition 3/21/24 LHACK
         self.registerCommands()
 
         # set up driving
