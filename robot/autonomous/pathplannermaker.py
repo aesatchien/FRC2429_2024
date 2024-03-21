@@ -31,6 +31,10 @@ class PathPlannerConfiguration():
 
     # This is a method that will configure the paths for the robot to follow, based on the .path files in the deploy/pathplanner/paths directory.
     def configure_paths(self, autonomous_chooser:wpilib.SendableChooser):
+        allowed_autos = ['1+1 amp', '1+1 middle', '1+1 source']
+        only_use_allowed_autos = True # Change to false for testing, true for comp.  Does not allow paths, only autos, when true.
+
+
         if wpilib.RobotBase.isReal():
             path_to_pathplanner_trajectories = '/home/lvuser/py/deploy/pathplanner/paths'
             path_to_pathplanner_autos = '/home/lvuser/py/deploy/pathplanner/autos'
@@ -40,21 +44,20 @@ class PathPlannerConfiguration():
 
         file_names = os.listdir(path_to_pathplanner_trajectories) + os.listdir(path_to_pathplanner_autos)
 
-        for ix, file_name in enumerate(file_names):
+        # No more setting default command here because default command should be drivewait which is not pathplanner auto 3/21/24 LHACK
+        for file_name in file_names:
             pure_name = os.path.splitext(file_name)[0]
             extension = os.path.splitext(file_name)[1]
-            if extension == '.path':
-                # if ix == 0:
-                #     autonomous_chooser.setDefaultOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
-                # else:
-                #     autonomous_chooser.addOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
-                pass
-            elif extension == '.auto':
-                # if ix == 0:
-                #     autonomous_chooser.setDefaultOption(pure_name, PathPlannerAuto(pure_name))
-                # else:
-                #     autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
-                autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
+            # We don't want paths, only autos
+            if extension == '.auto':
+                if only_use_allowed_autos and pure_name in allowed_autos:
+                    autonomous_chooser.addOption(pure_name, PathPlannerAuto(pure_name))
+
+                elif not only_use_allowed_autos:
+                    print(f'Adding {pure_name} since we\'re adding all autos')
+
+            elif extension == '.path' and not only_use_allowed_autos:
+                autonomous_chooser.addOption(pure_name, AutoBuilder.followPath(PathPlannerPath.fromPathFile(pure_name)))
 
     # This is a method that will create a path from (0,0) to the desired position.
     def configure_path_manual(position_list:typing.Dict[str, float], final_velocity:float, distance_to_rotate:float) -> commands2.Command:
