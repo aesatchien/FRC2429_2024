@@ -187,8 +187,8 @@ class Led(commands2.Subsystem):
 
                 else:
                     if self.mode == Led.Mode.RING:
-                        # solid orange
-                        led.setRGB(255, 40, 0)
+                        # solid none
+                        led.setRGB(0, 0, 0)
 
                     elif self.mode == Led.Mode.CUBE:
                         # solid purple

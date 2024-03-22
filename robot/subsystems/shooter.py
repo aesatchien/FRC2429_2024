@@ -32,6 +32,11 @@ class Shooter(Subsystem):
         self.flywheel_lower_left.setInverted(False)   # False 2240228
         self.flywheel_upper_left.setInverted(False)    # False 2240228
 
+        for spark in [self.flywheel_lower_left, self.flywheel_upper_left]:
+            spark.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
+            if constants.k_burn_flash:
+                spark.burnFlash()
+
         # encoders
         self.flywheel_left_encoder = self.flywheel_lower_left.getEncoder()
 

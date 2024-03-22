@@ -52,6 +52,7 @@ class DriveByJoystickSwerve(commands2.Command):
         # self.slowmode_history.pop(0)
 
         slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
+        angular_slowmode_multiplier = 0.5 + 0.5 * self.controller.getRightTriggerAxis()
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
             self.field_oriented = False
@@ -59,15 +60,34 @@ class DriveByJoystickSwerve(commands2.Command):
             self.field_oriented = True
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
-        max_angular = 1 * slowmode_multiplier
+        max_angular = 1 * angular_slowmode_multiplier
 
-        # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
+        # note that swerve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
         # SO IF IT DOES NOT DRIVE CORRECTLY THAT WAY, CHECK KINEMATICS, THEN INVERSION OF DRIVE/ TURNING MOTORS
         # not all swerves are the same - some require inversion of drive and or turn motors
-        desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
-        desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
-        desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
+
+        joystick_fwd = self.controller.getLeftY()
+        joystick_strafe = self.controller.getLeftX()
+
+        linear_mapping = True  # two ways to make sure diagonal is at "full speed"
+        if linear_mapping:
+            # this lets you go full speed diagonal at the cost of sensitivity on the low end
+            desired_fwd = -self.input_transform_linear(1.0 * joystick_fwd) * max_linear
+            desired_strafe = -self.input_transform_linear(1.0 * joystick_strafe) * max_linear
+            desired_rot = -self.input_transform_linear(1.0 * self.controller.getRightX()) * max_angular
+        else:
+            # correcting for the x^2 + y^2 = 1 of the joysticks so we don't have to use a linear mapping
+            angle = math.atan2(joystick_fwd, joystick_strafe)
+            correction = math.fabs(math.cos(angle) * (math.sin(angle)))  # peaks at 45 degrees
+            fwd = joystick_fwd * (1 + 0.3 * math.copysign(correction, joystick_fwd))  # they max out at .77, so add the remainder at 45 degrees to make 1
+            strafe = joystick_strafe * (1 + 0.3 * math.copysign(correction, joystick_strafe))
+            if wpilib.RobotBase.isSimulation():
+                wpilib.SmartDashboard.putNumberArray('joysticks',[joystick_fwd, joystick_strafe, correction, fwd, strafe])
+
+            desired_fwd = -self.input_transform(1.0 * fwd) * max_linear
+            desired_strafe = -self.input_transform(1.0 * strafe) * max_linear
+            desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
@@ -105,3 +125,8 @@ class DriveByJoystickSwerve(commands2.Command):
         # 1706 uses a nice transform
         db_value = self.apply_deadband(value)
         return a * db_value**3 + b * db_value
+
+    def input_transform_linear(self, value, a=0.9, b=0.1):
+        # 1706 uses a nice transform
+        db_value = self.apply_deadband(value)
+        return db_value
