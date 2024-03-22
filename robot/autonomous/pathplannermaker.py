@@ -31,7 +31,7 @@ class PathPlannerConfiguration():
 
     # This is a method that will configure the paths for the robot to follow, based on the .path files in the deploy/pathplanner/paths directory.
     def configure_paths(self, autonomous_chooser:wpilib.SendableChooser):
-        allowed_autos = ['1+1 amp', '1+1 middle', '1+1 source']
+        allowed_autos = ['1+1 amp', '1+1 middle', '1+1 source', '1+0 stationary']
         only_use_allowed_autos = True # Change to false for testing, true for comp.  Does not allow paths, only autos, when true.
 
 
