@@ -19,10 +19,14 @@ class GetRing(commands2.SequentialCommandGroup):
         if not near_or_far in ['near', 'far']: raise(ValueError('Don\'t know whether to go for near or far ring!'))
         if near_or_far == 'near' and ring_num > 3: raise(ValueError(f'There is no near ring {ring_num}!'))
 
-        self.addCommands(GoToIntake(self.container))
         self.addCommands(AcquireNoteToggle(self.container, force='on', timeout=None))
+        self.addCommands(
+            commands2.ParallelCommandGroup(
+                GoToIntake(self.container),
+                commands2.WaitCommand(0.5).andThen(AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Get {near_or_far} ring {ring_num}')))
+            )
+        )
         # Note that this requires certain paths to be present
-        self.addCommands(AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Get {near_or_far} ring {ring_num}')))
         self.addCommands(AcquireNoteToggle(self.container, force='off', timeout=None))
 
 class GoToSpeakerAndShoot(commands2.SequentialCommandGroup):
