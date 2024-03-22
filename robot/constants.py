@@ -107,8 +107,8 @@ k_shooter_arm_dict = {
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-    'k_MaxVelocityRadPerSecond': 2.5,
-    'k_MaxAccelerationRadPerSecSquared': 2.5,
+    'k_MaxVelocityRadPerSecond': 3.0,
+    'k_MaxAccelerationRadPerSecSquared': 3.0,
     'k_kSVolts': 0.5,  # was 0.3 before chain # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio

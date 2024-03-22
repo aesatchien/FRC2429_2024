@@ -35,7 +35,7 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
 
         if self.stage == 1:  # initial part of climb - raise and move chain
             command = commands2.ParallelCommandGroup(
-                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 7),
                           commands2.SequentialCommandGroup(
                     IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=None),
                               ArmMove(container=self.container, arm=self.container.crank_arm,
@@ -44,38 +44,54 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
                               ArmMove(container=self.container, arm=self.container.shooter_arm,
                                       degrees=constants.k_crank_presets['shoot']['upper'], absolute=True),
                               IndexerToggle(container=self.container, indexer=self.container.indexer, power=1,
-                                            force='on', timeout=2),
+                                            force='on', timeout=1),
                               ArmMove(container=self.container, arm=self.container.shooter_arm,
                                       degrees=constants.k_crank_presets['climb_second']['upper'], absolute=True),
+                              # this is two and three
+                              ArmMove(container=self.container, arm=self.container.shooter_arm,
+                                      degrees=20, absolute=True, wait_to_finish=True),
+                              DriveSwerveAutoVelocity(self.container, self.container.drive, -0.2,
+                                                      'forwards').withTimeout(1.6),
+                              ToggleClimbServos(self.container, self.container.climber, force='on'),
+                              IndexerToggle(container=self.container, indexer=self.container.indexer, power=1,
+                                            force='off', timeout=0.5),
+                              # RunClimber(container=self.container, climber=self.container.climber, left_volts=3,
+                              #            right_volts=4).withTimeout(4.0),
+                              # ArmMove(container=self.container, arm=self.container.shooter_arm,
+                              #         degrees=-10, absolute=True, wait_to_finish=True),
+                              # ArmMove(container=self.container, arm=self.container.crank_arm,
+                              #         degrees=106, absolute=True, wait_to_finish=True),
+                              # ToggleClimbServos(self.container, self.container.climber, force='off'),
 
                           )
                       )
 
         elif self.stage == 2: # second part of climb - drive back and deploy servos
-            command = commands2.ParallelCommandGroup(
-                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
-                        commands2.SequentialCommandGroup(
-                            ArmMove(container=self.container, arm=self.container.shooter_arm,
-                                        degrees=20, absolute=True, wait_to_finish=True),
-                                    DriveSwerveAutoVelocity(self.container, self.container.drive, -0.2, 'forwards').withTimeout(1.5),
-                                    ToggleClimbServos(self.container, self.container.climber, force='on'),
-                                    IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='off', timeout=1),
-                        )
-                       )
+            command = commands2.PrintCommand("Nothing to do in stage 2 yet")
+            # command = commands2.ParallelCommandGroup(
+            #     self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
+            #             commands2.SequentialCommandGroup(
+            #                 ArmMove(container=self.container, arm=self.container.shooter_arm,
+            #                             degrees=20, absolute=True, wait_to_finish=True),
+            #                         DriveSwerveAutoVelocity(self.container, self.container.drive, -0.2, 'forwards').withTimeout(1.8),
+            #                         ToggleClimbServos(self.container, self.container.climber, force='on'),
+            #                         IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='off', timeout=1),
+            #             )
+            #            )
 
         elif self.stage == 3:  # third part of climb - climb up a bit, lower shooter, set crank?
-            # command = commands2.PrintCommand("Nothing to do in stage 3 yet - Sanjith should climb a bit")
-            command = commands2.ParallelCommandGroup(
-                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
-                commands2.SequentialCommandGroup(
-                    RunClimber(container=self.container, climber=self.container.climber, left_volts=3, right_volts=3).withTimeout(2.0),
-                    ArmMove(container=self.container, arm=self.container.shooter_arm,
-                            degrees=0, absolute=True, wait_to_finish=True),
-                    ArmMove(container=self.container, arm=self.container.crank_arm,
-                            degrees=100, absolute=True, wait_to_finish=True),
-                    ToggleClimbServos(self.container, self.container.climber, force='off'),
-                )
-            )
+            command = commands2.PrintCommand("Nothing to do in stage 3 yet")
+            # command = commands2.ParallelCommandGroup(
+            #     self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
+            #     commands2.SequentialCommandGroup(
+            #         RunClimber(container=self.container, climber=self.container.climber, left_volts=3, right_volts=3).withTimeout(3.0),
+            #         ArmMove(container=self.container, arm=self.container.shooter_arm,
+            #                 degrees=-10, absolute=True, wait_to_finish=True),
+            #         ArmMove(container=self.container, arm=self.container.crank_arm,
+            #                 degrees=106, absolute=True, wait_to_finish=True),
+            #         ToggleClimbServos(self.container, self.container.climber, force='off'),
+            #     )
+            # )
         elif self.stage == 4:  # last part of climb - deploy trap opener, shoot
             command = commands2.ParallelCommandGroup(
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
@@ -88,7 +104,12 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
                        )
         else:  # reset or do nothing?
             # self.stage = 0
-            command = commands2.PrintCommand(f"Nothing to do in exception stage ({self.stage})")
+            command = commands2.ParallelCommandGroup(
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
+                commands2.SequentialCommandGroup(
+                    AutoShootCycle(container=self.container, go_to_shoot=False),
+                )
+            )
 
         # schedule the command
         command.schedule()

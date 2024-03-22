@@ -158,10 +158,11 @@ class RobotContainer:
         #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
         #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
         #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        self.trigger_a.onTrue(commands2.ConditionalCommand(
-                                onTrue=AcquireNoteToggle(container=self, force='on'),
-                                onFalse=AcquireNoteToggle(container=self, force='off'),
-                                condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        # self.trigger_a.onTrue(commands2.ConditionalCommand(
+        #                         onTrue=AcquireNoteToggle(container=self, force='on'),
+        #                         onFalse=AcquireNoteToggle(container=self, force='off'),
+        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
+        self.trigger_a.onTrue(AcquireNoteToggle(container=self, force='on'))
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
         self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,
                                                                        field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
@@ -198,7 +199,7 @@ class RobotContainer:
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='shoot'))
+        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
@@ -218,10 +219,10 @@ class RobotContainer:
             self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-20, direction='down'))
         else:
             direction = None
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction=direction)) # was 15 and -15
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction=direction))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
+            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
+            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=15, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-15, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
 
