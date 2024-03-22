@@ -85,9 +85,6 @@ class RobotContainer:
             self.climber = Climber()
             self.vision = Vision()
 
-        # this has to stay immediately after subsystem definition 3/21/24 LHACK
-        self.registerCommands()
-
         # set up driving
         self.configure_driver_joystick()
         self.configure_swerve_bindings()
@@ -101,6 +98,9 @@ class RobotContainer:
             if constants.k_enable_copilot:
                 self.configure_copilot_joystick()
                 self.bind_copilot_buttons()
+
+        # this has to be before initialize_dashboard but after configuring controls 3/22/24 LHACK
+        self.registerCommands()
 
         self.initialize_dashboard()
 
@@ -268,7 +268,7 @@ class RobotContainer:
         for speaker_side in ['ampside', 'middle', 'sourceside']:
             NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
 
-        NamedCommands.registerCommand('Shoot preload', ShootPreload(self, 1))
+        NamedCommands.registerCommand('Shoot preload', ShootPreload(self, 5))
 
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))

@@ -6,6 +6,7 @@ from autonomous.auto_shoot_cycle import AutoShootCycle
 from commands.arm_move import ArmMove
 from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.move_arm_by_pose import MoveArmByPose
+from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 
 # LHACK 3/18/24- a bunch of commands used for auto only that don't really deserve their own files IMO
 
@@ -51,6 +52,7 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
         self.addCommands(
             commands2.ParallelRaceGroup(
+                DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited),
                 MoveArmByPose(self.container),
                 commands2.SequentialCommandGroup(
                     commands2.WaitCommand(time_to_aim),
