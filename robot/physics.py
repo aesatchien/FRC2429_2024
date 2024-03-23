@@ -15,6 +15,7 @@ from pyfrc.physics.core import PhysicsInterface
 from wpimath.kinematics import SwerveDrive4Kinematics, SwerveModuleState, SwerveModulePosition
 import wpimath.geometry as geo
 import hal
+import ntcore
 import rev
 from pyfrc.physics.units import units
 
@@ -80,10 +81,19 @@ class PhysicsEngine:
 
         self.distances = [0, 0, 0, 0]
 
+        key = 'orange'
+        self.inst = ntcore.NetworkTableInstance.getDefault()
+        self.ringcam_table = self.inst.getTable('/Cameras/Ringcam')   # lifecam for rings
+        self.targets_entry = self.ringcam_table.getEntry(f"/{key}/targets")
+        self.distance_entry = self.ringcam_table.getEntry(f"/{key}/distance")
+        self.strafe_entry = self.ringcam_table.getEntry(f"/{key}/strafe")
+        self.rotation_entry = self.ringcam_table.getEntry(f"/{key}/rotation")
+
         # sensors
 
         # set up the initial location of the robot on the field
         self.x, self.y = constants.k_start_x, constants.k_start_y
+        self.theta = 0
         initial_pose = geo.Pose2d(0, 0, geo.Rotation2d())
         self.physics_controller.move_robot(geo.Transform2d(self.x, self.y, 0))
 
@@ -103,6 +113,14 @@ class PhysicsEngine:
         wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
 
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
+
+    def distance_to_ring(self):  # example way, but VERY rigid - can't drag robot
+        ring_x, ring_y  = 8.25, 4.1
+        dx = self.x - ring_x
+        dy = self.y - ring_y
+        distance = (dx**2 + dy**2)**0.5
+        rotation = math.atan2(dy, dx) * 180/math.pi
+        return distance, rotation
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
@@ -187,6 +205,15 @@ class PhysicsEngine:
         # self.armSim.setState(crank_angle, crank_velocity)
         self.crank_arm_mech.setAngle(crank_angle_to_sim(crank_angle))
         self.shooter_arm_mech.setAngle(shooter_angle_to_sim(shooter_arm_angle))
+
+        # update the vision
+        ring_dist, ring_rot = self.distance_to_ring()
+        wpilib.SmartDashboard.putNumber('/sim/hub_dist', round(ring_dist, 2))
+        wpilib.SmartDashboard.putNumber('/sim/hub_rot', round(ring_rot, 2))
+        self.targets_entry.setDouble(1)
+        self.distance_entry.setDouble(ring_dist)
+        self.strafe_entry.setDouble(0)
+        self.rotation_entry.setDouble(self.theta - ring_rot)
 
 def crank_angle_to_sim(crank_angle):
     # for us 90 is straight up and the angle is positive CW (looking at robot from the right)

@@ -169,9 +169,10 @@ class RobotContainer:
 
         self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
-        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=3))
-        self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=3, right_volts=0))
-        self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=3))
+        climber_voltage = 4  # was 3 until Tempe
+        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
+        self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
@@ -197,7 +198,7 @@ class RobotContainer:
         # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
-        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='low_amp'))
+        # self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
         self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         # self.co_trigger_y.onTrue(LedToggle(container=self))
