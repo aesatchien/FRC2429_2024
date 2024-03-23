@@ -266,7 +266,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.setGoal(self.goal)
 
     def get_at_goal(self) -> bool:
-        tolerance = 4  # updated from 2 to 4 - 20240319 CJH
+        tolerance = 10  # updated from 2 to 4 to 8 at Tempe - 20240319 CJH
         self.at_goal = math.fabs(self.angle - self.goal) < math.radians(tolerance)  # update it before returning it
         return self.at_goal
 
