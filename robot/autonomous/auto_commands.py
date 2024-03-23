@@ -44,7 +44,12 @@ class GoToSpeakerAndShoot(commands2.SequentialCommandGroup):
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Go to {side} speaker side'))
             )
         )
-
+        self.addCommands(
+            commands2.ParallelRaceGroup(
+                AutoShootCycle(self.container, go_to_shoot=False),
+                DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited)
+            )
+        )
         self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
 
 class ShootPreload(commands2.SequentialCommandGroup):

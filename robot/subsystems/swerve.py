@@ -123,11 +123,9 @@ class Swerve (Subsystem):
         if report:
             pass
             # print(f'attempting to get pose: {self.odometry.getPose()}')
-        if self.use_apriltags:
-            return self.pose_estimator.getEstimatedPosition()
-        # else:
-        #     return self.odometry.getPose()  # need to learn how to update sim with apriltag pose
-        
+
+        return self.pose_estimator.getEstimatedPosition()
+
     # def get_pose_no_tag(self) -> Pose2d:
     #     return self.odometry.getPose()
 
