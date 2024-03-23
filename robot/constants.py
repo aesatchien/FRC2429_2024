@@ -11,7 +11,7 @@ import math
 # top level items
 
 k_burn_flash = True  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
-k_debugging_messages = True  # turn these off for competition
+k_debugging_messages = False  # turn these off for competition
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain

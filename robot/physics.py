@@ -84,10 +84,10 @@ class PhysicsEngine:
         key = 'orange'
         self.inst = ntcore.NetworkTableInstance.getDefault()
         self.ringcam_table = self.inst.getTable('/Cameras/Ringcam')   # lifecam for rings
-        self.targets_entry = self.ringcam_table.getEntry(f"/{key}/targets")
-        self.distance_entry = self.ringcam_table.getEntry(f"/{key}/distance")
-        self.strafe_entry = self.ringcam_table.getEntry(f"/{key}/strafe")
-        self.rotation_entry = self.ringcam_table.getEntry(f"/{key}/rotation")
+        self.targets_entry = self.ringcam_table.getEntry(f"{key}/targets")
+        self.distance_entry = self.ringcam_table.getEntry(f"{key}/distance")
+        self.strafe_entry = self.ringcam_table.getEntry(f"{key}/strafe")
+        self.rotation_entry = self.ringcam_table.getEntry(f"{key}/rotation")
 
         # sensors
 

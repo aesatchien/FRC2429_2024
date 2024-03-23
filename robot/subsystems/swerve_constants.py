@@ -12,7 +12,7 @@ class DriveConstants:
     kMaxSpeedMetersPerSecond = 4.25  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
-    kMaxTotalSpeed = math.sqrt(2) *  kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
+    kMaxTotalSpeed = 1.1 * math.sqrt(2) * kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
     # set the acceleration limits used in driving using the SlewRateLimiter tool
     kMagnitudeSlewRate = 5  # hundred percent per second (1 = 100%)
     kRotationalSlewRate = 5  # hundred percent per second (1 = 100%)
