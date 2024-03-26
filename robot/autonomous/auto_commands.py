@@ -58,17 +58,8 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.setName(f'Shoot preload after waiting {time_to_aim} seconds')
         self.container = container
 
-        self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
-        self.addCommands(
-            commands2.ParallelRaceGroup(
-                DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited),
-                MoveArmByPose(self.container),
-                commands2.SequentialCommandGroup(
-                    commands2.WaitCommand(time_to_aim),
-                    AutoShootCycle(self.container, go_to_shoot=False)
-                )
-            )
-        )
+        self.addCommands(GoToShoot(self.container))
+        self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
 
 class GoToShoot(commands2.SequentialCommandGroup):
     def __init__(self, container) -> None:
@@ -76,9 +67,9 @@ class GoToShoot(commands2.SequentialCommandGroup):
         self.setName('Go to shoot')  # change this to something appropriate for this command
         self.container = container
 
-        self.addCommands(ArmMove(self.container, self.container.crank_arm, constants.k_crank_presets['shoot']['lower'],
+        self.addCommands(ArmMove(self.container, self.container.crank_arm, constants.k_crank_presets['low_shoot']['lower'],
                                  absolute=True, wait_to_finish=True))
-        self.addCommands(ArmMove(self.container, self.container.shooter_arm, constants.k_crank_presets['shoot']['upper'],
+        self.addCommands(ArmMove(self.container, self.container.shooter_arm, constants.k_crank_presets['low_shoot']['upper'],
                                  absolute=True, wait_to_finish=True))
 
 class GoToIntake(commands2.SequentialCommandGroup):

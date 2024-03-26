@@ -7,11 +7,15 @@ changes.
 """
 
 import math
+import wpilib
 
 # top level items
 
 k_burn_flash = True  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
-k_debugging_messages = False  # turn these off for competition
+if wpilib.RobotBase.isReal():
+    k_debugging_messages = True  # turn these off for competition
+else:
+    k_debugging_messages = True #
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain
@@ -49,7 +53,7 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-68, 'lower': 54},  # was 63
+    'intake': {'upper':-65, 'lower': 54},  # was 63
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
@@ -68,7 +72,7 @@ k_crank_arm_dict = {
     'gearing': 300, 'arm_length': 20 * 0.0254, 'arm_mass': 8, # meters and kg
     'crank_gearbox_ratio': 80/18,  # This is the new gear ratio on the bottom crank
     # WANT 90 DEGREES TO BE ABOUT 0.7 ON THE ENCODER - GIVES HIGHEST RANGE FOR US
-    'abs_encoder_zero_offset': 0.720,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
+    'abs_encoder_zero_offset': 0.750,  # measered at arm=90 degrees - set the sparkmax's encoder and can still use abs p/m 45 deg.  in revolutions.
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal

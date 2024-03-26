@@ -35,7 +35,7 @@ class MyRobot(commands2.TimedCommandRobot):
     def disabledInit(self) -> None:
         """This function is called once each time the robot enters Disabled mode."""
         self.container.led.set_indicator(Led.Indicator.RAINBOW)
-        self.container.drive.set_use_apriltags(True)
+        # self.container.drive.set_use_apriltags(True)
 
     def disabledPeriodic(self) -> None:
         """This function is called periodically when disabled"""
@@ -57,7 +57,7 @@ class MyRobot(commands2.TimedCommandRobot):
     def teleopInit(self) -> None:
         # self.container.led.set_indicator(Led.Indicator.POLKA) <- Arshan and Miles's pattern for robot reveal
         self.container.led.set_indicator(Led.Indicator.NONE)
-        self.container.drive.set_use_apriltags(True)
+        # self.container.drive.set_use_apriltags(True)
         self.container.set_start_time()  # putting this after the scheduler is bad
 
         # This makes sure that the autonomous stops running when
