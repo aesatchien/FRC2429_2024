@@ -119,6 +119,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.error = 0
         self.limit_switch_state = self.limit_switch.get()
 
+        self.enabled = None  # set this tru or false below
         if wpilib.RobotBase.isReal():
             tol = math.radians(4)  # let the crank arm enable if we are within 4 degrees of the limits
             if self.goal > (self.min_angle - tol) and self.goal < (self.max_angle + tol):
@@ -126,6 +127,8 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             else:
                 self.disable_arm()
                 print(f'arm out of allowed range disabling')
+        else:
+            self.enable_arm()
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint

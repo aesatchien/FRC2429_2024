@@ -25,14 +25,9 @@ from subsystems.climber import Climber
 from subsystems.vision import Vision
 
 # auto
-from autonomous.auto_shoot_cycle import AutoShootCycle
-from autonomous.playback_auto import PlaybackAuto
-from autonomous.aim_and_shoot import AimAndShoot
-from autonomous.shoot_and_drive_out import ShootAndDriveOut
-from autonomous.auto_climb_arm import AutoClimbArm
 from autonomous.auto_commands import *
 from autonomous.auto_climb_arm_2 import AutoClimbArm2
-# from autonomous.shoot_and_drive_out_reset_gyro import ShootAndDriveOutResetGyro
+from autonomous.drive_wait import DriveWait
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -51,10 +46,6 @@ from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankBy
 from commands.arm_coast import CrankArmCoast
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
-
-# autonomous
-from autonomous.drive_wait import DriveWait
-
 
 
 class RobotContainer:
@@ -104,10 +95,6 @@ class RobotContainer:
 
         self.initialize_dashboard()
 
-        # arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
-        # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
-        # self.led.setDefaultCommand(LedLoop(container=self))
-
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
 
@@ -147,26 +134,14 @@ class RobotContainer:
         self.co_trigger_back = self.co_pilot_command_controller.back()
 
     def configure_swerve_bindings(self):
-        #self.trigger_a.debounce(0.05).onTrue(DriveSwerveAutoVelocity(container=self, drive=self.drive, velocity=0.25,
-        #direction = 'forwards', decide_by_turret = False).withTimeout(0.5))
         self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
     def bind_driver_buttons(self):
         # bind driver buttons not related to swerve
-        # self.trigger_a.onTrue(commands2.ConditionalCommand(
-        #                         onTrue=IntakeToggle(container=self, intake=self.intake, force='on'),
-        #                         onFalse=IntakeToggle(container=self,intake=self.intake, force='off'),
-        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
-        # self.trigger_a.onTrue(commands2.ConditionalCommand(
-        #                         onTrue=AcquireNoteToggle(container=self, force='on'),
-        #                         onFalse=AcquireNoteToggle(container=self, force='off'),
-        #                         condition=lambda: math.degrees(self.crank_arm.get_angle()) < 70))
         self.trigger_a.onTrue(AcquireNoteToggle(container=self, force='on'))
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
-        self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,
-                                                                       field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
-
+        self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
         self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         climber_voltage = 4  # was 3 until Tempe
@@ -175,7 +150,6 @@ class RobotContainer:
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
-
 
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
@@ -204,6 +178,7 @@ class RobotContainer:
         # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
+        # IF YOU WANT TO DO TOW THINGS ON ONE BUTTON, USE AN "ANDTHEN" or some other chained command
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
         self.co_trigger_lb.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.KILL, 5))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
@@ -229,7 +204,6 @@ class RobotContainer:
 
         # self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5)
         self.co_trigger_back.onTrue(AutoClimbArm2(self))
-
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
@@ -270,17 +244,14 @@ class RobotContainer:
             NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
 
         NamedCommands.registerCommand('Shoot preload', ShootPreload(self, 5))
-
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
         NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(self))
-
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
         NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],
                                                                                 absolute=True, wait_to_finish=True))
-
         NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=False))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
 

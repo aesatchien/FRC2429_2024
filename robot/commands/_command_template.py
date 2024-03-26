@@ -2,7 +2,7 @@ import commands2
 from wpilib import SmartDashboard
 
 
-class CommandTemplate(commands2.CommandBase):  # change the name for your command
+class CommandTemplate(commands2.Command):  # change the name for your command
 
     def __init__(self, container) -> None:
         super().__init__()
@@ -26,6 +26,8 @@ class CommandTemplate(commands2.CommandBase):  # change the name for your comman
     def end(self, interrupted: bool) -> None:
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
-        print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
-        SmartDashboard.putString(f"alert",
-                                 f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+        print_end_message = False
+        if print_end_message:
+            print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+            SmartDashboard.putString(f"alert",
+                                     f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
