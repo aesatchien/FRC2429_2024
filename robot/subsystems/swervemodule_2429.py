@@ -137,8 +137,7 @@ class SwerveModule:
 
         # CJH added for debugging and tuning
         if wpilib.RobotBase.isSimulation():
-
-            if constants.k_debugging_messages:  # only do this when debugging - it's pretty intensive
+            if constants.k_swerve_state_messages:  # only do this when debugging - it's pretty intensive
                 wpilib.SmartDashboard.putNumberArray(f'{self.label}_target_vel_angle',
                                     [optimizedDesiredState.speed, optimizedDesiredState.angle.radians()])
                 wpilib.SmartDashboard.putNumberArray(f'{self.label}_actual_vel_angle',

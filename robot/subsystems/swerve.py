@@ -165,7 +165,7 @@ class Swerve (Subsystem):
         rotDelivered = rotation_commanded * dc.kMaxAngularSpeed
 
         # probably can stop doing this now
-        if constants.k_debugging_messages:
+        if constants.k_swerve_state_messages:
             wpilib.SmartDashboard.putNumberArray('_xyr', [xSpeedDelivered, ySpeedDelivered, rotDelivered])
 
         # create the swerve state array depending on if we are field relative or not
@@ -374,7 +374,7 @@ class Swerve (Subsystem):
                 wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
                 # wpilib.SmartDashboard.putNumber('keep_angle_output', output)
 
-            if constants.k_debugging_messages:  # this is just a bit much, so
+            if constants.k_swerve_state_messages:  # this is just a bit much, so
                 angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]
                 absolutes = [m.get_turn_encoder() for m in self.swerve_modules]
                 wpilib.SmartDashboard.putNumberArray(f'_angles', angles)
