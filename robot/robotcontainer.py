@@ -62,6 +62,7 @@ class RobotContainer:
 
         # set the default arm position - will use this to control shot speed.  Need this before the arm subsystems...
         self.arm_configuration = 'intake'
+        wpilib.SmartDashboard.putString('arm_config', self.arm_configuration)
 
         # The robot's subsystems
         self.drive = Swerve()

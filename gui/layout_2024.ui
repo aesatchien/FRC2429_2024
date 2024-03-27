@@ -310,6 +310,37 @@ background-color:rgb(80, 235, 0);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
+      <widget class="QLabel2" name="qlabel_position_indicator">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>260</y>
+         <width>161</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 7px;
+border-radius: 7px;
+background-color:rgb(127, 127, 127);</string>
+       </property>
+       <property name="text">
+        <string>POSITION</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
@@ -1054,6 +1085,9 @@ background-color:rgb(180,180,180);</string>
        </property>
       </widget>
       <widget class="QLabel2" name="qlabel_align_to_target_indicator">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1075,7 +1109,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;Align To Target&gt;</string>
+        <string>&lt;CMD&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

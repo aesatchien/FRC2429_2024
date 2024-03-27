@@ -32,6 +32,7 @@ class CameraWorker(QObject):
         self.frames = 0
         self.previous_read_time = 0
         self.max_fps = 30
+        self.error_count = 0
 
     def stop(self):
         self.running = False
@@ -72,8 +73,11 @@ class CameraWorker(QObject):
                     # self.progress.emit(1)
                     self.previous_read_time = now
                 except Exception as e:
-                    print(f'cv error: {e}')
+                    self.error_count += 1
+                    if self.error_count % 100 == 0:
+                        print(f'{datetime.today().strftime("%H%M%S")} error count:{self.error_count}: cv read error: {e}')
                     # should I stop the thread here? or just let the user fix it by restarting manually?
+
         self.finished.emit()
 
 class Ui(QtWidgets.QMainWindow):
@@ -346,6 +350,7 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_intake_indicator': {'widget': self.qlabel_intake_indicator, 'nt': '/SmartDashboard/intake_enabled', 'command': None, 'flash': True},
         'qlabel_orange_target_indicator': {'widget': self.qlabel_orange_target_indicator, 'nt': '/SmartDashboard/orange_targets_exist', 'command': None},
         'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': None},
+        'qlabel_position_indicator': {'widget': self.qlabel_position_indicator, 'nt': '/SmartDashboard/arm_config', 'command': None},
 
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
@@ -506,6 +511,15 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}')
         self.qlabel_shot_distance.setStyleSheet(shot_style)
 
+        # update the 2024 arm configuration indicator
+        config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
+        if config.upper() != 'LOW_SHOOT':
+            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+            postion_style = f"border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb{text_color};"
+        else:
+            postion_style = style_on
+        self.qlabel_position_indicator.setText(f'POS: {config.upper()}')
+        self.qlabel_position_indicator.setStyleSheet(postion_style)
 
         self.counter += 1
         if self.counter % 80 == 0:  # display an FPS every 2s or so
