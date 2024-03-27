@@ -41,11 +41,21 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
         elif DriverStation.getAlliance() == DriverStation.Alliance.kBlue:
             self.speaker_translation = Translation2d(constants.k_blue_speaker[0], constants.k_blue_speaker[1])
 
+
     def execute(self) -> None:
         # Get distance to speaker
         robot_pose = self.container.drive.get_pose()
-        robot_translation = Translation2d(robot_pose.X(), robot_pose.Y())
-        distance_to_speaker = self.speaker_translation.distance(robot_translation)
+
+        #robot_translation = Translation2d(robot_pose.X(), robot_pose.Y())
+        #distance_to_speaker = self.speaker_translation.distance(robot_translation)
+        
+        x = robot_pose.X()
+        y = robot_pose.Y()
+        self.distance_to_speaker = math.sqrt(math.pow((x - self.speaker_translation[0]), 2) + math.pow((y - self.speaker_translation[1]), 2))
+
+        
+
+        ''' interpolation isn't necessary, I will try not using it for now - Arshan
 
         # Find the points to interpolate between
         distances = list(self.distance_angle_lookup_table.keys())
@@ -75,7 +85,11 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
 
         interpolated = self.distance_angle_lookup_table[lesser_distance] + m * (distance_to_speaker - lesser_distance)
 
-        self.container.crank_arm.set_goal(math.radians(interpolated))
+        '''
+
+        self.container.crank_arm.set_goal(math.pi / 2)
+        if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
+            self.container.shooter_arm.set_goal(-1 * math.atan((constants.k_speaker_opening_height - constants.k_crank_arm_dict['arm_length']) / self.distance_to_speaker))
 
         return
 

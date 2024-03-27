@@ -129,7 +129,6 @@ k_PID_dict_vel_shooter_arm = {'kP': 0, 'kI': 0, 'kD': 0, 'kIz': 1e-5, 'kFF':0, '
 # The least "folded" the upper crank can be while still allowing the lower crank to retract as much as it likes
 k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65)
 
-
 # ------------------- SHOOTER -------------------
 k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
@@ -160,3 +159,5 @@ k_red_amp = [14.75, 7.74, 90] #(x, y, rotation)
 # --------------  SPEAKER POSITIONS  ---------------
 k_blue_speaker = [0, 5.555, 180] #(x, y, rotation)
 k_red_speaker = [16.5, 5.555, 0] #(x, y, rotation)
+
+k_speaker_opening_height = 2.05 #height of speaker opening
