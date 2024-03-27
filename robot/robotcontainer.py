@@ -109,6 +109,7 @@ class RobotContainer:
         self.trigger_x = self.driver_command_controller.x()
         self.trigger_y = self.driver_command_controller.y()
         self.trigger_rb = self.driver_command_controller.rightBumper()
+        self.trigger_lb = self.driver_command_controller.leftBumper()
         self.trigger_start = self.driver_command_controller.start()
         self.trigger_d = self.driver_command_controller.povDown()
         self.trigger_u = self.driver_command_controller.povUp()
@@ -174,13 +175,13 @@ class RobotContainer:
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         # self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_y.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         # self.co_trigger_y.onTrue(LedToggle(container=self))
         # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         # IF YOU WANT TO DO TOW THINGS ON ONE BUTTON, USE AN "ANDTHEN" or some other chained command
         self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
-        self.co_trigger_lb.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.KILL, 5))
+        # self.co_trigger_lb.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.KILL, 5))
         self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
 
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
