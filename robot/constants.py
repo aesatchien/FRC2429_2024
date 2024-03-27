@@ -12,10 +12,6 @@ import wpilib
 # top level items
 
 k_burn_flash = True  # if we want to burn the settings to the sparkmaxes - usually false unless setting up
-if wpilib.RobotBase.isReal():
-    k_swerve_state_messages = True  # turn these off for competition
-else:
-    k_swerve_state_messages = True #
 k_volt_compensation = 12.0  # allow sparkmaxes to scale the requests when the battery is low/hi
 k_enable_soft_limits = False  # arm will have soft limits as one way to prevent mishaps
 k_swerve_only = False  # mode for debugging the drivetrain
@@ -23,6 +19,9 @@ k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
 k_path_from_robot_to_pathplanner_autos = 'deploy/pathplanner/autos'
 k_path_to_abs_encoder_data = '/home/lvuser/abs_encoder_data.json'
 k_enable_copilot = True
+
+k_swerve_state_messages = True  # these currently send the pose data to the sim - keep them on
+k_swerve_debugging_messages = False  # these show the target angles and actual.  Only for debugging.
 
 # --------------  DRIVER OI  ---------------
 # ID for the driver's joystick (template)

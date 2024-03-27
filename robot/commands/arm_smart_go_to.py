@@ -1,5 +1,6 @@
 import math
 
+from wpilib import SmartDashboard
 import commands2
 from wpilib import SmartDashboard
 
@@ -116,7 +117,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         else:  # someone isn't moving, so whichever is fine?
             pass
 
-
+        SmartDashboard.putString('arm_config', self.desired_position)
         commands2.CommandScheduler.getInstance().schedule(command)
 
 
