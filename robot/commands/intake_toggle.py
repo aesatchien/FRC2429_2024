@@ -7,7 +7,7 @@ class IntakeToggle(commands2.CommandBase):
 
     def __init__(self, container, intake:Intake, power=0.5, force=None, timeout=None) -> None:
         super().__init__()
-        self.setName('IndexerToggle')
+        self.setName('IntakeToggle')
         self.intake = intake
         self.container = container
         self.force = force

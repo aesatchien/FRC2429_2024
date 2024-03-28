@@ -834,9 +834,9 @@ background-color:rgb(0, 20, 250);</string>
        <property name="geometry">
         <rect>
          <x>6</x>
-         <y>100</y>
+         <y>90</y>
          <width>81</width>
-         <height>71</height>
+         <height>60</height>
         </rect>
        </property>
        <property name="font">
@@ -870,9 +870,9 @@ DETECTED</string>
        <property name="geometry">
         <rect>
          <x>93</x>
-         <y>100</y>
+         <y>90</y>
          <width>81</width>
-         <height>71</height>
+         <height>60</height>
         </rect>
        </property>
        <property name="font">
@@ -902,20 +902,20 @@ TAG
       </widget>
       <widget class="QLabel2" name="qlabel_note_captured_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>180</y>
+         <y>160</y>
          <width>141</width>
-         <height>41</height>
+         <height>61</height>
         </rect>
        </property>
        <property name="font">
         <font>
          <family>MS Shell Dlg 2</family>
-         <pointsize>11</pointsize>
+         <pointsize>14</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -926,8 +926,8 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;NOTE&gt;
-&lt;CAPTURED&gt;</string>
+        <string>NOTE
+CAPTURED</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

@@ -351,6 +351,7 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_orange_target_indicator': {'widget': self.qlabel_orange_target_indicator, 'nt': '/SmartDashboard/orange_targets_exist', 'command': None},
         'qlabel_apriltag_target_indicator': {'widget': self.qlabel_apriltag_target_indicator, 'nt': '/SmartDashboard/tag_targets_exist', 'command': None},
         'qlabel_position_indicator': {'widget': self.qlabel_position_indicator, 'nt': '/SmartDashboard/arm_config', 'command': None},
+        'qlabel_note_captured_indicator': {'widget': self.qlabel_note_captured_indicator, 'nt': '/SmartDashboard/shooter_has_ring', 'command': None, 'flash': True},
 
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
@@ -362,9 +363,9 @@ class Ui(QtWidgets.QMainWindow):
             # LEFTOVER TO SORT FROM 2023
         #'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
         #'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},
-        'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/cone_selected', 'command': '/SmartDashboard/LedToggle/running',
-                                        'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 225, 0); color:rgb(0, 0, 0);",
-                                        'style_off': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 225); color:rgb(0, 0, 0);"},
+        'qlabel_game_piece_indicator': {'widget': self.qlabel_game_piece_indicator, 'nt': '/SmartDashboard/shooter_has_ring', 'command': '/SmartDashboard/LedToggle/running',
+                                        'style_on': "border: 7px; border-radius: 7px; background-color:rgb(245, 120, 0); color:rgb(240, 240, 240);",
+                                        'style_off': "border: 7px; border-radius: 7px; background-color:rgb(127, 127, 127); color:rgb(0, 0, 0);"},
         # 'qlabel_upper_pickup_indicator': {'widget': self.qlabel_upper_pickup_indicator, 'nt': '/SmartDashboard/UpperSubstationPickup/running', 'command': '/SmartDashboard/UpperSubstationPickup/running'},
         'hub_targets': {'widget': None, 'nt': '/Ringcam//orange/targets', 'command': None},
         'hub_rotation': {'widget': None, 'nt': '/Ringcam//orange/rotation', 'command': None},
@@ -391,12 +392,13 @@ class Ui(QtWidgets.QMainWindow):
 
     def update_widgets(self):
         """ Main function which is looped to update the GUI with NT values"""
-        style_on = "border: 7px; border-radius: 7px; background-color:rgb(80, 235, 0); color:rgb(0, 0, 0);"
-        style_off = "border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb(200, 200, 200);"
-        style_high = "border: 7px; border-radius: 15px; background-color:rgb(80, 235, 0); color:rgb(0, 0, 0);"
-        style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
-        style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"
-        style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"
+        # these are the styles for the gui labels
+        style_on = "border: 7px; border-radius: 7px; background-color:rgb(80, 235, 0); color:rgb(0, 0, 0);"  # bright green, black letters
+        style_off = "border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb(200, 200, 200);"  # bright red, dull white letters (also flash off)
+        style_high = "border: 7px; border-radius: 15px; background-color:rgb(80, 235, 0); color:rgb(0, 0, 0);"  # match time -> regular game, green
+        style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # match time endgame - blue
+        style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"  # flashing on step 1 - black with thite letters
+        style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # flashing on step 2 - blue with white letters
         style_flash = style_flash_on if self.counter % 10 < 5 else style_flash_off  # get things to blink
 
         # update the connection indicator
@@ -410,11 +412,11 @@ class Ui(QtWidgets.QMainWindow):
                 if 'indicator' in key:
                     #  print(f'Indicator: {key}')
                     # allow for a custom style in the widget
-                    if 'style_on' in d.keys():
+                    if 'style_on' in d.keys():  # override the default styles for a specific widget
                         style = d['style_on'] if d['entry'].getBoolean(False) else d['style_off']
-                    elif 'flash' in d.keys():
+                    elif 'flash' in d.keys():  # flashing behaviour - not compatible with a custom style override
                         style = style_flash if (d['flash'] and d['entry'].getBoolean(False)) else style_off
-                    else:
+                    else:  # default style behaviour
                         style = style_on if d['entry'].getBoolean(False) else style_off
                     d['widget'].setStyleSheet(style)
                 elif 'lcd' in key:
