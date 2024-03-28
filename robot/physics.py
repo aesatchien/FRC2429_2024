@@ -66,8 +66,8 @@ class PhysicsEngine:
         self.spark_turn_ids = [20, 24, 22, 26]  # keep in this order
 
         # Other devices
-        self.spark_peripherals = ['br_crank', 'bl_crank', 'tr_crank', 'tl_crank', 't_shooter','b_shooter']
-        self.spark_peripheral_ids = [6, 7, 8, 9, 10, 11]
+        self.spark_peripherals = ['intake', 'br_crank', 'bl_crank', 'tr_crank', 'tl_crank', 't_shooter','b_shooter', 'indexer']
+        self.spark_peripheral_ids = [5, 6, 7, 8, 9, 10, 11, 12]
 
         # allow ourselves to access the simdevice's Position, Velocity, Applied Output, etc
         self.spark_names = self.spark_drives + self.spark_turns + self.spark_peripherals
@@ -102,16 +102,29 @@ class PhysicsEngine:
 
         # Create a Mechanism2d display of an Arm
         self.mech2d = wpilib.Mechanism2d(60, 60)
-        self.armBase = self.mech2d.getRoot("ArmBase", 30, 30)
-        self.chassisBase = self.mech2d.getRoot("chassisBase", 5, 23)
+        self.armBase = self.mech2d.getRoot("ArmBase", 30, 20)
+        self.chassisBase = self.mech2d.getRoot("chassisBase", 5, 13)
         self.chassis = self.chassisBase.appendLigament(
             "chassis", 28, 0, 12, wpilib.Color8Bit(wpilib.Color.kGray))
+        self.intake_mech = self.chassis.appendLigament(
+            "Intake", 10, 180, 10, wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        )
         self.crank_arm_mech = self.armBase.appendLigament(
             "Crank Arm Tower", 22, 90, 12, wpilib.Color8Bit(wpilib.Color.kDodgerBlue)
         )
         self.shooter_arm_mech = self.crank_arm_mech.appendLigament(
             "Shooter Arm", 19, 175, 20, wpilib.Color8Bit(wpilib.Color.kYellow)
         )
+        self.indexer_mech = self.shooter_arm_mech.appendLigament(
+            "Indexer", 5, 180, 15, wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        )
+        self.spacer_mech = self.indexer_mech.appendLigament(
+            "Spacer", 8, 0, 10, wpilib.Color8Bit(wpilib.Color.kYellow)
+        )
+        self.flywheel_mech = self.spacer_mech.appendLigament(
+            "Flywheel", 6, 0, 10, wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        )
+
 
         wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
 
@@ -205,10 +218,20 @@ class PhysicsEngine:
         # self.armSim.setInputVoltage(self.arm_motor_sim.getSpeed() * voltage)
         # self.armSim.update(tm_diff)
         # arm_angle = self.armSim.getAngleDegrees()
-
         # self.armSim.setState(crank_angle, crank_velocity)
         self.crank_arm_mech.setAngle(crank_angle_to_sim(crank_angle))
         self.shooter_arm_mech.setAngle(shooter_angle_to_sim(shooter_arm_angle))
+
+        indexer_on = math.fabs(self.spark_dict['indexer']['output'].value) > 0.1
+        flywheel_on = math.fabs(self.spark_dict['t_shooter']['velocity'].value) > 0.1 or math.fabs(self.spark_dict['t_shooter']['output'].value) > 0.1
+        intake_on = math.fabs(self.spark_dict['intake']['output'].value) > 0.1
+        flywheel_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if flywheel_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        indexer_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if indexer_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        intake_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if intake_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        self.flywheel_mech.setColor(flywheel_color)
+        self.indexer_mech.setColor(indexer_color)
+        self.intake_mech.setColor(intake_color)
+
 
         # update the vision
         ring_dist, ring_rot = self.distance_to_ring()
