@@ -22,6 +22,7 @@ class Shooter(Subsystem):
         self.rpm = 1000
         self.rpm_list = [1000, 2000, 3000, 4000, 5000, 4000, 3000, 2000]  # cycle through these
         self.rpm_index = 0
+        self.ring_loaded = False  # keep track of if we have the ring
 
         # initialize motors
         # looking from back to front
@@ -60,6 +61,11 @@ class Shooter(Subsystem):
 
         # TODO configure_sparkmax()
         # configure_sparkmax()
+
+    def is_ring_loaded(self):
+        # open shooter box seems to be about 380mm, so anything less indicates a ring
+        self.ring_loaded = self.shooter_height_sensor.getRange() < 300
+        return self.ring_loaded
 
     def set_flywheel(self, rpm, volts=None, use_voltage=False):
         # self.flywheel_left_controller.setReference(rpm, rev.CANSparkLowLevel.ControlType.kSmartVelocity, 0)
@@ -102,6 +108,7 @@ class Shooter(Subsystem):
     def get_at_velocity(self):
         return self.at_velocity
 
+
     def toggle_shooter(self, rpm=None):
         if self.shooter_on:
             self.stop_shooter()
@@ -124,3 +131,4 @@ class Shooter(Subsystem):
             SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
             SmartDashboard.putNumber('shooter_output', self.flywheel_lower_left.getAppliedOutput())
             SmartDashboard.putNumber('shooter_tof', self.shooter_height_sensor.getRange())
+            SmartDashboard.putBoolean('shooter_has_ring', self.is_ring_loaded())
