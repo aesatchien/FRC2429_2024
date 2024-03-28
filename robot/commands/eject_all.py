@@ -31,7 +31,7 @@ class EjectAll(commands2.CommandBase):  # change the name for your command
     def execute(self) -> None:
         trigger_val = self.controller.getLeftTriggerAxis()
         desired_intake = - trigger_val / 2  # set_intake takes a value from 0 to 1
-        desired_indexer = - trigger_val / 3  # set_indexer takes a value from 0 to 1 instead of volts
+        desired_indexer = - trigger_val  # set_indexer takes a value from 0 to 1 instead of volts
         desired_voltage_shooter = - trigger_val * 2
         # 6v intake 4v indexer 2V shooter
         self.intake.set_intake(desired_intake)

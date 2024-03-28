@@ -114,7 +114,7 @@ class Shooter(Subsystem):
         self.counter += 1
 
         # SmartDashboard.putBoolean('shooter_enable', self.shooter_enable)
-        if self.counter % 20 == 0:
+        if self.counter % 10 == 0:
             # not too often
             SmartDashboard.putNumber('shooter_rpm', self.flywheel_left_encoder.getVelocity())
             SmartDashboard.putNumber('shooter_rpm_target', self.rpm)

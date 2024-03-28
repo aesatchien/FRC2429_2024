@@ -52,7 +52,7 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-65, 'lower': 54},  # was 63
+    'intake': {'upper':-73, 'lower': 46},  # was 63
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 50, 'lower': 100},
@@ -132,7 +132,7 @@ k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65)
 # ------------------- SHOOTER -------------------
 k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
-k_shooter_timeoflight = 13  # time of flight CAN ID
+k_shooter_timeoflight = 14  # time of flight CAN ID
 
 
 # ------------------- Indexer -------------------
