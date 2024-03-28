@@ -232,7 +232,6 @@ class PhysicsEngine:
         self.indexer_mech.setColor(indexer_color)
         self.intake_mech.setColor(intake_color)
 
-
         # update the vision
         ring_dist, ring_rot = self.distance_to_ring()
         wpilib.SmartDashboard.putNumber('/sim/hub_dist', round(ring_dist, 2))

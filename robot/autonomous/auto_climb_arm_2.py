@@ -65,6 +65,13 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
 
                           )
                       )
+        elif self.stage > 1:  # make it so it only shoots trap now
+            command = commands2.ParallelCommandGroup(
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 1),
+                commands2.SequentialCommandGroup(
+                    AutoShootCycle(container=self.container, go_to_shoot=False),
+                )
+            )
 
         elif self.stage == 2: # second part of climb - drive back and deploy servos
             command = commands2.PrintCommand("Nothing to do in stage 2 yet")
