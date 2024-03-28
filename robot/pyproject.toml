@@ -19,7 +19,7 @@ robotpy_extras = [
      "pathplannerlib",
     # "phoenix5",
     # "phoenix6",
-#     "playingwithfusion",
+     "playingwithfusion",
      "rev",
     # "romi",
      "sim",

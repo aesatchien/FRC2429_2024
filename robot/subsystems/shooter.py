@@ -4,6 +4,7 @@ import math
 from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
+from playingwithfusion import TimeOfFlight
 
 import constants
 from misc.configure_controllers import configure_sparkmax
@@ -52,6 +53,10 @@ class Shooter(Subsystem):
         # toggle state
         self.shooter_on = False
         SmartDashboard.putBoolean('shooter_on', self.shooter_on)
+
+        # set up distance sensor
+        self.shooter_height_sensor = TimeOfFlight(constants.k_shooter_timeoflight)
+        self.shooter_height_sensor.setRangingMode(TimeOfFlight.RangingMode.kShort, 50)
 
         # TODO configure_sparkmax()
         # configure_sparkmax()
@@ -118,3 +123,4 @@ class Shooter(Subsystem):
             SmartDashboard.putBoolean('shooter_ready', self.at_velocity)
             SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
             SmartDashboard.putNumber('shooter_output', self.flywheel_lower_left.getAppliedOutput())
+            SmartDashboard.putNumber('shooter_tof', self.shooter_height_sensor.getRange())

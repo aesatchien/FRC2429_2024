@@ -132,6 +132,7 @@ k_max_upper_crank_where_retracting_lower_crank_safe_rad = math.radians(-65)
 # ------------------- SHOOTER -------------------
 k_flywheel_lower_left_neo_port = 10 #CAN ID
 k_flywheel_upper_left_neo_port = 11 #CAN ID
+k_shooter_timeoflight = 13  # time of flight CAN ID
 
 
 # ------------------- Indexer -------------------

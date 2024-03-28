@@ -21,7 +21,7 @@ class AcquireNoteToggle(commands2.CommandBase):
         self.addRequirements(self.intake, self.indexer, self.shooter)
 
         self.intake_power = 0.5
-        self.indexer_power = 1
+        self.indexer_power = 0.33  # was 1 (12V) when we had a 45:1, should be .33 (4V) for when we have a 15:1
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
