@@ -64,6 +64,13 @@ class Vision(SubsystemBase):
         else:
             return 0
 
+    def get_orange_rotation(self):
+        orange_available = self.target_available('orange')
+        if orange_available > 0:
+            return self.camera_dict['orange']['rotation_entry'].get()
+        else:
+            return 0
+
     def periodic(self) -> None:
         self.counter += 1
 
