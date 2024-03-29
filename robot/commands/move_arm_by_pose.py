@@ -89,7 +89,7 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
 
         self.container.crank_arm.set_goal(math.pi / 2)
         if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
-            self.container.shooter_arm.set_goal(-1 * math.atan((constants.k_speaker_opening_height - constants.k_crank_arm_dict['arm_length']) / self.distance_to_speaker))
+            self.container.shooter_arm.set_goal(-1 * math.atan((constants.k_speaker_opening_height - 0.8382) / self.distance_to_speaker))
 
         return
 
