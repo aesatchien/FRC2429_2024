@@ -58,7 +58,7 @@ class DriveAndAutoAimChassis(commands2.Command):
 
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
-        desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
+        desired_angle = translation_robot_to_speaker.angle()#.rotateBy(Rotation2d(math.radians(180)))
         self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards speaker since we shoot like that
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
