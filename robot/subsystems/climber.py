@@ -20,19 +20,22 @@ class Climber(Subsystem):
         #initialize motors
         motor_type = rev.CANSparkMax.MotorType.kBrushless
         self.left_winch = rev.CANSparkMax(constants.k_left_winch_neo_port, motor_type)
-        self.follower_winch = rev.CANSparkMax(constants.k_follower_winch_neo_port, motor_type)
+        self.right_winch = rev.CANSparkMax(constants.k_follower_winch_neo_port, motor_type)  # actually doesn't follow
         # self.follower_winch.follow
 
-        for spark in [self.left_winch, self.follower_winch]:
+        for spark in [self.left_winch, self.right_winch]:
             spark.setIdleMode(rev.CANSparkBase.IdleMode.kBrake)
             if constants.k_burn_flash:
                 spark.burnFlash()
 
         self.left_winch.setInverted(True)
-        self.follower_winch.setInverted(False)
+        self.right_winch.setInverted(False)
 
-        # #encoder
-        # self.left_winch_encoder = self.left_winch.getEncoder()
+        # encoders
+        self.left_winch_encoder = self.left_winch.getEncoder()
+        self.right_winch_encoder = self.right_winch.getEncoder()
+        self.encoders = [self.right_winch_encoder, self.left_winch_encoder]
+        [encoder.setPosition(0) for encoder in self.encoders]
 
         # #controller
         # self.left_winch_controller = self.left_winch.getPIDController()
@@ -53,17 +56,18 @@ class Climber(Subsystem):
         
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
-    def set_climber(self, left_volts, right_volts):
+    def set_climber(self, left_volts, right_volts, verbose=True):
         self.left_winch.setVoltage(left_volts)
-        self.follower_winch.setVoltage(right_volts)
+        self.right_winch.setVoltage(right_volts)
         self.climber_enable = True
-        print(f'setting volts to {self.climber_voltage}')
+        if verbose:
+            print(f'setting volts to {right_volts} {left_volts}')
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
     def stop_climber(self):
         # self.left_winch_controller.setReference(0, rev.CANSparkMax.ControlType.kVoltage)
         self.left_winch.setVoltage(0)
-        self.follower_winch.setVoltage(0)
+        self.right_winch.setVoltage(0)
         self.climber_voltage = 0
         self.climber_enable = False
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
@@ -71,6 +75,12 @@ class Climber(Subsystem):
     def get_climber(self):
         return "nope lol"
         # return self.left_winch_encoder.getVelocity()
+
+    def get_encoders(self):
+        return self.right_winch_encoder.getPosition(), self.left_winch_encoder.getPosition()
+
+    def reset_encoders(self):
+        [encoder.setPosition(0) for encoder in self.encoders]
 
     def toggle_climber(self, rpm):
         if self.climber_enable:
@@ -122,3 +132,7 @@ class Climber(Subsystem):
             SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
             SmartDashboard.putNumber("right servo angle", self.right_servo.getAngle())
             SmartDashboard.putNumber("left servo angle", self.left_servo.getAngle())
+
+        if wpilib.RobotBase.isSimulation():  # fake the climber motors - one rev/second per 4 volts
+            self.right_winch_encoder.setPosition(self.right_winch_encoder.getPosition() + self.right_winch.getAppliedOutput() / (4*50))
+            self.left_winch_encoder.setPosition(self.left_winch_encoder.getPosition() + self.left_winch.getAppliedOutput() / (4*50))

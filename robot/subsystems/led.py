@@ -173,7 +173,8 @@ class Led(commands2.Subsystem):
                         if cycle % 2 == 0:
                             led.setRGB(0, 0, 0)
                         else:
-                            led.setRGB(255, 192, 203)
+                            # led.setRGB(255, 192, 203)  # too bright - looks white - CJH 03292024
+                            led.setRGB(127, 96, 101)
 
                     elif self.indicator == Led.Indicator.POLKA:
                         # circling white and black spots
