@@ -47,7 +47,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.max_angle = math.radians(self.config['max_angle'])   # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
         self.min_angle = math.radians(self.config['min_angle'])   # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
-        self.tolerance = 20  # degrees  # updated from 2 to 4 to 8 at Tempe- 20240319 CJH
+        self.tolerance = math.radians(30)  # degrees  # updated from 2 to 4 to 8 at Tempe- 20240319 CJH
 
         # initialize the motors and keep a list of them for configuration later
         self.motor = rev.CANSparkMax(self.config['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
@@ -271,7 +271,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
     def get_at_goal(self) -> bool:
         self.angle = self.get_angle()
-        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(self.tolerance)  # update it before returning it
+        self.at_goal = math.fabs(self.angle - self.goal) < self.tolerance  # update it before returning it
         return self.at_goal
 
     def get_limit_switch_state(self) -> bool:
@@ -299,7 +299,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
-            self.at_goal = math.fabs(self.angle - self.goal) < math.radians(self.tolerance)  # maybe we want to call this an error
+            self.at_goal = math.fabs(self.angle - self.goal) < self.tolerance  # maybe we want to call this an error
             self.error = self.angle - self.goal
             if wpilib.RobotBase.isReal():
                 self.limit_switch_state = self.limit_switch.get()

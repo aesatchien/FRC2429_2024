@@ -111,7 +111,7 @@ k_shooter_arm_dict = {
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
     'k_MaxVelocityRadPerSecond': 4,  # was 3 starting Tempe (but we added a spring)
-    'k_MaxAccelerationRadPerSecSquared': 3.5,  # was 3 starting Tempe
+    'k_MaxAccelerationRadPerSecSquared': 4,  # was 3 starting Tempe
     'k_kSVolts': 1.0,  # was 0.3 before chain # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio

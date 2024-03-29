@@ -47,7 +47,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.max_angle = self.config['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
         self.min_angle = self.config['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
-        self.tolerance = 30  # degrees  # updated from 2 to 4 to 8 at Tempe- 20240319 CJH
+        self.tolerance = math.radians(45)  # degrees  # updated from 2 to 4 to 8 at Tempe- 20240319 CJH
 
         # initialize the motors and keep a list of them for configuration later
         self.motor = rev.CANSparkMax(self.config['motor_can_id'], rev.CANSparkMax.MotorType.kBrushless)
@@ -218,7 +218,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
     def get_at_goal(self) -> bool:
         # Update at_goal before returning it
         self.angle = self.get_angle()
-        self.at_goal = math.fabs(self.angle - self.goal) < math.radians(self.tolerance)
+        self.at_goal = math.fabs(self.angle - self.goal) < self.tolerance
         return self.at_goal
 
     def periodic(self) -> None:
@@ -226,7 +226,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.counter += 1
         if self.counter % 10 == 0:
             self.angle = self.get_angle()
-            self.at_goal = math.fabs(self.angle - self.goal) < math.radians(self.tolerance)  # maybe we want to call this an error
+            self.at_goal = math.fabs(self.angle - self.goal) < self.tolerance  # maybe we want to call this an error
             wpilib.SmartDashboard.putBoolean(f'{self.getName()}_at_goal', self.at_goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rad_goal', self.goal)
             wpilib.SmartDashboard.putNumber(f'{self.getName()}_rads', self.angle)
