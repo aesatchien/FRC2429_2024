@@ -6,6 +6,7 @@ import navx
 from subsystems.climber import Climber
 from subsystems.swerve import Swerve
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
+from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 from subsystems.led import Led
 
 class AutoRunClimber(commands2.CommandBase):
@@ -17,6 +18,7 @@ class AutoRunClimber(commands2.CommandBase):
         self.container = container
         self.led: Led = container.led
         self.shooter_arm: UpperCrankArmTrapezoidal = self.container.shooter_arm
+        self.crank_arm: LowerCrankArmTrapezoidal = self.container.crank_arm
         self.swerve: Swerve = self.container.drive
         self.navx = self.swerve.navx
         self.left_volts = left_volts
@@ -47,7 +49,8 @@ class AutoRunClimber(commands2.CommandBase):
         roll_correction = roll_correction if math.fabs(roll_correction) < roll_correction_max_volts else math.copysign(roll_correction_max_volts, roll_correction)
         left_volts = max(0, self.left_volts + roll_correction)  # don't let them go negative with the correction
         right_volts = max(0, self.right_volts - roll_correction)
-        self.climber.set_climber(left_volts, right_volts)
+        verbose = True if self.count % 50 == 0 else False  # report once in a while
+        self.climber.set_climber(left_volts, right_volts, verbose=verbose)
 
         # lower the shooter box while we go up - each rotation is probably pi*1.375 = 4.3" or so
         right_encoder, left_encoder = self.climber.get_encoders()
@@ -61,6 +64,7 @@ class AutoRunClimber(commands2.CommandBase):
         elif encoder_average_inches > 6:
             self.shooter_arm.set_goal(math.radians(-30))
         elif encoder_average_inches > 3:
+            self.crank_arm.set_goal(math.radians(109))
             self.shooter_arm.set_goal(math.radians(-10))
 
     def isFinished(self) -> bool:
