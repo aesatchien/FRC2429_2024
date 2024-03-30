@@ -20,6 +20,7 @@ import os
 import typing
 from autonomous.drive_swerve_auto_velocity import DriveSwerveAutoVelocity
 from subsystems.swerve import Swerve, AutoBuilder
+from subsystems.led import Led
 from subsystems.swerve_constants import DriveConstants as dc
 from subsystems.swerve_constants import AutoConstants as ac
 import constants
@@ -69,10 +70,10 @@ class PathPlannerConfiguration():
         )
     
     # This is a method that will be used to create a path on the fly from the "current position" (x,y) of the robot.
-    def on_the_fly_path(swerve:Swerve, position_list:typing.Dict[str, float], final_velocity:float, speed_factor=1, fast_turn=True) -> commands2.Command:
+    def on_the_fly_path(swerve:Swerve, led:Led, position_list:typing.Dict[str, float], final_velocity:float, linear_speed_factor=1, angular_speed_factor=1, fast_turn=True) -> commands2.Command:
         if position_list["x"] == 0 and position_list["y"] == 0: #bezier curve generation requires the robot to move a non-zero distance.
             return DriveSwerveAutoVelocity(swerve, 0).withTimeout(0.1) #stop
-        current_pose = swerve.get_pose_no_tag()
+        current_pose = swerve.get_pose()
 
         position_list = {"x": position_list["x"] - current_pose.X(), "y": position_list["y"] - current_pose.Y(), "rotation": position_list["rotation"] - swerve.get_angle()}
         #create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
@@ -84,7 +85,42 @@ class PathPlannerConfiguration():
         bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
         path = PathPlannerPath( #assumes holonomic drivetrain.
             bezier_points,
-            PathConstraints(ac.kMaxSpeedMetersPerSecond * speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * speed_factor),
+            PathConstraints(ac.kMaxSpeedMetersPerSecond * linear_speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * linear_speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * angular_speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * angular_speed_factor),
             GoalEndState(final_velocity, Rotation2d.fromDegrees(position_list["rotation"]), rotateFast=fast_turn)
         )
-        return AutoBuilder.followPath(path)
+        return AutoBuilder.followPath(path).andThen(led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 1))
+
+    def on_the_fly_path_by_pose(self, swerve: Swerve, led: Led, destination:str, final_velocity: float, linear_speed_factor=1, angular_speed_factor=1, fast_turn=True) -> commands2.Command:
+        # CJH changed function to take a pose - simpler this way  20240330
+        if destination == 'stage':
+            target_pose = swerve.get_nearest_tag(location='stage')  # return a pose2d of where the nearest stage is
+        elif destination == 'amp':  # not tested yet
+            target_pose = swerve.get_nearest_tag(location='amp')  # return a pose2d of where the nearest amp is
+        elif destination == 'speaker': # not tested yet
+            pass
+        else:
+            target_pose = swerve.get_pose()  # just stay where we are
+
+        x = target_pose.translation().x
+        y = target_pose.translation().y
+        rot = target_pose.rotation().degrees()
+
+        current_pose = swerve.get_pose()
+
+        if current_pose.translation().distance(target_pose.translation()) < 0.1:  # bezier curve generation requires the robot to move a non-zero distance.
+            return DriveSwerveAutoVelocity(swerve, 0).withTimeout(0.1)  # stop
+
+        position_list = {"x": x - current_pose.X(), "y": y - current_pose.Y(), "rotation": rot - swerve.get_angle()}
+        # create a Transform2d object that contains the position matrix and rotation matrix of the desired position.
+        delta_pose = Transform2d(Translation2d(position_list["x"], position_list["y"]), Rotation2d.fromDegrees(0))
+
+        start_pose = Pose2d(current_pose.translation(), current_pose.rotation())
+        end_pose = start_pose.transformBy(delta_pose)
+
+        bezier_points = PathPlannerPath.bezierFromPoses([start_pose, end_pose])
+        path = PathPlannerPath( #assumes holonomic drivetrain.
+            bezier_points,
+            PathConstraints(ac.kMaxSpeedMetersPerSecond * linear_speed_factor, ac.kMaxAccelerationMetersPerSecondSquared * linear_speed_factor, ac.kMaxAngularSpeedRadiansPerSecond * angular_speed_factor, ac.kMaxAngularSpeedRadiansPerSecondSquared * angular_speed_factor),
+            GoalEndState(final_velocity, Rotation2d.fromDegrees(position_list["rotation"]), rotateFast=fast_turn)
+        )
+        return AutoBuilder.followPath(path).andThen(led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 1))

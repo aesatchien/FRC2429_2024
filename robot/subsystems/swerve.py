@@ -15,6 +15,9 @@ import rev
 import pathplannerlib
 from pathplannerlib.path import PathPlannerTrajectory
 import ntcore
+import robotpy_apriltag as ra
+import wpimath.geometry as geo
+
 
 import constants
 from .swervemodule_2429 import SwerveModule
@@ -63,7 +66,7 @@ class Swerve (Subsystem):
         self.gyro_calibrated = False
 
         # timer and variables for checking if we should be using pid on rotation
-        self.keep_angle = 0  # the heading we try to maintain when not rotating
+        self.keep_angle = 0.0  # the heading we try to maintain when not rotating
         self.keep_angle_timer = wpilib.Timer()
         self.keep_angle_timer.start()
         self.keep_angle_timer.reset()
@@ -219,6 +222,13 @@ class Swerve (Subsystem):
     #     return cmd
     # -------------- END PATHPLANNER STUFF
 
+    def reset_keep_angle(self):
+        self.last_rotation_time = self.keep_angle_timer.get()  # reset the rotation time
+        self.last_drive_time = self.keep_angle_timer.get()  # reset the drive time
+        new_angle = self.get_angle()
+        print(f'resetting keep angle from {self.keep_angle:.1f} to {new_angle:.1f}', flush=True)
+        self.keep_angle = new_angle
+
     def perform_keep_angle(self, xSpeed, ySpeed, rot):  # update rotation if we are drifting when trying to drive straight
         output = rot  # by default we will return rot unless it needs to be changed
         if math.fabs(rot) > dc.k_inner_deadband:  # we are actually intending to rotate
@@ -336,6 +346,36 @@ class Swerve (Subsystem):
 
     def get_automated_path(self):
         return self.automated_path
+
+
+    # figure out the nearest stage - or any tag, I suppose if we pass in a list
+    def get_nearest_tag(self, location='stage'):
+        # get a field so we can query the tags
+        field = ra.AprilTagField.k2024Crescendo
+        layout = ra.loadAprilTagLayoutField(field)
+        current_pose = self.get_pose()
+
+        if location == 'stage':
+            # get all distances to the stage tags
+            tags = [11, 12, 15, 16]  # the ones we can see from driver's station - does not matter if red or blue
+        elif location == 'amp':
+            tags = [5, 6]
+        elif location == 'speaker':
+            tags = [7, 4]  # right one facing blue, left one facing red
+        else:
+            raise ValueError('location for get_nearest tag must be in ["stage", "amp"] etc')
+
+        poses = [layout.getTagPose(tag).toPose2d() for tag in tags]
+        distances = [current_pose.translation().distance(pose.translation()) for pose in poses]
+
+        # sort the distances
+        combined = list(zip(tags, distances))
+        combined.sort(key=lambda x: x[1])  # sort on the distances
+        sorted_tags, sorted_distances = zip(*combined)
+        nearest_stage_pose = layout.getTagPose(sorted_tags[0])  # get the pose of the nearest stage tag
+        nearest_stage_pose = nearest_stage_pose.toPose2d()
+        print(f'nearest stage is {sorted_tags[0]} at {nearest_stage_pose.translation()}')
+        return nearest_stage_pose
 
     def periodic(self) -> None:
 

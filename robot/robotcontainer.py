@@ -141,6 +141,7 @@ class RobotContainer:
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
     def bind_driver_buttons(self):
+        PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
         self.trigger_a.onTrue(AcquireNoteToggle(container=self, force='on'))
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
@@ -159,8 +160,11 @@ class RobotContainer:
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
         amp_pose = constants.k_blue_amp
         speaker_pose = constants.k_blue_speaker
-        # self.trigger_y.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": amp_pose[0], "y": amp_pose[1], "rotation": amp_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
-                                 # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
+        self.trigger_y.whileTrue(  # create a path to the nearest speaker
+                PathPlannerMaker.on_the_fly_path_by_pose(swerve=self.drive, led=self.led, destination='stage', final_velocity=0,
+                linear_speed_factor=0.5, angular_speed_factor=0.75, fast_turn=True)
+            ).toggleOnFalse(commands2.InstantCommand(lambda: self.drive.reset_keep_angle()))
+
         # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))

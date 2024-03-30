@@ -72,7 +72,7 @@ class AutoClimbSanjith(commands2.CommandBase):
         elif encoder_average > 140 and not self.toggle_servo_fired:  # 24.2 inches of rope
             self.shooter_arm.set_goal(math.radians(-90))
             commands2.InstantCommand(lambda: self.container.climber.toggle_trap_servo).schedule()
-            print(f"Fired trap servo at {self.container.get_enabled_time()}s")
+            print(f"Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
             self.toggle_servo_fired = True
         elif encoder_average > 110 and not self.shooter_half_down:  # 19 inches
             self.shooter_arm.set_goal(math.radians(-45))

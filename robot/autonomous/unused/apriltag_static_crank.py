@@ -89,7 +89,7 @@ class AutoAimAprilTag(commands2.Command):  # change the name for your command
         k_gap_x = 0.4 # distance (x) from apriltag we want to be at for shooting. 0.4 is a random number.
         target_pos = {"x": pose.X() - k_gap_x, "y": pose.Y() - k_gap_y, "rotation": -pose.rotation().Z()}
 
-        path = PathPlannerConfiguration().on_the_fly_path(self.drive, target_pos, 0).andThen(ShooterToggle(self.container, self.shooter, wait_for_spinup=True)).schedule()
+        path = PathPlannerConfiguration().on_the_fly_path(self.drive, self.container.led, target_pos, 0, 1).andThen(ShooterToggle(self.container, self.shooter, wait_for_spinup=True)).schedule()
         # todo: lock crank in place (?) Or does the crank automatically brake when stopped...(?)
         # todo: shoot note after robot in place.
 
