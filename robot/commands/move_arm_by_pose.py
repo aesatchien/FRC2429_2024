@@ -87,9 +87,11 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
 
         '''
 
+        angle_difference = 2.5 #difference value to fix errors (initially shots were too high, so we can eperiment with different values for this variable and see how it affects accuracy)
+
         self.container.crank_arm.set_goal(math.pi / 2)
         if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
-            self.container.shooter_arm.set_goal(-1 * math.atan((constants.k_speaker_opening_height - 0.8382) / self.distance_to_speaker))
+            self.container.shooter_arm.set_goal(math.radians(math.degrees(-1 * math.atan((constants.k_speaker_opening_height - 0.8382) / self.distance_to_speaker))-angle_difference))
 
         return
 
