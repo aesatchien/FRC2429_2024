@@ -18,7 +18,7 @@ class DriveByJoystick(commands2.CommandBase):
         self.forward = forward
         self.rotation = rotation
 
-        self.addRequirements(self.drive)
+        self.addRequirements([self.drive])
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
@@ -27,13 +27,9 @@ class DriveByJoystick(commands2.CommandBase):
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
     def execute(self) -> None:
-
-        forward = 0.1#self.container.driver_controller.getLeftY()
-        rotation = self.container.driver_controller.getRightX()
-        self.drive.arcade_drive(forward, rotation)
+        self.drive.arcade_drive(self.forward(), self.rotation())
 
     def end(self, interrupted: bool) -> None:
-
         self.drive.arcade_drive(0,0)
 
         end_time = self.container.get_enabled_time()

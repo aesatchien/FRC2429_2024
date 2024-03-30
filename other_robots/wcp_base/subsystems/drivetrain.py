@@ -22,7 +22,8 @@ class Drivetrain(SubsystemBase):
         self.navx = navx.AHRS.create_spi()
 
         # initialize motors
-        motor_type = rev.CANSparkLowLevel.MotorType.kBrushless
+        motor_type = rev.CANSparkMax.MotorType.kBrushless
+        # motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
         self.spark_neo_left_front = rev.CANSparkMax(constants.k_left_motor1_port, motor_type)
         self.spark_neo_left_back = rev.CANSparkMax(constants.k_left_motor2_port, motor_type)
         self.spark_neo_right_front = rev.CANSparkMax(constants.k_right_motor1_port, motor_type)
@@ -64,9 +65,9 @@ class Drivetrain(SubsystemBase):
 
 
         # add two dummy PWMs so we can track the SparkMax in the sim (should be updated in sim periodic)
-        # if wpilib.RobotBase.isSimulation():
-        #     self.dummy_motor_left = PWMSparkMax(1)
-        #     self.dummy_motor_right = PWMSparkMax(3)
+        if wpilib.RobotBase.isSimulation():
+            self.dummy_motor_left = PWMSparkMax(1)
+            self.dummy_motor_right = PWMSparkMax(3)
 
     # ----------------- DRIVE METHODS -----------------------
 
@@ -82,7 +83,8 @@ class Drivetrain(SubsystemBase):
             # need to update the simulated PWMs here
             #self.dummy_motor_left.set(self.spark_neo_left_front.get())
             #self.dummy_motor_right.set(self.spark_neo_right_front.get())
-            pass
+            self.dummy_motor_right.set(self.spark_neo_right_front.getAppliedOutput())
+            self.dummy_motor_left.set(self.spark_neo_left_front.getAppliedOutput())
 
     def tank_drive_volts(self, left_volts, right_volts):
         """Control the robot's drivetrain with voltage inputs for each side.  Used by Ramsete """

@@ -14,7 +14,10 @@ from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.indexer import Indexer
 from subsystems.climber import Climber
+from subsystems.drivetrain import Drivetrain
 
+from commands.drive_velocity_stick import DriveByJoystickVelocity
+from commands.drive_by_joystick import DriveByJoystick
 from commands.led_loop import LedLoop
 from commands.led_toggle import LedToggle
 from commands.intake_toggle import IntakeToggle
@@ -42,15 +45,16 @@ class RobotContainer:
         self.start_time = time.time()
 
         # The robot's subsystems
-        #self.drive = Drivetrain()
-        self.vision = Vision()
+        self.drive = Drivetrain()
+        # self.vision = Vision()
         self.led = Led()
-        self.shooter = Shooter()
-        self.intake = Intake()
-        self.crank_arm = LowerCrankArmTrapezoidal()  # CrankArm()
-        self.shooter_arm = UpperCrankArmTrapezoidal()
-        self.indexer = Indexer()
-        self.climber = Climber()
+        if wpilib.RobotBase.isSimulation():
+            self.shooter = Shooter()
+            self.intake = Intake()
+            self.crank_arm = LowerCrankArmTrapezoidal()  # CrankArm()
+            self.shooter_arm = UpperCrankArmTrapezoidal()
+            self.indexer = Indexer()
+            #self.climber = Climber()
 
         self.game_piece_mode = 'cube'  # TODO: change to empty and full? orange vs white?
 
@@ -63,11 +67,14 @@ class RobotContainer:
       #  if False:
 
         arm_degrees = 10 if wpilib.RobotBase.isReal() else 100
-        self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
+        # self.indexer.setDefaultCommand(IndexerByJoystick(container=self, indexer=self.indexer))
         #self.shooter_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.shooter_arm, controller=self.driver_controller, degrees=arm_degrees))
         #self.crank_arm.setDefaultCommand(ArmJoystickControl(container=self, arm=self.crank_arm, controller=self.driver_controller, degrees=arm_degrees))
     #    else:
         #self.drive.setDefaultCommand(DriveByJoystickVelocity(container=self, drive=self.drive, control_type='velocity', scaling=1))
+
+        self.drive.setDefaultCommand(DriveByJoystick(container=self, drive=self.drive, forward=lambda:self.driver_controller.getLeftY, rotation =lambda:self.driver_controller.getRightX))
+
 
         self.led.setDefaultCommand(LedLoop(container=self))
 
@@ -102,7 +109,7 @@ class RobotContainer:
         # self.buttonRightAxis = AxisButton(self.driver_controller, 3)
 
         # co-pilot controller
-        use_co_pilot = True
+        use_co_pilot = False
         if use_co_pilot:
             self.co_driver_controller = wpilib.XboxController(constants.k_co_driver_controller_port)
             self.co_buttonA = JoystickButton(self.co_driver_controller, 1)
@@ -127,31 +134,31 @@ class RobotContainer:
         # bind commands to driver
 
         # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
-        self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
-        self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        # self.buttonA.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
+        # self.buttonB.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
 
         # bind intake
-        self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
+        # self.buttonY.onTrue(IntakeToggle(container=self, intake=self.intake, rpm=2500, force='on'))
 
         # bind crank arms for testing
 
         #self.buttonUp.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='up'), self.shooter_arm))
         #self.buttonDown.onTrue(commands2.cmd.runOnce(lambda: test_system.set_next_position(direction='down'), self.shooter_arm))
-        setpoints = False
-        if setpoints:
-            self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
-            self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
-            self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=15, direction='up'))
-            self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-15, direction='down'))
-        else:
-            direction = None
-            self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=direction))
-            self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=direction))
-            self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction))
-            self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
-
-        self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
-        self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
+        # setpoints = False
+        # if setpoints:
+        #     self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
+        #     self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
+        #     self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=15, direction='up'))
+        #     self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-15, direction='down'))
+        # else:
+        #     direction = None
+        #     self.buttonRight.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=10, direction=direction))
+        #     self.buttonLeft.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-10, direction=direction))
+        #     self.buttonUp.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction))
+        #     self.buttonDown.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+        #
+        # self.buttonY.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        # self.buttonX.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
 
         # bind LED
         #  self.buttonA.onTrue(LedToggle(container=self))
