@@ -130,6 +130,8 @@ class Climber(Subsystem):
             # SmartDashboard.putBoolean('climber_ready', self.left_winch_encoder.getVelocity() > 1800)
             SmartDashboard.putNumber('climber_current', self.left_winch.getOutputCurrent())
             SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
+            SmartDashboard.putNumber('climber_r_encoder', self.right_winch_encoder.getPosition())
+            SmartDashboard.putNumber('climber_l_encoder', self.left_winch_encoder.getPosition())
             SmartDashboard.putNumber("right servo angle", self.right_servo.getAngle())
             SmartDashboard.putNumber("left servo angle", self.left_servo.getAngle())
 

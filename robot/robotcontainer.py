@@ -148,7 +148,8 @@ class RobotContainer:
         self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         climber_voltage = 4  # was 3 until Tempe
-        self.trigger_d.debounce(0.05).whileTrue(AutoRunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        # self.trigger_d.debounce(0.05).whileTrue(AutoRunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
