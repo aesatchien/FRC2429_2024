@@ -135,6 +135,6 @@ class Climber(Subsystem):
             SmartDashboard.putNumber("right servo angle", self.right_servo.getAngle())
             SmartDashboard.putNumber("left servo angle", self.left_servo.getAngle())
 
-        if wpilib.RobotBase.isSimulation():  # fake the climber motors - one rev/second per 4 volts
-            self.right_winch_encoder.setPosition(self.right_winch_encoder.getPosition() + self.right_winch.getAppliedOutput() / (4*50))
-            self.left_winch_encoder.setPosition(self.left_winch_encoder.getPosition() + self.left_winch.getAppliedOutput() / (4*50))
+        if wpilib.RobotBase.isSimulation():  # fake the climber motors - 50 rev/second per 4 volts
+            self.right_winch_encoder.setPosition(self.right_winch_encoder.getPosition() + self.right_winch.getAppliedOutput() * 50 / (4*50))
+            self.left_winch_encoder.setPosition(self.left_winch_encoder.getPosition() + self.left_winch.getAppliedOutput() * 50 / (4*50))

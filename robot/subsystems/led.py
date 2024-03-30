@@ -65,7 +65,7 @@ class Led(commands2.Subsystem):
     def set_indicator(self, indicator) -> None:
         self.indicator = indicator
 
-    def set_indicator_with_timeout(self, indicator: Indicator, timeout: float) -> commands2.StartEndCommand:
+    def set_indicator_with_timeout(self, indicator: Indicator, timeout: float) -> commands2.ParallelRaceGroup:
         return commands2.StartEndCommand(
             lambda: self.set_indicator(indicator),
             lambda: self.set_indicator(Led.Indicator.NONE),
@@ -174,7 +174,7 @@ class Led(commands2.Subsystem):
                             led.setRGB(0, 0, 0)
                         else:
                             # led.setRGB(255, 192, 203)  # probably too bright - looks white - CJH 03292024
-                            led.setRGB(127, 96, 101)
+                            led.setRGB(183, 144, 152)
 
                     elif self.indicator == Led.Indicator.POLKA:
                         # circling white and black spots

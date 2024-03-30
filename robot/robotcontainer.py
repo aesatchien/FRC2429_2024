@@ -26,9 +26,9 @@ from subsystems.vision import Vision
 
 # auto
 from autonomous.auto_commands import *  # CJH STRONGLY DISAPPROVES OF THIS SLOPPINESS!
-from autonomous.auto_climb_arm_2 import AutoClimbArm2
+from autonomous.auto_climb_giselle import AutoClimbGiselle
 from autonomous.drive_wait import DriveWait
-from autonomous.auto_run_climber import AutoRunClimber
+from autonomous.auto_climb_sanjith import AutoClimbSanjith
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -148,8 +148,8 @@ class RobotContainer:
         self.trigger_y.onTrue(commands2.RunCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
         climber_voltage = 4  # was 3 until Tempe
-        # self.trigger_d.debounce(0.05).whileTrue(AutoRunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
-        self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        # self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
@@ -207,7 +207,7 @@ class RobotContainer:
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
 
         # self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5)
-        self.co_trigger_back.onTrue(AutoClimbArm2(self))
+        self.co_trigger_back.onTrue(AutoClimbGiselle(self))
 
         # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
         # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))

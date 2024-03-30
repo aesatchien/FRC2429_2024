@@ -13,7 +13,7 @@ from commands.run_climber import RunClimber
 from subsystems.led import Led
 
 
-class AutoClimbArm2(commands2.Command):  # try to auto climb
+class AutoClimbGiselle(commands2.Command):  # try to auto climb
 
     stage = 0  # keep track of how many times we have climbed
 
@@ -35,7 +35,7 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
 
         if self.stage == 1:  # initial part of climb - raise and move chain
             command = commands2.ParallelCommandGroup(
-                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 7),
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 4),
                           commands2.SequentialCommandGroup(
                     IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=None),
                               ArmMove(container=self.container, arm=self.container.crank_arm,
@@ -44,7 +44,7 @@ class AutoClimbArm2(commands2.Command):  # try to auto climb
                               ArmMove(container=self.container, arm=self.container.shooter_arm,
                                       degrees=constants.k_crank_presets['shoot']['upper'], absolute=True),
                               IndexerToggle(container=self.container, indexer=self.container.indexer, power=1,
-                                            force='on', timeout=1),
+                                            force='on', timeout=0.25),
                               ArmMove(container=self.container, arm=self.container.shooter_arm,
                                       degrees=constants.k_crank_presets['climb_second']['upper'], absolute=True),
                               # this is two and three
