@@ -358,10 +358,19 @@ class Swerve (Subsystem):
         if destination == 'stage':
             # get all distances to the stage tags
             tags = [11, 12, 15, 16]  # the ones we can see from driver's station - does not matter if red or blue
+            x_offset, y_offset = 0, 0.15  # subtracting below makes +x INTO the tage, +y LEFT of tag
+            robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
+            face_tag = True  # do we want to face the tag?
         elif destination == 'amp':
             tags = [5, 6]
+            x_offset, y_offset = -0.5, 0  # subtracting below makes +1 INTO the tage, +y LEFT of tag
+            robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
+            face_tag = True
         elif destination == 'speaker':
             tags = [7, 4]  # right one facing blue, left one facing red
+            x_offset, y_offset = -1.5, 0  # subtracting below makes +1 INTO the tage
+            robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
+            face_tag = False
         else:
             raise ValueError('location for get_nearest tag must be in ["stage", "amp"] etc')
 
@@ -373,9 +382,17 @@ class Swerve (Subsystem):
         combined.sort(key=lambda x: x[1])  # sort on the distances
         sorted_tags, sorted_distances = zip(*combined)
         nearest_pose = layout.getTagPose(sorted_tags[0])  # get the pose of the nearest stage tag
-        nearest_pose = nearest_pose.toPose2d()
+
+        # transform the tag pose to our specific needs
+        tag_pose = nearest_pose.toPose2d()  # work with a 2D pose
+        tag_rotation = tag_pose.rotation()  # we are either going to match this or face opposite
+        robot_offset_corrected = robot_offset.rotateBy(tag_rotation)  # rotate our offset so we align with the tag
+        updated_translation = tag_pose.translation() - robot_offset_corrected.translation()  # careful with these signs
+        updated_rotation = tag_rotation + geo.Rotation2d(math.pi) if face_tag else tag_rotation  # choose if we flip
+        updated_pose = geo.Pose2d(translation=updated_translation, rotation=updated_rotation)  # drive to here
+
         print(f'nearest {destination} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
-        return nearest_pose
+        return updated_pose
 
     def periodic(self) -> None:
 

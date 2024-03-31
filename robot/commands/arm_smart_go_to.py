@@ -35,6 +35,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         self.desired_position = desired_position
         self.wait_for_finish = wait_for_finish
         self.start_time = 0   # having some problems with this crashing...
+        self.led_time = 2  # seconds to display info
         if not self.desired_position in ['intake', 'shoot', 'low_shoot','amp', 'low_amp', 'bottom', 'climb_second']: raise ValueError
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
@@ -49,7 +50,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
         command = None
 
         if self.desired_position == 'shoot':
-            self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['shoot']['lower']
             crank_goal = constants.k_crank_presets['shoot']['upper']
             command = (AcquireNoteToggle(container=self.container, force='off')
@@ -57,7 +58,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'], absolute=True)))
 
         elif self.desired_position == 'climb_second':
-            # self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
+            # self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, self.led_time).schedule()
 
             command = (AcquireNoteToggle(container=self.container, force='off')
                        .andThen(ArmMove(container=self.container, arm=self.lower_crank, degrees=constants.k_crank_presets['climb_second']['lower'], absolute=True, wait_to_finish=True))
@@ -65,7 +66,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
 
 
         elif self.desired_position == 'low_shoot':
-            self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.READY_SHOOT, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['low_shoot']['lower']
             crank_goal = constants.k_crank_presets['low_shoot']['upper']
             command = (AcquireNoteToggle(container=self.container, force='off')
@@ -73,14 +74,14 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.crank_arm, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True)))
 
         elif self.desired_position == 'intake':
-            self.led.set_indicator_with_timeout(Led.Indicator.INTAKE, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.INTAKE, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['intake']['lower']
             crank_goal = constants.k_crank_presets['intake']['upper']
             command = (ArmMove(container=self.container, arm=self.shooter_arm, degrees=constants.k_crank_presets['intake']['upper'], absolute=True, wait_to_finish=True)
                        .andThen(ArmMove(self.container, self.crank_arm, degrees=constants.k_crank_presets['intake']['lower'], absolute=True)))
 
         elif self.desired_position == 'amp':
-            self.led.set_indicator_with_timeout(Led.Indicator.AMP, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.AMP, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['amp']['lower']
             crank_goal = constants.k_crank_presets['amp']['upper']
             command = (AcquireNoteToggle(container=self.container, force='off')
@@ -88,7 +89,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.shooter_arm, degrees=constants.k_crank_presets['amp']['upper'], absolute=True)))
 
         elif self.desired_position == 'low_amp':
-            self.led.set_indicator_with_timeout(Led.Indicator.AMP, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.AMP, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['low_amp']['lower']
             crank_goal = constants.k_crank_presets['low_amp']['upper']
             command = (AcquireNoteToggle(container=self.container, force='off')
@@ -96,7 +97,7 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.shooter_arm, degrees=constants.k_crank_presets['low_amp']['upper'], absolute=True)))
 
         elif self.desired_position == 'bottom':
-            self.led.set_indicator_with_timeout(Led.Indicator.INTAKE, 5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.INTAKE, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['bottom']['lower']
             crank_goal = constants.k_crank_presets['bottom']['upper']
             command = (ArmMove(container=self.container, arm=self.shooter_arm12, degrees=constants.k_crank_presets['bottom']['upper'], absolute=True, wait_to_finish=True)
@@ -137,7 +138,13 @@ class ArmSmartGoTo(commands2.CommandBase):  # change the name for your command
             return True
 
     def end(self, interrupted: bool) -> None:
-        pass
+        # needs to check for wait for finish to flash success / failure
+        if self.wait_for_finish:
+            if interrupted:
+                self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, 1).schedule()
+            else:
+                self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 1).schedule()
+
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print_end_message = False

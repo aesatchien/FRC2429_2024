@@ -515,7 +515,7 @@ class Ui(QtWidgets.QMainWindow):
 
         # update the 2024 arm configuration indicator
         config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
-        if config.upper() != 'LOW_SHOOT':
+        if config.upper() not in ['LOW_SHOOT', 'INTAKE']:  # these two positions drive under the stage
             text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
             postion_style = f"border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb{text_color};"
         else:

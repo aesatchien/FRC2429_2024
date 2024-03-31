@@ -982,9 +982,9 @@ color:rgb(230,230,230);</string>
       <property name="title">
        <string>Autonomous Commands</string>
       </property>
-      <widget class="QLabel2" name="qlabel_cmd1_indicator">
+      <widget class="QLabel2" name="qlabel_reset_gyro_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -1007,7 +1007,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>Reset Gyro</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1016,9 +1016,9 @@ background-color:rgb(180,180,180);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_cmd3_indicator">
+      <widget class="QLabel2" name="qlabel_drive_to_speaker_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -1041,7 +1041,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>Drive to SPEAKER</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1050,9 +1050,9 @@ background-color:rgb(180,180,180);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_cmd2_indicator">
+      <widget class="QLabel2" name="qlabel_drive_to_stage_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -1075,7 +1075,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>Drive to STAGE</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1084,9 +1084,9 @@ background-color:rgb(180,180,180);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_align_to_target_indicator">
+      <widget class="QLabel2" name="qlabel_drive_to_amp_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -1109,7 +1109,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>Drive to AMP</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1118,7 +1118,7 @@ background-color:rgb(180,180,180);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_arm_calibration_indicator">
+      <widget class="QLabel2" name="qlabel_get_ring_indicator">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1144,7 +1144,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>Get Ring</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

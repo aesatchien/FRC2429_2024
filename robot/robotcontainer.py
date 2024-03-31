@@ -319,6 +319,7 @@ class RobotContainer:
         # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
         wpilib.SmartDashboard.putData('ToStage', AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
         wpilib.SmartDashboard.putData('ToAmp', AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
+        wpilib.SmartDashboard.putData('ToSpeaker', AutoDriveToTag(container=self, drive=self.drive, destination='speaker'))
 
         wpilib.SmartDashboard.putData(commands2.CommandScheduler.getInstance())
 
