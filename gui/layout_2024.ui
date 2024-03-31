@@ -982,7 +982,7 @@ color:rgb(230,230,230);</string>
       <property name="title">
        <string>Autonomous Commands</string>
       </property>
-      <widget class="QLabel2" name="qlabel_reset_gyro_indicator">
+      <widget class="QLabel2" name="qlabel_reset_gyro_from_pose_indicator">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -1007,7 +1007,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>Reset Gyro</string>
+        <string>Gyro from Pose</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>

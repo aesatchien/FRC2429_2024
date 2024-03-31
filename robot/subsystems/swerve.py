@@ -339,7 +339,9 @@ class Swerve (Subsystem):
         if adjustment is not None:
             # ADD adjustment.
             self.gyro.setAngleAdjustment(adjustment)
-        self.keep_angle = 0
+        else:
+            self.gyro.setAngleAdjustment(0)
+        self.reset_keep_angle()
     
     def get_use_apriltags(self):
         return self.use_apriltags

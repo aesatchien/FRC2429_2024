@@ -320,6 +320,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ToStage', AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
         wpilib.SmartDashboard.putData('ToAmp', AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         wpilib.SmartDashboard.putData('ToSpeaker', AutoDriveToTag(container=self, drive=self.drive, destination='speaker'))
+        wpilib.SmartDashboard.putData('GyroFromPose', GyroReset(self, swerve=self.drive, from_pose=True))
 
         wpilib.SmartDashboard.putData(commands2.CommandScheduler.getInstance())
 

@@ -6,13 +6,14 @@ from wpimath.filter import Debouncer
 
 
 class GyroReset(commands2.Command):
-    def __init__(self, container, swerve: Swerve, angle=None) -> None:
+    def __init__(self, container, swerve: Swerve, angle=None, from_pose=False) -> None:
         super().__init__()
         self.setName('GyroReset')
         self.container = container
         self.swerve = swerve
         self.counter = 0
         self.angle = angle
+        self.from_pose = from_pose  # determine if we want to set the angle from the pose
         self.addRequirements(self.swerve)  # commandsv2 version of requirements
 
     def runsWhenDisabled(self):  # ok to run when disabled - override the base method
@@ -27,10 +28,14 @@ class GyroReset(commands2.Command):
 
         # All this command does for now is reset the gyro, although we may need to add more
         # self.swerve.gyro.reset()
-        if self.angle is None:
+        if self.from_pose:
+            angle = self.swerve.get_pose().rotation().degrees()  # get this from the swerve's current pose - maybe the yaw
+            self.swerve.reset_gyro(adjustment=angle)
+        elif self.angle is None:
             self.swerve.reset_gyro()  # also update the keep_angle
         else:
-            self.swerve.reset_gyro(self.angle)
+            self.swerve.reset_gyro(adjustment=self.angle)
+
 
     def execute(self) -> None:
         pass
