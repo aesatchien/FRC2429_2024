@@ -349,18 +349,18 @@ class Swerve (Subsystem):
 
 
     # figure out the nearest stage - or any tag, I suppose if we pass in a list
-    def get_nearest_tag(self, location='stage'):
+    def get_nearest_tag(self, destination='stage'):
         # get a field so we can query the tags
         field = ra.AprilTagField.k2024Crescendo
         layout = ra.loadAprilTagLayoutField(field)
         current_pose = self.get_pose()
 
-        if location == 'stage':
+        if destination == 'stage':
             # get all distances to the stage tags
             tags = [11, 12, 15, 16]  # the ones we can see from driver's station - does not matter if red or blue
-        elif location == 'amp':
+        elif destination == 'amp':
             tags = [5, 6]
-        elif location == 'speaker':
+        elif destination == 'speaker':
             tags = [7, 4]  # right one facing blue, left one facing red
         else:
             raise ValueError('location for get_nearest tag must be in ["stage", "amp"] etc')
@@ -374,7 +374,7 @@ class Swerve (Subsystem):
         sorted_tags, sorted_distances = zip(*combined)
         nearest_pose = layout.getTagPose(sorted_tags[0])  # get the pose of the nearest stage tag
         nearest_pose = nearest_pose.toPose2d()
-        print(f'nearest {location} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
+        print(f'nearest {destination} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
         return nearest_pose
 
     def periodic(self) -> None:

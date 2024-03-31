@@ -27,7 +27,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         self.drive: Swerve = drive
         self.led: Led = self.container.led
         self.destination = destination
-        # self.addRequirements(self.container.drive)  # if you do this the holonomic path follower will this command
+        # self.addRequirements(self.container.drive)  # if you add this the holonomic path follower will end this command
         self.cmd = None  # we will build a path-following command in initialize
         self.scheduler = None  # we will grab the scheduler in init
         self.counter = 0  # use this for some periodic debugging messages
@@ -41,7 +41,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
         # copying template from Josh
         # figure out where we are going - swerve currently is managing this since it keeps the odometry... could live anywhere
-        target_pose = self.drive.get_nearest_tag(location=self.destination)
+        target_pose = self.drive.get_nearest_tag(destination=self.destination)
         x = target_pose.translation().x
         y = target_pose.translation().y
         rot = target_pose.rotation().degrees()
@@ -79,10 +79,11 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         print(f'scheduling {self.cmd.getName()} ...')
 
     def execute(self) -> None:
-        self.counter += 1
-        # monitor our command
-        if self.counter % 100 == 0:
-            print(f' {self.cmd.getName()} is scheduled: {self.scheduler.isScheduled(self.cmd)}')
+        pass
+        # self.counter += 1
+        # # monitor our command
+        # if self.counter % 100 == 0:
+        #     print(f' {self.cmd.getName()} is scheduled: {self.scheduler.isScheduled(self.cmd)}')
 
     def isFinished(self) -> bool:
         # finish when the command we scheduled ends! - interrupt if we let go of the button
@@ -93,7 +94,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         if interrupted:
             # cancel the command we launched in the init phase if we let go of the button early, show failure
            self.scheduler.cancel(self.cmd)
-           print(f'CANCELING {self.cmd.getName()}')
+           print(f'CANCELING {self.cmd.getName()}', flush=True)
            self.led.set_indicator_with_timeout(Led.Indicator.AMP, 0.75).schedule()  # RED
 
         else:
@@ -106,6 +107,6 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         message = 'Interrupted' if interrupted else 'Ended'
         print_end_message = True
         if print_end_message:
-            print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")
+            print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
             SmartDashboard.putString(f"alert",
                                      f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

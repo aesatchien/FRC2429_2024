@@ -13,7 +13,7 @@ class AutoClimbSanjith(commands2.CommandBase):
 
     def __init__(self, container, climber:Climber, left_volts=2, right_volts=2) -> None:
         super().__init__()
-        self.setName('Run climber')
+        self.setName('AutoClimbSanjith')
         self.climber = climber
         self.container = container
         self.led: Led = container.led

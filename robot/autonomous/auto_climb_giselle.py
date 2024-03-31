@@ -19,7 +19,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
 
     def __init__(self, container) -> None:
         super().__init__()
-        self.setName('AutoClimbArm2')  # change this to something appropriate for this command
+        self.setName('AutoClimbGiselle')  # change this to something appropriate for this command
         self.container = container
         self.led: Led = self.container.led
         # self.addRequirements(self.container.)  # commandsv2 version of requirements

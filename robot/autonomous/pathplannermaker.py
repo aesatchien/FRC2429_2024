@@ -93,9 +93,9 @@ class PathPlannerConfiguration():
     def on_the_fly_path_by_pose(self, swerve: Swerve, led: Led, destination:str, final_velocity: float, linear_speed_factor=1, angular_speed_factor=1, fast_turn=True) -> commands2.Command:
         # CJH changed function to take a pose - simpler this way  20240330
         if destination == 'stage':
-            target_pose = swerve.get_nearest_tag(location='stage')  # return a pose2d of where the nearest stage is
+            target_pose = swerve.get_nearest_tag(destination='stage')  # return a pose2d of where the nearest stage is
         elif destination == 'amp':  # not tested yet
-            target_pose = swerve.get_nearest_tag(location='amp')  # return a pose2d of where the nearest amp is
+            target_pose = swerve.get_nearest_tag(destination='amp')  # return a pose2d of where the nearest amp is
         elif destination == 'speaker': # not tested yet
             pass
         else:
