@@ -51,9 +51,11 @@ class Climber(Subsystem):
         # toggle state
         self.climber_enable = False
         self.servos_open = False
+        self.trap_open = False
 
-        self.close_servos() #Drew wanted servoes to be "closed" on startup - JS
-        
+        self.close_servos()  # Drew wanted servos to be "closed" on startup - JS
+        self.stow_trap_servo()
+
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
     def set_climber(self, left_volts, right_volts, verbose=True):
@@ -108,18 +110,23 @@ class Climber(Subsystem):
         self.right_servo.setAngle(103)
         self.servos_open = False
 
-    def deploy_trap_servo(self):
-        # self.trap_servo.set(1)
-        self.trap_servo.setAngle(120)
-
     def stow_trap_servo(self):
+        self.trap_open = True
+        # self.trap_servo.set(1)
+        self.trap_servo.setAngle(180)
+        print(f"DEPLOYED TRAP SERVO")
+
+    def deploy_trap_servo(self):
+        self.trap_open = False
         self.trap_servo.set(0)
+        print(f"STOWED TRAP SERVO")
 
     def toggle_trap_servo(self):
-        if self.trap_servo.get() > 0.5:
+        if self.trap_open:
             self.stow_trap_servo()
         else:
             self.deploy_trap_servo()
+        print(f"TOGGLED TRAP SERVO")
 
     def periodic(self) -> None:
 

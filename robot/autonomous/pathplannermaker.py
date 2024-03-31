@@ -103,7 +103,7 @@ class PathPlannerConfiguration():
 
         x = target_pose.translation().x
         y = target_pose.translation().y
-        rot = target_pose.rotation().degrees()
+        rot = target_pose.rotation().degrees() - 180
 
         current_pose = swerve.get_pose()
 

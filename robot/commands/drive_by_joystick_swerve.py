@@ -25,7 +25,7 @@ class DriveByJoystickSwerve(commands2.Command):
         self.addRequirements(*[self.swerve])
         # can't import container and don't want to pass lambdas just yet
         self.controller: typing.Optional[CommandXboxController] = self.container.driver_command_controller
-        self.slow_mode_trigger = self.controller.rightBumper()
+        # self.slow_mode_trigger = self.controller.rightBumper()
         self.robot_oriented_trigger = self.controller.leftBumper()
         self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)

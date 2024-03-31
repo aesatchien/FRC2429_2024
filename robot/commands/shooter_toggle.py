@@ -31,8 +31,10 @@ class ShooterToggle(commands2.Command):
 
         # try to set the shot based on the last arm configuration set  - CJH update 20240319
         arm_configuration:str = self.container.get_arm_configuration()
-        if 'amp' in arm_configuration.lower() or 'trap' in arm_configuration.lower():
+        if 'amp' in arm_configuration.lower():
             rpm = self.amp_rpm
+        elif 'trap' in arm_configuration.lower():
+            rpm = self.amp_rpm + 500
         else:
             rpm = self.rpm
 

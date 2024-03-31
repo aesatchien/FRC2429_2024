@@ -21,6 +21,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
         super().__init__()
         self.setName('AutoClimbArm2')  # change this to something appropriate for this command
         self.container = container
+        self.led: Led = self.container.led
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
@@ -54,7 +55,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
                                                       'forwards').withTimeout(1.6),
                               ToggleClimbServos(self.container, self.container.climber, force='on'),
                               IndexerToggle(container=self.container, indexer=self.container.indexer, power=1,
-                                            force='off', timeout=0.5),
+                                            force='off', timeout=0.5).andThen(self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.5)),
                               # RunClimber(container=self.container, climber=self.container.climber, left_volts=3,
                               #            right_volts=4).withTimeout(4.0),
                               # ArmMove(container=self.container, arm=self.container.shooter_arm,
@@ -103,7 +104,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
             command = commands2.ParallelCommandGroup(
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5),
                         commands2.SequentialCommandGroup(
-                            commands2.InstantCommand(lambda:self.container.climber.toggle_trap_servo),  # can't use a runCommand here
+                            # commands2.InstantCommand(lambda:self.container.climber.toggle_trap_servo),  # can't use a runCommand here
                             commands2.PrintCommand("Just opened the trap servo"),
                             IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='off', timeout=1),
                             AutoShootCycle(container=self.container, go_to_shoot=False),
@@ -128,6 +129,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
         return True
 
     def end(self, interrupted: bool) -> None:
+        self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.5)
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print_end_message = False

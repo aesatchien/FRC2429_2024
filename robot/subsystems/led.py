@@ -174,7 +174,7 @@ class Led(commands2.Subsystem):
                             led.setRGB(0, 0, 0)
                         else:
                             # led.setRGB(255, 192, 203)  # probably too bright - looks white - CJH 03292024
-                            led.setRGB(183, 144, 152)
+                            led.setRGB(220, 172, 183)
 
                     elif self.indicator == Led.Indicator.POLKA:
                         # circling white and black spots
