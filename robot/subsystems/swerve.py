@@ -319,10 +319,12 @@ class Swerve (Subsystem):
         return self.gyro.getAngle()
 
     def get_angle(self):  # if necessary reverse the heading for swerve math
+        # note this does add in the current offset
         return -self.gyro.getAngle() if dc.kGyroReversed else self.gyro.getAngle()
 
     def get_yaw(self):  # helpful for determining nearest heading parallel to the wall
         # but you should probably never use this - just use get_angle to be consistent
+        # because yaw does NOT return the offset that get_Angle does
         # return self.gyro.getYaw()
         return -self.gyro.getYaw() if dc.kGyroReversed else self.gyro.getYaw()  #2024 possible update
 
@@ -337,9 +339,10 @@ class Swerve (Subsystem):
     def reset_gyro(self, adjustment=None):  # use this from now on whenever we reset the gyro
         self.gyro.reset()
         if adjustment is not None:
-            # ADD adjustment.
+            # ADD adjustment - e.g trying to update the gyro from a pose
             self.gyro.setAngleAdjustment(adjustment)
         else:
+            # make sure there is no adjustment
             self.gyro.setAngleAdjustment(0)
         self.reset_keep_angle()
     
@@ -433,6 +436,7 @@ class Swerve (Subsystem):
 
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.get_yaw())
+            wpilib.SmartDashboard.putNumber('_navx_angle', self.get_angle())
 
             if wpilib.RobotBase.isSimulation() or wpilib.RobotBase.isReal():
                 wpilib.SmartDashboard.putNumber('keep_angle', self.keep_angle)
