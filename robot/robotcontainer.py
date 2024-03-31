@@ -147,7 +147,7 @@ class RobotContainer:
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
         self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
-        self.trigger_u.onTrue(ToggleClimbServos(self, self.climber))
+        self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
         climber_voltage = 4  # was 3 until Tempe
         self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
         # self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))

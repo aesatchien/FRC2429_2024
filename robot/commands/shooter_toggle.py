@@ -34,7 +34,7 @@ class ShooterToggle(commands2.Command):
         if 'amp' in arm_configuration.lower():
             rpm = self.amp_rpm
         elif 'trap' in arm_configuration.lower():
-            rpm = self.amp_rpm + 500
+            rpm = 1200 # self.amp_rpm + 500
         else:
             rpm = self.rpm
 
