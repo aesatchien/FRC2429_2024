@@ -372,10 +372,10 @@ class Swerve (Subsystem):
         combined = list(zip(tags, distances))
         combined.sort(key=lambda x: x[1])  # sort on the distances
         sorted_tags, sorted_distances = zip(*combined)
-        nearest_stage_pose = layout.getTagPose(sorted_tags[0])  # get the pose of the nearest stage tag
-        nearest_stage_pose = nearest_stage_pose.toPose2d()
-        print(f'nearest stage is {sorted_tags[0]} at {nearest_stage_pose.translation()}')
-        return nearest_stage_pose
+        nearest_pose = layout.getTagPose(sorted_tags[0])  # get the pose of the nearest stage tag
+        nearest_pose = nearest_pose.toPose2d()
+        print(f'nearest {location} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
+        return nearest_pose
 
     def periodic(self) -> None:
 

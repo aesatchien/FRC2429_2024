@@ -29,6 +29,7 @@ from autonomous.auto_commands import *  # CJH STRONGLY DISAPPROVES OF THIS SLOPP
 from autonomous.auto_climb_giselle import AutoClimbGiselle
 from autonomous.drive_wait import DriveWait
 from autonomous.auto_climb_sanjith import AutoClimbSanjith
+from autonomous.auto_drive_to_tag import AutoDriveToTag
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -47,6 +48,7 @@ from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankBy
 from commands.arm_coast import CrankArmCoast
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
+from commands.system_interrupt import SystemInterrupt
 
 
 class RobotContainer:
@@ -156,14 +158,17 @@ class RobotContainer:
 
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
+        self.trigger_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
+
+        # Josh's stuff
         # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
         # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
         amp_pose = constants.k_blue_amp
         speaker_pose = constants.k_blue_speaker
-        self.trigger_y.whileTrue(  # create a path to the nearest speaker
-                PathPlannerMaker.on_the_fly_path_by_pose(swerve=self.drive, led=self.led, destination='stage', final_velocity=0,
-                linear_speed_factor=0.5, angular_speed_factor=0.75, fast_turn=True)
-            ).toggleOnFalse(commands2.InstantCommand(lambda: self.drive.reset_keep_angle()))
+        # self.trigger_y.whileTrue(  # create a path to the nearest speaker
+        #         PathPlannerMaker.on_the_fly_path_by_pose(swerve=self.drive, led=self.led, destination='stage', final_velocity=0,
+        #         linear_speed_factor=0.5, angular_speed_factor=0.75, fast_turn=True)
+        #     ).toggleOnFalse(commands2.InstantCommand(lambda: self.drive.reset_keep_angle()))
 
         # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
                                  # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
@@ -312,6 +317,10 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('MoveArmbyPose', MoveArmByPose(container=self))
         wpilib.SmartDashboard.putData('Drive and auto aim chassis', DriveAndAutoAimChassis(container=self, swerve=self.drive))
         # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
+        wpilib.SmartDashboard.putData('ToStage', AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
+        wpilib.SmartDashboard.putData('ToAmp', AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
+
+        wpilib.SmartDashboard.putData(commands2.CommandScheduler.getInstance())
 
     def get_autonomous_command(self):
         return self.autonomous_chooser.getSelected()
