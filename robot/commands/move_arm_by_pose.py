@@ -33,11 +33,11 @@ class MoveArmByPose(commands2.CommandBase):
         
 
         #CHANGE THESE VALUES FOR THIS TABLE, I PUT THESE VALUES BASED OFF OF ESTIMATIONS JUST TO TEST SIM - THESE VALUES ARE NOT REALISTIC OR ACCURATE
-        self.far_range_distance_angle_lookup_table = {
-            1: -54.8733,
-            2: -34.4111,
-            3: -24.5446,
-        } #put upper crank arm (shooter arm) angle values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
+        self.far_range_distance_angle_offset_lookup_table = {
+            1: 4,
+            2: 4,
+            3: 4
+        } #put upper crank arm (shooter arm) angle offset values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
 
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
@@ -49,9 +49,9 @@ class MoveArmByPose(commands2.CommandBase):
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
         if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
-            self.speaker_translation = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
+            self.speaker_translation = Translation2d(constants.k_speaker_tags_poses["red"][0], constants.k_speaker_tags_poses["red"][1])
         elif DriverStation.getAlliance() == DriverStation.Alliance.kBlue:
-            self.speaker_translation = Translation2d(constants.k_blue_speaker[0], constants.k_blue_speaker[1])
+            self.speaker_translation = Translation2d(constants.k_speaker_tags_poses["blue"][0], constants.k_speaker_tags_poses["blue"][1])
 
 
     def execute(self) -> None:
@@ -106,7 +106,7 @@ class MoveArmByPose(commands2.CommandBase):
         #else if shooting backwards
         elif self.container.shooting_backwards == False:
            # Find the points to interpolate between
-            distances = list(self.far_range_distance_angle_lookup_table.keys())
+            distances = list(self.far_range_distance_angle_offset_lookup_table.keys())
             distances = sorted(distances)
 
             if len(distances) == 0:
@@ -128,16 +128,18 @@ class MoveArmByPose(commands2.CommandBase):
                         break
 
             # find slope and interpolate
-            m = ((self.far_range_distance_angle_lookup_table[greater_distance] - self.far_range_distance_angle_lookup_table[lesser_distance]) / (greater_distance - lesser_distance))
+            m = ((self.far_range_distance_angle_offset_lookup_table[greater_distance] - self.far_range_distance_angle_offset_lookup_table[lesser_distance]) / (greater_distance - lesser_distance))
 
-            interpolated = self.far_range_distance_angle_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
+            interpolated_offset = self.far_range_distance_angle_offset_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
 
 
             self.container.crank_arm.set_goal(math.pi / 2)
 
+            used_height = constants.k_speaker_opening_height - (constants.k_bumper_height + constants.k_crank_arm_dict['arm_length'])
+
             if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
 
-                self.container.shooter_arm.set_goal(math.radians(interpolated))
+                self.container.shooter_arm.set_goal(math.radians(math.degrees(-math.atan(used_height / self.distance_to_speaker))+interpolated_offset))
 
         return
 
