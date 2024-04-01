@@ -125,6 +125,8 @@ class RobotContainer:
         self.trigger_u = self.driver_command_controller.povUp()
         self.trigger_r = self.driver_command_controller.povRight()
         self.trigger_l = self.driver_command_controller.povLeft()
+        self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
+        self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2)
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
@@ -154,7 +156,7 @@ class RobotContainer:
 
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
 
-        #self.trigger_b.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
+        self.trigger_l_trigger.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
 
 
 
