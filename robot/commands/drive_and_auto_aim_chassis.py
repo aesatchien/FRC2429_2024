@@ -58,8 +58,8 @@ class DriveAndAutoAimChassis(commands2.Command):
 
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
-        shooting_backwards = True
-        if shooting_backwards:
+        
+        if self.container.shooting_backwards:
             desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
         else:
             desired_angle = translation_robot_to_speaker.angle()

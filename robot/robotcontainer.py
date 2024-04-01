@@ -50,6 +50,7 @@ from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 from commands.smart_intake import SmartIntake
 from commands.system_interrupt import SystemInterrupt
+from commands.change_shooting_direction import ChangeShootingDirection
 
 
 class RobotContainer:
@@ -67,6 +68,9 @@ class RobotContainer:
         # set the default arm position - will use this to control shot speed.  Need this before the arm subsystems...
         self.arm_configuration = 'unknown'
         wpilib.SmartDashboard.putString('arm_config', self.arm_configuration)
+
+        #robot is shooting backwards for auto aim by default
+        self.shooting_backwards = True
 
         # The robot's subsystems
         self.drive = Swerve()
@@ -121,6 +125,8 @@ class RobotContainer:
         self.trigger_u = self.driver_command_controller.povUp()
         self.trigger_r = self.driver_command_controller.povRight()
         self.trigger_l = self.driver_command_controller.povLeft()
+        self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
+        self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2)
 
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
@@ -147,9 +153,16 @@ class RobotContainer:
     def bind_driver_buttons(self):
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
+
+        self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
+
+        self.trigger_l_trigger.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
+
+
+
         self.trigger_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
         self.trigger_back.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
-        # self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
+
         self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
         self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
@@ -271,6 +284,7 @@ class RobotContainer:
                                                                                 absolute=True, wait_to_finish=True))
         NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=False))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
+        NamedCommands.registerCommand('Switch Shooting Direction for Auto Aim', ChangeShootingDirection(container=self))
 
     def get_arm_configuration(self):
         return self.arm_configuration
@@ -324,6 +338,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ToAmp', AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         wpilib.SmartDashboard.putData('ToSpeaker', AutoDriveToTag(container=self, drive=self.drive, destination='speaker'))
         wpilib.SmartDashboard.putData('GyroFromPose', GyroReset(self, swerve=self.drive, from_pose=True))
+        wpilib.SmartDashboard.putData('ChangeShootingDirection', ChangeShootingDirection(container=self))
 
         wpilib.SmartDashboard.putData(commands2.CommandScheduler.getInstance())
 
