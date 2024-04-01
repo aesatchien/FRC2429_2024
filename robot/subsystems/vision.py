@@ -17,10 +17,13 @@ class Vision(SubsystemBase):
         self.camera_values = {}
 
         self.ringcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Ringcam')  # lifecam for rings
-        self.tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Tagcam')  # logitech for tags
+        self.back_tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Tagcam')  # logitech for tags
+
+        # TODO - figure out how to have two tag cameras play nice
+        self.front_tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/TagcamFront')  # logitech for tags
 
         for key in self.camera_dict.keys():  # colors on top
-            table = self.ringcam_table if key == 'orange' else self.tagcam_table
+            table = self.ringcam_table if key == 'orange' else self.back_tagcam_table
             self.camera_dict[key].update({'id_entry': table.getDoubleTopic(f"{key}/id").subscribe(0)})
             self.camera_dict[key].update({'targets_entry': table.getDoubleTopic(f"{key}/targets").subscribe(0)})
             self.camera_dict[key].update({'distance_entry': table.getDoubleTopic(f"{key}/distance").subscribe(0)})

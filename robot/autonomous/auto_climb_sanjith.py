@@ -71,9 +71,9 @@ class AutoClimbSanjith(commands2.CommandBase):
         if encoder_average > 145 and not self.at_top_of_climb:  # 24.2 inches of rope
             self.led.set_indicator(Led.Indicator.CALIBRATION_SUCCESS)  # flash green
             self.at_top_of_climb = True
-        elif encoder_average > 140 and not self.toggle_servo_fired:  # 24.2 inches of rope
+        elif encoder_average > 125 and not self.toggle_servo_fired:  # 24.2 inches of rope
             self.shooter_arm.set_goal(math.radians(-90))
-            self.climber.close_trap_servo()
+            self.climber.open_trap_servo()
             print(f"Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
             self.toggle_servo_fired = True
         elif encoder_average > 110 and not self.shooter_half_down:  # 19 inches

@@ -99,8 +99,10 @@ class Swerve (Subsystem):
 
         # get poses from NT
         self.inst = ntcore.NetworkTableInstance.getDefault()
-        self.apriltag_pose_subscriber = self.inst.getDoubleArrayTopic("/Cameras/Tagcam/poses/tag1").subscribe([0]*8)
-        self.apriltag_count_subscriber = self.inst.getDoubleTopic("/Cameras/Tagcam/tags/targets").subscribe(0)
+        self.apriltag_rear_pose_subscriber = self.inst.getDoubleArrayTopic("/Cameras/Tagcam/poses/tag1").subscribe([0] * 8)
+        self.apriltag_rear_count_subscriber = self.inst.getDoubleTopic("/Cameras/Tagcam/tags/targets").subscribe(0)
+        self.apriltag_front_pose_subscriber = self.inst.getDoubleArrayTopic("/Cameras/TagcamFront/poses/tag1").subscribe([0]*8)
+        self.apriltag_front_count_subscriber = self.inst.getDoubleTopic("/Cameras/TagcamFront/tags/targets").subscribe(0)
         self.use_apriltags = True
 
         # configure the autobuilder of pathplanner supposed to be the last thing in init per instructions- 20240218 CJH
@@ -363,12 +365,12 @@ class Swerve (Subsystem):
         if destination == 'stage':
             # get all distances to the stage tags
             tags = [11, 12, 15, 16]  # the ones we can see from driver's station - does not matter if red or blue
-            x_offset, y_offset = -0.15, 0.15  # subtracting translations below makes +x INTO the tage, +y LEFT of tag
+            x_offset, y_offset = -0.15, 0.35  # subtracting translations below makes +x INTO the tage, +y LEFT of tag
             robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
             face_tag = True  # do we want to face the tag?
         elif destination == 'amp':
             tags = [5, 6]
-            x_offset, y_offset = -0.5, 0  # subtracting translations below makes +1 INTO the tage, +y LEFT of tag
+            x_offset, y_offset = -0.30, 0  # subtracting translations below makes +1 INTO the tage, +y LEFT of tag
             robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
             face_tag = True
         elif destination == 'speaker':
@@ -407,13 +409,24 @@ class Swerve (Subsystem):
         wpilib.SmartDashboard.putNumber('_timestamp', wpilib.Timer.getFPGATimestamp())
         # update pose based on apriltags
         if self.use_apriltags:
-            if self.apriltag_count_subscriber.get() > 0 :
+
+            if self.apriltag_front_count_subscriber.get() > 0:  # use front camera
                 # update pose from apriltags
-                tag_data = self.apriltag_pose_subscriber.get()  # 8 items - timestamp, id, tx ty tx rx ry rz
+                tag_data = self.apriltag_front_pose_subscriber.get()  # 8 items - timestamp, id, tx ty tx rx ry rz
                 tx, ty, tz = tag_data[2], tag_data[3], tag_data[4]
                 rx, ry, rz = tag_data[5], tag_data[6], tag_data[7]
                 tag_pose = Pose3d(Translation3d(tx, ty, tz), Rotation3d(rx, ry, rz)).toPose2d()
                 self.pose_estimator.addVisionMeasurement(tag_pose, tag_data[0])
+
+            if self.apriltag_rear_count_subscriber.get() > 0:  # use rear camera - should I make this an elif?
+                # update pose from apriltags
+                tag_data = self.apriltag_rear_pose_subscriber.get()  # 8 items - timestamp, id, tx ty tx rx ry rz
+                tx, ty, tz = tag_data[2], tag_data[3], tag_data[4]
+                rx, ry, rz = tag_data[5], tag_data[6], tag_data[7]
+                tag_pose = Pose3d(Translation3d(tx, ty, tz), Rotation3d(rx, ry, rz)).toPose2d()
+                self.pose_estimator.addVisionMeasurement(tag_pose, tag_data[0])
+
+
 
         # Update the odometry in the periodic block -
         if wpilib.RobotBase.isReal():
