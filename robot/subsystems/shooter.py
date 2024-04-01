@@ -68,8 +68,8 @@ class Shooter(Subsystem):
         # open shooter box seems to be about 380mm, so anything less indicates a ring
         self.ring_loaded = self.shooter_height_sensor.getRange() < 300
 
-        if wpilib.RobotBase.isSimulation():
-            self.ring_loaded = False
+        if wpilib.RobotBase.isSimulation():  # test it
+            self.ring_loaded = self.counter % 1000 < 500
 
         return self.ring_loaded
 
