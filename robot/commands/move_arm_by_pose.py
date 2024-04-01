@@ -5,7 +5,7 @@ from wpimath.geometry import Translation2d
 
 import constants
 
-class MoveArmByPose(commands2.CommandBase):  # change the name for your command
+class MoveArmByPose(commands2.CommandBase):
     # LHACK 3/11/2024 a command that uses linear interpolation to move the lower crank arm according to our distance to the speaker
 
     def __init__(self, container) -> None:
@@ -19,14 +19,26 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
         # 87" 41 deg
         # 77" 45 deg
         # 59" 54 deg
-        self.distance_angle_lookup_table = {
+
+        #add two interpolation data point lookup tables, one for shooting backwards in low position, and one for shooting forwards in old shooter position
+
+        self.close_range_distance_angle_lookup_table = {
             1.27: 54,
             1.42: 54,
             1.50: 53,
             1.55: 48,
             1.96: 45,
             2.21: 41
-        }
+        } #put lower crank arm angle values in this table ; upper crank arm is at -84 degrees and fixated when lower shooting mode
+        
+
+        #CHANGE THESE VALUES FOR THIS TABLE, I PUT THESE VALUES BASED OFF OF ESTIMATIONS JUST TO TEST SIM - THESE VALUES ARE NOT REALISTIC OR ACCURATE
+        self.far_range_distance_angle_lookup_table = {
+            1: -54.8733,
+            2: -34.4111,
+            3: -24.5446,
+        } #put upper crank arm (shooter arm) angle values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
+
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
@@ -45,53 +57,87 @@ class MoveArmByPose(commands2.CommandBase):  # change the name for your command
     def execute(self) -> None:
         # Get distance to speaker
         robot_pose = self.container.drive.get_pose()
-
-        #robot_translation = Translation2d(robot_pose.X(), robot_pose.Y())
-        #distance_to_speaker = self.speaker_translation.distance(robot_translation)
-        
         x = robot_pose.X()
         y = robot_pose.Y()
         self.distance_to_speaker = math.sqrt(math.pow((x - self.speaker_translation[0]), 2) + math.pow((y - self.speaker_translation[1]), 2))
 
+        #robot_pose = self.container.drive.get_pose()
+        #robot_translation = Translation2d(robot_pose.X(), robot_pose.Y())
+        #distance_to_speaker = self.speaker_translation.distance(robot_translation)
+
+
+        #if shooting forwards use forward shooting
+        if self.distance_to_speaker <= 2.21 and self.container.shooting_backwards:
+            # Find the points to interpolate between
+            distances = list(self.close_range_distance_angle_lookup_table.keys())
+            distances = sorted(distances)
+
+            if len(distances) == 0:
+                raise ValueError('No known distances!')
+            elif len(distances) == 1:
+                greater_distance = lesser_distance = distances[0]
+            else:
+                greater_distance = distances[-1]  # If we're further than the furthest known distance, keep the slope between the last 2 distances
+                lesser_distance = distances[-2]
+
+                for idx, known_distance in enumerate(distances):
+                    if known_distance > self.distance_to_speaker:
+                        if idx > 0:
+                            greater_distance = distances[idx]
+                            lesser_distance = distances[idx - 1]
+                        else:
+                            greater_distance = distances[1]
+                            lesser_distance = distances[0]  # If we're closer than the closest known distance, keep the slope between the first 2 distances
+                        break
+
+            #find slope and interpolate
+            m = ((self.close_range_distance_angle_lookup_table[greater_distance] - self.close_range_distance_angle_lookup_table[lesser_distance]) /
+                                                    (greater_distance - lesser_distance))
+
+            interpolated = self.close_range_distance_angle_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
+
+            #self.container.shooter_arm.set_goal( wherever the default old position was for upper crank)
+
+            self.container.crank_arm.set_goal(math.radians(interpolated))
+
+            self.container.shooter_arm.set_goal(math.radians(-84))
+
         
+        #else if shooting backwards
+        elif self.container.shooting_backwards == False:
+           # Find the points to interpolate between
+            distances = list(self.far_range_distance_angle_lookup_table.keys())
+            distances = sorted(distances)
 
-        ''' interpolation isn't necessary, I will try not using it for now - Arshan
+            if len(distances) == 0:
+                raise ValueError('No known distances; table empty.')
+            elif len(distances) == 1:
+                greater_distance = lesser_distance = distances[0]
+            else:
+                greater_distance = distances[-1]  # If we're further than the furthest known distance, keep the slope between the last 2 distances
+                lesser_distance = distances[-2]
 
-        # Find the points to interpolate between
-        distances = list(self.distance_angle_lookup_table.keys())
-        distances = sorted(distances)
+                for i, known_distance in enumerate(distances):
+                    if known_distance > self.distance_to_speaker:
+                        if i > 0:
+                            greater_distance = distances[i]
+                            lesser_distance = distances[i - 1]
+                        else:
+                            greater_distance = distances[1]
+                            lesser_distance = distances[0]  # If we're closer than the closest known distance, keep the slope between the first 2 distances
+                        break
 
-        if len(distances) == 0:
-            raise ValueError('No known distances!')
-        elif len(distances) == 1:
-            greater_distance = lesser_distance = distances[0]
-        else:
-            greater_distance = distances[-1]  # If we're further than the furthest known distance, keep the slope between the last 2 distances
-            lesser_distance = distances[-2]
+            # find slope and interpolate
+            m = ((self.far_range_distance_angle_lookup_table[greater_distance] - self.far_range_distance_angle_lookup_table[lesser_distance]) / (greater_distance - lesser_distance))
 
-            for idx, known_distance in enumerate(distances):
-                if known_distance > distance_to_speaker:
-                    if idx > 0:
-                        greater_distance = distances[idx]
-                        lesser_distance = distances[idx - 1]
-                    else:
-                        greater_distance = distances[1]
-                        lesser_distance = distances[0]  # If we're closer than the closest known distance, keep the slope between the first 2 distances
-                    break
+            interpolated = self.far_range_distance_angle_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
 
-        # We have the 2 points to interpolate between, so interpolate!
-        m = ((self.distance_angle_lookup_table[greater_distance] - self.distance_angle_lookup_table[lesser_distance]) /
-                                                (greater_distance - lesser_distance))
 
-        interpolated = self.distance_angle_lookup_table[lesser_distance] + m * (distance_to_speaker - lesser_distance)
+            self.container.crank_arm.set_goal(math.pi / 2)
 
-        '''
+            if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
 
-        angle_difference = 4 #difference value to fix errors (initially shots were too high, so we can eperiment with different values for this variable and see how it affects accuracy)
-
-        self.container.crank_arm.set_goal(math.pi / 2)
-        if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
-            self.container.shooter_arm.set_goal(math.radians(math.degrees(-1 * math.atan((constants.k_speaker_opening_height - 0.8382) / self.distance_to_speaker))+angle_difference))
+                self.container.shooter_arm.set_goal(math.radians(interpolated))
 
         return
 
