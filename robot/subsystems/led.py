@@ -91,14 +91,14 @@ class Led(commands2.Subsystem):
                 # check if there is an indicator, and override
                 if self.indicator != Led.Indicator.NONE:
                     if self.indicator == Led.Indicator.READY_SHOOT:
-                        # flashing white
+                        # flashing yellow
                         freq = 1  # 10 /s > 2x /s
                         cycle = math.floor(self.animation_counter / freq)
 
                         if cycle % 2 == 0:
                             led.setRGB(0, 0, 0)
                         else:
-                            led.setRGB(0, 255, 0)
+                            led.setRGB(255, 255, 0)
 
                     elif self.indicator == Led.Indicator.AMP:
                         # solid red

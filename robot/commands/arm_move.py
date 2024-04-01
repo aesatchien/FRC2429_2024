@@ -23,7 +23,7 @@ class ArmMove(commands2.Command):
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
-        self.print_start_message()
+        # self.print_start_message()
         if self.direction is None:
             if self.absolute:
                 self.arm.set_goal(math.radians(self.degrees))

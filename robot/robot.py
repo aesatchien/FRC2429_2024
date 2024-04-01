@@ -11,6 +11,9 @@ import robotcontainer
 from robotcontainer import RobotContainer
 from subsystems.led import Led
 
+# import warnings
+# warnings.filterwarnings("ignore")
+
 
 class MyRobot(commands2.TimedCommandRobot):
     """
