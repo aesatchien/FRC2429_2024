@@ -114,8 +114,10 @@ class Ui(QtWidgets.QMainWindow):
         self.thread = None
         self.camera_dict = {'Ringcam': 'http://10.24.29.12:1187/stream.mjpg',
                             'Tagcam': 'http://10.24.29.12:1186/stream.mjpg',
+                            'FrontTag': 'http://10.24.29.13:1186/stream.mjpg',
                             'Raw Ring': 'http://10.24.29.12:1182/stream.mjpg',
-                            'Raw Tag': 'http://10.24.29.12:1181/stream.mjpg'}
+                            'Raw Tag': 'http://10.24.29.12:1181/stream.mjpg',
+                            'Raw FrontTag': 'http://10.24.29.13:1181/stream.mjpg'}
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
