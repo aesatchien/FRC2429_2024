@@ -154,7 +154,7 @@ class RobotContainer:
 
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
 
-        self.trigger_b.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
+        #self.trigger_b.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
 
 
 
