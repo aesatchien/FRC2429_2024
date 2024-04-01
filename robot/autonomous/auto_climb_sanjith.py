@@ -25,6 +25,7 @@ class AutoClimbSanjith(commands2.CommandBase):
         self.right_volts = right_volts
         self.addRequirements(climber)
         self.count = 0
+        self.voltage_boost = 2  # start off with a voltage boost to get the slack out
 
         # make some milestones
         self.climb_started = False
@@ -58,8 +59,8 @@ class AutoClimbSanjith(commands2.CommandBase):
         full_correction_degree_limit = 10  # max degrees before we apply full correction
         roll_correction = roll_correction_max_volts * roll / full_correction_degree_limit  # add or subtract up to a volt based on our tilt
         roll_correction = roll_correction if math.fabs(roll_correction) < roll_correction_max_volts else math.copysign(roll_correction_max_volts, roll_correction)
-        left_volts = max(0, self.left_volts - roll_correction)  # don't let them go negative with the correction
-        right_volts = max(0, self.right_volts + roll_correction)
+        left_volts = max(0, self.left_volts - roll_correction + self.voltage_boost)  # don't let them go negative with the correction
+        right_volts = max(0, self.right_volts + roll_correction + self.voltage_boost)
         verbose = True if self.count % 50 == 0 else False  # report once in a while
         self.climber.set_climber(left_volts, right_volts, verbose=verbose)
 
@@ -71,7 +72,7 @@ class AutoClimbSanjith(commands2.CommandBase):
         if encoder_average > 145 and not self.at_top_of_climb:  # 24.2 inches of rope
             self.led.set_indicator(Led.Indicator.CALIBRATION_SUCCESS)  # flash green
             self.at_top_of_climb = True
-        elif encoder_average > 125 and not self.toggle_servo_fired:  # 24.2 inches of rope
+        elif encoder_average > 120 and not self.toggle_servo_fired:  # 24.2 inches of rope
             self.shooter_arm.set_goal(math.radians(-90))
             self.climber.open_trap_servo()
             print(f"Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
@@ -86,6 +87,7 @@ class AutoClimbSanjith(commands2.CommandBase):
             print(f"Closing servos at {self.container.get_enabled_time()}s")
         elif encoder_average > 84 and not self.initial_slack_taken:  # just getting taut - 14.5"
             print(f"Initial slack taken up {self.container.get_enabled_time()}s")
+            self.voltage_boost = 0  # slow down the climbing at this point
             self.crank_arm.set_goal(math.radians(109))
             self.shooter_arm.set_goal(math.radians(0))
             self.initial_slack_taken = True

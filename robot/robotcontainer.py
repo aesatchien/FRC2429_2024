@@ -48,6 +48,7 @@ from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankBy
 from commands.arm_coast import CrankArmCoast
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
+from commands.smart_intake import SmartIntake
 from commands.system_interrupt import SystemInterrupt
 from commands.change_shooting_direction import ChangeShootingDirection
 
@@ -65,7 +66,7 @@ class RobotContainer:
         self.start_time = time.time()
 
         # set the default arm position - will use this to control shot speed.  Need this before the arm subsystems...
-        self.arm_configuration = 'intake'
+        self.arm_configuration = 'unknown'
         wpilib.SmartDashboard.putString('arm_config', self.arm_configuration)
 
         #robot is shooting backwards for auto aim by default
@@ -119,6 +120,7 @@ class RobotContainer:
         self.trigger_rb = self.driver_command_controller.rightBumper()
         self.trigger_lb = self.driver_command_controller.leftBumper()
         self.trigger_start = self.driver_command_controller.start()
+        self.trigger_back = self.driver_command_controller.back()
         self.trigger_d = self.driver_command_controller.povDown()
         self.trigger_u = self.driver_command_controller.povUp()
         self.trigger_r = self.driver_command_controller.povRight()
@@ -149,12 +151,15 @@ class RobotContainer:
     def bind_driver_buttons(self):
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
-        self.trigger_a.onTrue(AcquireNoteToggle(container=self, force='on'))
 
         self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
 
         self.trigger_b.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
 
+
+
+        self.trigger_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
+        self.trigger_back.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
 
         self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))

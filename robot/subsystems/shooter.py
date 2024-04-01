@@ -1,6 +1,8 @@
 # flywheel for 2024 bot
 # started 2022 0102 to update to commands2
 import math
+
+import wpilib
 from commands2 import Subsystem
 from wpilib import SmartDashboard
 import rev
@@ -65,6 +67,10 @@ class Shooter(Subsystem):
     def is_ring_loaded(self):
         # open shooter box seems to be about 380mm, so anything less indicates a ring
         self.ring_loaded = self.shooter_height_sensor.getRange() < 300
+
+        if wpilib.RobotBase.isSimulation():  # test it
+            self.ring_loaded = self.counter % 1000 < 500
+
         return self.ring_loaded
 
     def set_flywheel(self, rpm, volts=None, use_voltage=False):
