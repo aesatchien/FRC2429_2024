@@ -15,11 +15,12 @@ import constants
 from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveAndAutoAimChassis(commands2.Command):
-    def __init__(self, container, swerve: Swerve, field_oriented=True, rate_limited=False,) -> None:
+    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False) -> None:
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
         self.swerve = swerve
+        self.velocity_multiplier = velocity_multiplier
         self.field_oriented = field_oriented  # Sanjith wants this on a button instead
         self.rate_limited = rate_limited
         self.addRequirements(*[self.swerve])
@@ -71,7 +72,10 @@ class DriveAndAutoAimChassis(commands2.Command):
         # not all swerves are the same - some require inversion of drive and or turn motors
         pid_output = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
         # The inner one clamps the PID output; the outer one clamps the total output considering that max_angular can get >1
-        desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * max_angular, db_low=0)
+        if self.velocity_multiplier is not None:
+            desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * self.velocity_multiplier, db_low=0)
+        else:
+            desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * max_angular, db_low=0)
         desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
         desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
         # desired_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
