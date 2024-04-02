@@ -34,7 +34,7 @@ class MoveArmByPose(commands2.CommandBase):
         
         self.far_range_distance_angle_offset_lookup_table = {
             1.4: 5,
-            3.92: 7
+            3.92: 7.2
         } #put upper crank arm (shooter arm) angle offset values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
 
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
@@ -63,14 +63,11 @@ class MoveArmByPose(commands2.CommandBase):
         y = robot_pose.Y()
         self.distance_to_speaker = math.sqrt(math.pow((x - self.speaker_translation[0]), 2) + math.pow((y - self.speaker_translation[1]), 2))
 
-        #robot_pose = self.container.drive.get_pose()
-        #robot_translation = Translation2d(robot_pose.X(), robot_pose.Y())
-        #distance_to_speaker = self.speaker_translation.distance(robot_translation)
 
+        #if shooting backwards use backwards low shooting, and vice versa if shooting forwards:
 
-        #if shooting forwards use forward shooting
         if self.distance_to_speaker <= 2.21 and self.shooting_backwards:
-            # Find the points to interpolate between
+            #interpolation
             distances = list(self.close_range_distance_angle_lookup_table.keys())
             distances = sorted(distances)
 
@@ -98,16 +95,13 @@ class MoveArmByPose(commands2.CommandBase):
 
             interpolated = self.close_range_distance_angle_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
 
-            #self.container.shooter_arm.set_goal( wherever the default old position was for upper crank)
-
             self.container.crank_arm.set_goal(math.radians(interpolated))
 
             self.container.shooter_arm.set_goal(math.radians(-84))
 
         
-        #else if shooting backwards
         elif not self.shooting_backwards:
-           # Find the points to interpolate between
+           # interpolation
             distances = list(self.far_range_distance_angle_offset_lookup_table.keys())
             distances = sorted(distances)
 
@@ -134,7 +128,7 @@ class MoveArmByPose(commands2.CommandBase):
 
             interpolated_offset = self.far_range_distance_angle_offset_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
 
-            #IF TESTING, change this to experiment
+            #IF TESTING, change this to experimental angle offset
             interpolated_offset = interpolated_offset
 
             self.container.crank_arm.set_goal(math.pi / 2)
@@ -142,7 +136,6 @@ class MoveArmByPose(commands2.CommandBase):
             used_height = constants.k_speaker_opening_height - (constants.k_bumper_height + constants.k_crank_arm_dict['arm_length'])
 
             if self.container.crank_arm.angle > abs(constants.k_max_upper_crank_where_retracting_lower_crank_safe_rad):
-
                 self.container.shooter_arm.set_goal(math.radians(math.degrees(-math.atan(used_height / self.distance_to_speaker))+interpolated_offset))
 
         return
