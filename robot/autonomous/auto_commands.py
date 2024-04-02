@@ -7,6 +7,7 @@ from commands.arm_move import ArmMove
 from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
+from commands.change_shooting_direction import ChangeShootingDirection
 
 # LHACK 3/18/24- a bunch of commands used for auto only that don't really deserve their own files IMO
 
@@ -51,6 +52,24 @@ class GoToSpeakerAndShoot(commands2.SequentialCommandGroup):
             )
         )
         self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
+
+class ShootFromAnywhere(commands2.SequentialCommandGroup):
+    def __init__(self, container) -> None:
+        super().__init__()
+        self.setName(f'Shoot from anywhere')
+        self.container = container
+
+        self.addCommands(ChangeShootingDirection(self.container))
+        self.addCommands(
+            commands2.ParallelRaceGroup(
+                MoveArmByPose(self.container),
+                DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited),
+                commands2.WaitCommand(4.0)
+            )
+        )
+        self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
+        self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
+
 
 class ShootPreload(commands2.SequentialCommandGroup):
     def __init__(self, container, time_to_aim) -> None:

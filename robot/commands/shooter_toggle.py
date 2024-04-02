@@ -1,8 +1,11 @@
 # give ourselves three possible actions for the shooter - stop, set, and cycle through a list (for testing)
 import math
 import commands2
+import constants
 import wpilib
-from wpilib import SmartDashboard
+from wpilib import SmartDashboard, DriverStation
+from wpimath.geometry import Translation2d
+
 
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
@@ -29,12 +32,25 @@ class ShooterToggle(commands2.Command):
 
         self.timer.restart()
 
+        if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
+            self.speaker_translation = Translation2d(constants.k_speaker_tags_poses["red"][0], constants.k_speaker_tags_poses["red"][1])
+        elif DriverStation.getAlliance() == DriverStation.Alliance.kBlue:
+            self.speaker_translation = Translation2d(constants.k_speaker_tags_poses["blue"][0], constants.k_speaker_tags_poses["blue"][1])
+
+        #figuring out how far we are from the speaker
+        robot_pose = self.container.drive.get_pose()
+        x = robot_pose.X()
+        y = robot_pose.Y()
+        self.distance_to_speaker = math.sqrt(math.pow((x - self.speaker_translation[0]), 2) + math.pow((y - self.speaker_translation[1]), 2))
+
         # try to set the shot based on the last arm configuration set  - CJH update 20240319
         arm_configuration:str = self.container.get_arm_configuration()
         if 'amp' in arm_configuration.lower():
             rpm = self.amp_rpm
         elif 'trap' in arm_configuration.lower():
             rpm = 900 # self.amp_rpm + 500
+        elif self.distance_to_speaker > 3:
+            rpm = 4500
         else:
             rpm = self.rpm
 

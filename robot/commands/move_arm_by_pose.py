@@ -35,8 +35,10 @@ class MoveArmByPose(commands2.CommandBase):
         #CHANGE THESE VALUES FOR THIS TABLE, I PUT THESE VALUES BASED OFF OF ESTIMATIONS JUST TO TEST SIM - THESE VALUES ARE NOT REALISTIC OR ACCURATE
         self.far_range_distance_angle_offset_lookup_table = {
             1: 4,
-            2: 4,
-            3: 4
+            2: 7,
+            3: 7,
+            4: 4,
+            5: -0.2
         } #put upper crank arm (shooter arm) angle offset values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
 
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
@@ -104,7 +106,7 @@ class MoveArmByPose(commands2.CommandBase):
 
         
         #else if shooting backwards
-        elif self.container.shooting_backwards == False:
+        elif not self.container.shooting_backwards:
            # Find the points to interpolate between
             distances = list(self.far_range_distance_angle_offset_lookup_table.keys())
             distances = sorted(distances)

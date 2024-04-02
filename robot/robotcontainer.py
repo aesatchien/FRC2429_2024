@@ -213,8 +213,8 @@ class RobotContainer:
         direction = None
         self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
         self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
-        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
-        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=0.2, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-0.2, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
         self.co_trigger_back.onTrue(AutoClimbGiselle(self))
@@ -263,6 +263,7 @@ class RobotContainer:
         NamedCommands.registerCommand('Auto shoot cycle', AutoShootCycle(self, go_to_shoot=False))
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
         NamedCommands.registerCommand('Switch Shooting Direction for Auto Aim', ChangeShootingDirection(container=self))
+        NamedCommands.registerCommand('Shoot from anywhere', ShootFromAnywhere(self))
 
     def get_arm_configuration(self):
         return self.arm_configuration
