@@ -254,8 +254,8 @@ class RobotContainer:
         NamedCommands.registerCommand('Go to shoot', GoToShoot(self))
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
-        NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(self))
-        NamedCommands.registerCommand('Auto aim robot chassis towards speaker', DriveAndAutoAimChassis(container=self, swerve=self.drive, velocity_multiplier=1))
+        NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(container=self, shooting_backwards=True))
+        NamedCommands.registerCommand('Auto aim robot chassis towards speaker', DriveAndAutoAimChassis(container=self, swerve=self.drive, velocity_multiplier=1, shooting_backwards=True))
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
         NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],
