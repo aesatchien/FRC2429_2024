@@ -172,13 +172,15 @@ class RobotContainer:
         # TRIGGER B BOUND IN SWERVE SECTION
 
         # AUTO AIMING
-        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(self))
-        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=True))
+        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=True))
+
+        self.trigger_shift_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=False))
+        self.trigger_shift_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=False))
 
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
 
-        self.trigger_l_trigger.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
 
         # DPAD
