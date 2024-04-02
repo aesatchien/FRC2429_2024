@@ -41,8 +41,8 @@ class DriveAndAutoAimChassis(commands2.Command):
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
     def execute(self) -> None:
-        auto_aim_offset = 0.2
-        slowmode_multiplier = auto_aim_offset + 0.2 + 0.8 * self.controller.getRightTriggerAxis()
+
+        slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
             self.field_oriented = False
@@ -50,7 +50,9 @@ class DriveAndAutoAimChassis(commands2.Command):
             self.field_oriented = True
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
-        max_angular = 1.5 * slowmode_multiplier
+
+        # since we are tracking angular, we need to be able to spin faster, so up this compared to the regular way
+        max_angular = 2.5 * slowmode_multiplier  # 1.5 * slowmode_multiplier
 
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
             translation_origin_to_speaker = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
