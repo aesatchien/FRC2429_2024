@@ -261,9 +261,15 @@ class Swerve (Subsystem):
         for module in self.swerve_modules:
             module.drivingPIDController.setReference(setpoint, control_type, pidSlot=pidSlot)
 
-    def set_brake_mode(self, mode='brake'):
+    def set_x_mode(self, mode='brake'):
         if mode == 'brake':
             self.setX()
+
+    def set_brake_mode(self, mode='brake'):
+        idle_mode = rev.CANSparkBase.IdleMode.kBrake if mode == 'brake' else rev.CANSparkBase.IdleMode.kCoast
+        print(f'setting swerve brake mode to {mode}')
+        for module in self.swerve_modules:
+            module.drivingSparkMax.setIdleMode(idle_mode)
 
     def setX(self) -> None:
         """Sets the wheels into an X formation to prevent movement."""

@@ -39,6 +39,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 4),
                           commands2.SequentialCommandGroup(
                     IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=None),
+                              commands2.InstantCommand(self.container.drive.set_brake_mode('coast')),
                               ArmMove(container=self.container, arm=self.container.crank_arm,
                                       degrees=constants.k_crank_presets['shoot']['lower'], absolute=True,
                                       wait_to_finish=True),
@@ -51,8 +52,8 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
                               # this is two and three
                               ArmMove(container=self.container, arm=self.container.shooter_arm,
                                       degrees=20, absolute=True, wait_to_finish=True),
-                              DriveSwerveAutoVelocity(self.container, self.container.drive, -0.2,
-                                                      'forwards').withTimeout(1.6),
+                              DriveSwerveAutoVelocity(self.container, self.container.drive, -0.3,
+                                                      'forwards').withTimeout(1.05),
                               ToggleClimbServos(self.container, self.container.climber, force='on'),
                               IndexerToggle(container=self.container, indexer=self.container.indexer, power=1,
                                             force='off', timeout=0.5).andThen(self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.5)),
