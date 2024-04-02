@@ -21,7 +21,7 @@ class Vision(SubsystemBase):
         self.back_tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/Tagcam')  # logitech for tags
         # TODO - figure out how to have two tag cameras play nice
         self.front_tagcam_table = NetworkTableInstance.getDefault().getTable('/Cameras/TagcamFront')  # logitech for tags
-        self.tables = [self.ringcam_table, self.front_tagcam_table, self.ringcam_table]
+        self.tables = [self.ringcam_table, self.front_tagcam_table, self.back_tagcam_table]
 
         for ix, key in enumerate(self.camera_dict.keys()):  # colors on top
             table = self.tables[ix]

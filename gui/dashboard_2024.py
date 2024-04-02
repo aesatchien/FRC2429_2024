@@ -74,7 +74,7 @@ class CameraWorker(QObject):
                     self.previous_read_time = now
                 except Exception as e:
                     self.error_count += 1
-                    if self.error_count % 100 == 0:
+                    if self.error_count % 10000 == 0:
                         print(f'{datetime.today().strftime("%H%M%S")} error count:{self.error_count}: cv read error: {e}')
                     # should I stop the thread here? or just let the user fix it by restarting manually?
 

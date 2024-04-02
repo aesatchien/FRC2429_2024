@@ -75,6 +75,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
             self.cmd = AutoBuilder.followPath(path)  # .andThen(commands2.InstantCommand(self.drive.reset_keep_angle))
             #.andThen(self.container.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.75)))
 
+        self.drive.set_use_apriltags(True)  # dont update when moving
         self.cmd.schedule()  # this kills the current command if we required the drive, so don't!
         print(f'scheduling {self.cmd.getName()} ...')
 
@@ -102,6 +103,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
             self.container.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.75).schedule()  # GREEN
 
         self.drive.reset_keep_angle()  # either way, reset the keep angle on the drive
+        self.drive.set_use_apriltags(True)  # update again
 
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'

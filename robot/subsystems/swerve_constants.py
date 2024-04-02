@@ -9,7 +9,7 @@ class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
     k_drive_controller_type = CANSparkFlex
-    kMaxSpeedMetersPerSecond = 4.25  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out
+    kMaxSpeedMetersPerSecond = 4.5  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out
     kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
     kMaxTotalSpeed = 1.1 * math.sqrt(2) * kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
@@ -88,7 +88,7 @@ class ModuleConstants:
     kWheelDiameterMeters = 4 * 0.0254  #  0.1016  =  four inches
     kWheelCircumferenceMeters = kWheelDiameterMeters * math.pi
     # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
-    kDrivingMotorReduction = 6.75  # From MK4i website, L2  #  From (45.0 * 22) / (kDrivingMotorPinionTeeth * 15)
+    kDrivingMotorReduction = 6.75 #8.14 #6.75  # From MK4i website, L2  #  From (45.0 * 22) / (kDrivingMotorPinionTeeth * 15)
     kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction
 
     kDrivingEncoderPositionFactor = (kWheelDiameterMeters * math.pi) / kDrivingMotorReduction  # meters
@@ -125,8 +125,8 @@ class ModuleConstants:
     kDrivingMotorIdleMode = DriveConstants.k_drive_controller_type.IdleMode.kBrake
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
 
-    kDrivingMotorCurrentLimit = 50  # amp
-    kTurningMotorCurrentLimit = 20  # amp
+    kDrivingMotorCurrentLimit = 80  # amp
+    kTurningMotorCurrentLimit = 40  # amp
 
 class AutoConstants:  # retaining this from original swerve code template, but we don't use (yet)
     kMaxSpeedMetersPerSecond = 3
