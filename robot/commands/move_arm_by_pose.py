@@ -132,6 +132,8 @@ class MoveArmByPose(commands2.CommandBase):
 
             interpolated_offset = self.far_range_distance_angle_offset_lookup_table[lesser_distance] + m * (self.distance_to_speaker - lesser_distance)
 
+            #IF TESTING, change this to experiment
+            interpolated_offset = interpolated_offset
 
             self.container.crank_arm.set_goal(math.pi / 2)
 
