@@ -31,7 +31,7 @@ class Swerve (Subsystem):
     def __init__(self) -> None:
         super().__init__()
 
-        self.counter = 0
+        self.counter = 6
 
         # Create SwerveModules
         self.frontLeft = SwerveModule(

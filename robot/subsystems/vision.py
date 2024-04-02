@@ -10,7 +10,7 @@ class Vision(SubsystemBase):
     def __init__(self) -> None:
         super().__init__()
         self.setName('Vision')
-        self.counter = 0
+        self.counter = 8
         self.ntinst = NetworkTableInstance.getDefault()
 
         self.camera_dict = {'orange': {}, 'front_tags': {}, 'back_tags': {}}

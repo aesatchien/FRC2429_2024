@@ -15,7 +15,7 @@ class Shooter(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Shooter')
-        self.counter = 0
+        self.counter = 5
         #self.PID_dict_vel = {'kP': 0.00021, 'kI': 0, 'kD': 0, 'kIz': 0, 'kFF': 0.000192}
         self.smartmotion_maxvel = 5001  # rpm
         self.smartmotion_maxacc = 5001
@@ -134,7 +134,7 @@ class Shooter(Subsystem):
             velocity = self.get_velocity()
             self.at_velocity = math.fabs(velocity - self.rpm) < 300 and self.rpm > 100  # need to figure out this tolerance
             SmartDashboard.putBoolean('shooter_ready', self.at_velocity)
-            SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
+            # SmartDashboard.putNumber('shooter_current', self.flywheel_lower_left.getOutputCurrent())
             SmartDashboard.putNumber('shooter_output', self.flywheel_lower_left.getAppliedOutput())
             SmartDashboard.putNumber('shooter_tof', self.shooter_height_sensor.getRange())
             SmartDashboard.putBoolean('shooter_has_ring', self.is_ring_loaded())

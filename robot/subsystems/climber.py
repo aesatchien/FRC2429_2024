@@ -10,7 +10,7 @@ class Climber(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Climber')
-        self.counter = 0
+        self.counter = 1
         self.smartmotion_maxvel = 5001
         self.smartmotion_maxacc = 5001
         self.current_limit = 35
@@ -136,8 +136,8 @@ class Climber(Subsystem):
         if self.counter % 20 == 0:
             # SmartDashboard.putNumber('climber_rpm', self.left_winch_encoder.getVelocity())
             # SmartDashboard.putBoolean('climber_ready', self.left_winch_encoder.getVelocity() > 1800)
-            SmartDashboard.putNumber('climber_current', self.left_winch.getOutputCurrent())
-            SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
+            # SmartDashboard.putNumber('climber_current', self.left_winch.getOutputCurrent())
+            # SmartDashboard.putNumber('climber_output', self.left_winch.getAppliedOutput())
             SmartDashboard.putNumber('climber_r_encoder', self.right_winch_encoder.getPosition())
             SmartDashboard.putNumber('climber_l_encoder', self.left_winch_encoder.getPosition())
             SmartDashboard.putNumber("right servo angle", self.right_servo.getAngle())

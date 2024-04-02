@@ -43,7 +43,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # ------------   2429 Additions to the template's __init__  ------------
         self.setName(self.config['name'])
-        self.counter = 0
+        self.counter = 4
         self.max_angle = math.radians(self.config['max_angle'])   # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
         self.min_angle = math.radians(self.config['min_angle'])   # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion
@@ -92,7 +92,7 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
             position_to_set_encoder = absolute_offset_from_90 + math.pi/2
         self.spark_encoder.setPosition(position_to_set_encoder)  # convert absolute encoder to a spot near pi/2 radians
 
-        boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position}'
+        boot_message = f'{self.getName()} absolute encoder position at boot: {initial_position} '
         boot_message += f'set to {self.spark_encoder.getPosition() * 180 / math.pi:.1f} degrees'
         print(boot_message)
         self.angle = self.spark_encoder.getPosition()

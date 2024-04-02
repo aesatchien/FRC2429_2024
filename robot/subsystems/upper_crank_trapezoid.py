@@ -43,7 +43,7 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
 
         # ------------   2429 Additions to the template's __init__  ------------
         self.setName(self.config['name'])
-        self.counter = 0
+        self.counter = 7
         self.max_angle = self.config['max_angle'] * math.pi / 180  # straight up is 90, call max allawable 120 degrees  todo: remeasure and verify
         self.min_angle = self.config['min_angle'] * math.pi / 180  # do not close more than this - angle seems to mess up at the bottom
         self.is_moving = False  # may want to keep track of if we are in motion

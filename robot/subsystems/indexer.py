@@ -12,7 +12,7 @@ class Indexer(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Indexer')
-        self.counter = 0
+        self.counter = 2
         self.smartmotion_maxvel = 5001
         self.smartmotion_maxacc = 5001
         self.current_limit = 35

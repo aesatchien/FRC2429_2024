@@ -12,7 +12,7 @@ class Intake(Subsystem):
     def __init__(self):
         super().__init__()
         self.setName('Intake')
-        self.counter = 0
+        self.counter = 3
 
         motor_type = rev.CANSparkMax.MotorType.kBrushless
         self.motor = rev.CANSparkMax(constants.k_intake_neo_port, motor_type)
@@ -49,7 +49,7 @@ class Intake(Subsystem):
 
     def periodic(self) -> None:
         self.counter += 1
-        if self.counter % 25 == 0:
+        if self.counter % 20 == 0:
             if wpilib.RobotBase.isReal():
                 SmartDashboard.putNumber('intake_output', 12 * self.motor.getAppliedOutput())
             else:

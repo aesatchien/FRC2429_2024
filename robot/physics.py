@@ -130,6 +130,9 @@ class PhysicsEngine:
 
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
 
+        # Not sure why this is necessary but it is- LHACK 3/12/24
+        simlib.DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
+
     def distance_to_ring(self):  # example way, but VERY rigid - can't drag robot
         ring_x, ring_y  = 8.25, 4.1
         dx = self.x - ring_x
@@ -137,6 +140,7 @@ class PhysicsEngine:
         distance = (dx**2 + dy**2)**0.5
         rotation = math.atan2(dy, dx) * 180/math.pi
         return distance, rotation
+
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
@@ -147,9 +151,6 @@ class PhysicsEngine:
         :param tm_diff: The amount of time that has passed since the last
                         time that this function was called
         """
-
-        # Not sure why this is necessary but it is- LHACK 3/12/24
-        simlib.DriverStationSim.setAllianceStationId(hal.AllianceStationID.kBlue2)
 
         # Simulate the drivetrain (only front motors used because read should be in sync)
         ##lf_motor = self.lf_motor.getSpeed()
