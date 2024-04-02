@@ -128,6 +128,19 @@ class RobotContainer:
         self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
         self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2)
 
+        # BUTTONS THAT WORK ONLY WITHOUT THE LB
+        self.trigger_only_a = self.trigger_a.and_(self.trigger_lb.not_())
+        self.trigger_only_b = self.trigger_b.and_(self.trigger_lb.not_())
+        self.trigger_only_x = self.trigger_x.and_(self.trigger_lb.not_())
+        self.trigger_only_y = self.trigger_y.and_(self.trigger_lb.not_())
+
+        # SHIFT BUTTONS THAT WORK ONLY WITH THE LB
+        self.trigger_shift_a = self.trigger_a.and_(self.trigger_lb)
+        self.trigger_shift_b = self.trigger_b.and_(self.trigger_lb)
+        self.trigger_shift_x = self.trigger_x.and_(self.trigger_lb)
+        self.trigger_shift_y = self.trigger_y.and_(self.trigger_lb)
+
+
     def configure_copilot_joystick(self):
         self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
         self.co_trigger_left_stick_y = self.co_pilot_command_controller.axisGreaterThan(axis=1, threshold=0.5)
@@ -147,98 +160,64 @@ class RobotContainer:
         self.co_trigger_back = self.co_pilot_command_controller.back()
 
     def configure_swerve_bindings(self):
-        self.trigger_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
+        self.trigger_only_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
     def bind_driver_buttons(self):
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
 
-        self.trigger_x.debounce(0.05).whileTrue(MoveArmByPose(self))
+        self.trigger_only_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
+        self.trigger_shift_a.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
+        # TRIGGER B BOUND IN SWERVE SECTION
+
+        # AUTO AIMING
+        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(self))
+        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+
+        self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
+        self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
 
         self.trigger_l_trigger.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
-
-
-
-        self.trigger_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
-        self.trigger_back.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
-
-        self.trigger_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive,field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
+
+        # DPAD
         self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
         climber_voltage = 4  # was 3 until Tempe
         self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
-        # self.trigger_d.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
         self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
         self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
-        self.trigger_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
-
-        # Josh's stuff
-        # amp_pose = constants.k_blue_amp if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_amp
-        # speaker_pose = constants.k_blue_speaker if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kBlue else constants.k_red_speaker
-        amp_pose = constants.k_blue_amp
-        speaker_pose = constants.k_blue_speaker
-        # self.trigger_y.whileTrue(  # create a path to the nearest speaker
-        #         PathPlannerMaker.on_the_fly_path_by_pose(swerve=self.drive, led=self.led, destination='stage', final_velocity=0,
-        #         linear_speed_factor=0.5, angular_speed_factor=0.75, fast_turn=True)
-        #     ).toggleOnFalse(commands2.InstantCommand(lambda: self.drive.reset_keep_angle()))
-
-        # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
-                                 # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-                                 # .andThen(ArmSmartGoTo(container=self, desired_position='amp', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        # self.trigger_x.whileTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, 0, speed_factor=0.25, fast_turn=True))
-
-        # .andThen(ArmSmartGoTo(container=self, desired_position='shoot', wait_for_finish=True))).toggleOnFalse(ArmSmartGoTo(container=self, desired_position='intake'))
-        # self.trigger_x.whileTrue(AutomatedPath(self, self.drive, {"x": speaker_pose[0], "y": speaker_pose[1], "rotation": speaker_pose[2]}, final_velocity=0, speed_factor=0.5, fast_turn=True))
-        # self.trigger_x.onTrue(PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": self.drive.get_pose().X(), "y": self.drive.get_pose().Y() + 1, "rotation": self.drive.get_angle()}, 0, speed_factor=0.25, fast_turn=True))
+        # SHIFT COMMANDS - using left bumper as a button multiplier
+        #self.trigger_shift_a.onTrue(commands2.PrintCommand('You pressed A and LB - and nothing else happened'))
+        self.trigger_shift_b.onTrue(commands2.PrintCommand('You pressed B and LB - and nothing else happened'))
+        self.trigger_shift_x.onTrue(commands2.PrintCommand('You pressed X and LB - and nothing else happened'))
+        # self.trigger_shift_y.onTrue(commands2.PrintCommand('You pressed Y and LB - and nothing else happened'))
 
     def bind_copilot_buttons(self):
-        # bind shooter - forcing 'off' and 'on' ignores the rpm parameter - for now, anyway
-        # self.co_trigger_a.onTrue(ShooterToggle(container=self, shooter=self.shooter, rpm=None, force='on'))
-        # self.co_trigger_b.onTrue(ShooterToggle(container=self, shooter=self.shooter, force='off'))
-
+        # arm positions
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
-        # self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
-        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
         # self.co_trigger_y.onTrue(LedToggle(container=self))
-        # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
-        # IF YOU WANT TO DO TOW THINGS ON ONE BUTTON, USE AN "ANDTHEN" or some other chained command
-        self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))
-        # self.co_trigger_lb.onTrue(self.led.set_indicator_with_timeout(Led.Indicator.KILL, 5))
-        self.co_trigger_rb.onTrue(AutoShootCycle(container=self))
-
+        # intake / shoot control
+        self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))  # kill
+        self.co_trigger_rb.onTrue(AutoShootCycle(container=self))  # shoot
         self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
         self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
 
-        #bind crank arm
-        setpoints = False
-        if setpoints:
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=5, direction='up'))
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-5, direction='down'))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=20, direction='up'))
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-20, direction='down'))
-        else:
-            direction = None
-            self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
-            self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
-            self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
-            self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+        # bind crank arm  - TODO - figure out how to do a double-tap to make things go faster
+        direction = None
+        self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
+        self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
+        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
-
-        # self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 5)
         self.co_trigger_back.onTrue(AutoClimbGiselle(self))
-
-        # self.co_trigger_y.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
-        # self.co_trigger_x.whileTrue(CrankArmCoast(container=self, crank_arm=self.shooter_arm))
-
-        # bind intake
-        # self.co_trigger_y.onTrue(IntakeToggle(container=self, intake=self.intake, force='on'))
 
         # bind indexer
         # Left bumper kills everything
@@ -249,7 +228,6 @@ class RobotContainer:
         # Y activate intake
         # use that trigger command to call something like intake drive by trigger if the trigger is greater than sometbing
 
-        # bind LED
 
     def set_automated_path(self, command : PathPlannerPath):
         self.autonomous_command = command

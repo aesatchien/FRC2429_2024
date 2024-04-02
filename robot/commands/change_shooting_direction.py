@@ -13,12 +13,18 @@ class ChangeShootingDirection(commands2.Command):  # change the name for your co
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
-        SmartDashboard.putString("alert",
-                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+        # print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
+        SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+
+        # THIS IS A FIRE AND FORGET
+        self.container.shooting_backwards = not self.container.shooting_backwards
+        if self.container.shooting_backwards:
+            print(f'Updated shooting direction: BACKWARDS in {self.getName()} at {self.start_time} s **", flush=True')
+        else:
+            print(f'Updated shooting direction: FORWARDS in {self.getName()} at {self.start_time} s **", flush=True')
 
     def execute(self) -> None:
-        self.container.shooting_backwards = not self.container.shooting_backwards
+        pass
 
     def isFinished(self) -> bool:
         return True
