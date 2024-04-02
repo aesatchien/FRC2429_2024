@@ -8,10 +8,11 @@ import constants
 class MoveArmByPose(commands2.CommandBase):
     # LHACK 3/11/2024 a command that uses linear interpolation to move the lower crank arm according to our distance to the speaker
 
-    def __init__(self, container) -> None:
+    def __init__(self, container, shooting_backwards=True) -> None:
         super().__init__()
         self.setName('Move arm by pose')  # change this to something appropriate for this command
         self.container = container
+        self.shooting_backwards = shooting_backwards
         # Meters and degrees. todo: tune
         # 50" 52 deg
         # 56" 51 deg
@@ -31,20 +32,23 @@ class MoveArmByPose(commands2.CommandBase):
             2.21: 41
         } #put lower crank arm angle values in this table ; upper crank arm is at -84 degrees and fixated when lower shooting mode
         
-
-        #CHANGE THESE VALUES FOR THIS TABLE, I PUT THESE VALUES BASED OFF OF ESTIMATIONS JUST TO TEST SIM - THESE VALUES ARE NOT REALISTIC OR ACCURATE
         self.far_range_distance_angle_offset_lookup_table = {
             1: 4,
             2: 7,
             3: 7,
             4: 4,
             5: -0.2
+            #4.113: 5
         } #put upper crank arm (shooter arm) angle offset values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
 
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
+
+        self.container.set_arm_configuration('auto aim')
+        SmartDashboard.putString('arm_config', self.container.get_arm_configuration())
+
         self.start_time = round(self.container.get_enabled_time(), 2)
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert",
@@ -69,7 +73,7 @@ class MoveArmByPose(commands2.CommandBase):
 
 
         #if shooting forwards use forward shooting
-        if self.distance_to_speaker <= 2.21 and self.container.shooting_backwards:
+        if self.distance_to_speaker <= 2.21 and self.shooting_backwards:
             # Find the points to interpolate between
             distances = list(self.close_range_distance_angle_lookup_table.keys())
             distances = sorted(distances)
@@ -106,7 +110,7 @@ class MoveArmByPose(commands2.CommandBase):
 
         
         #else if shooting backwards
-        elif not self.container.shooting_backwards:
+        elif not self.shooting_backwards:
            # Find the points to interpolate between
             distances = list(self.far_range_distance_angle_offset_lookup_table.keys())
             distances = sorted(distances)

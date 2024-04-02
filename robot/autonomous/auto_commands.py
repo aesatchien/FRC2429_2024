@@ -7,7 +7,7 @@ from commands.arm_move import ArmMove
 from commands.acquire_note_toggle import AcquireNoteToggle
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
-from commands.change_shooting_direction import ChangeShootingDirection
+from commands.unused.change_shooting_direction import ChangeShootingDirection
 
 # LHACK 3/18/24- a bunch of commands used for auto only that don't really deserve their own files IMO
 

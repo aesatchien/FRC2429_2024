@@ -15,10 +15,11 @@ import constants
 from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveAndAutoAimChassis(commands2.Command):
-    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False) -> None:
+    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False, shooting_backwards=True) -> None:
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
+        self.shooting_backwards = shooting_backwards
         self.swerve = swerve
         self.velocity_multiplier = velocity_multiplier
         self.field_oriented = field_oriented  # Sanjith wants this on a button instead
@@ -39,10 +40,9 @@ class DriveAndAutoAimChassis(commands2.Command):
         print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
-        self.slowmode_history = [1 for i in range(20)]
-
     def execute(self) -> None:
-        slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
+        auto_aim_offset = 0.2
+        slowmode_multiplier = auto_aim_offset + 0.2 + 0.8 * self.controller.getRightTriggerAxis()
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
             self.field_oriented = False
@@ -60,7 +60,7 @@ class DriveAndAutoAimChassis(commands2.Command):
         translation_origin_to_robot = self.swerve.get_pose().translation()
         translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
         
-        if self.container.shooting_backwards:
+        if self.shooting_backwards:
             desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
         else:
             desired_angle = translation_robot_to_speaker.angle()

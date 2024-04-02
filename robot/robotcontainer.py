@@ -1,17 +1,13 @@
 #  Container for 2429's 2023 swerve robot with turret, elevator, arm, wrist, and manipulator
-import math
 import time
 
-import commands2
 import wpilib
 from commands2.button import CommandXboxController
 
 # pathplanner
-from pathplannerlib.auto import NamedCommands, PathPlannerPath
+from pathplannerlib.auto import NamedCommands
 
-import constants
 from autonomous.pathplannermaker import PathPlannerConfiguration
-from autonomous.pathplannermakercommand import PathPlannerConfigurationCommand
 
 # subsystems
 from subsystems.swerve import Swerve
@@ -49,8 +45,6 @@ from commands.arm_coast import CrankArmCoast
 from commands.move_arm_by_pose import MoveArmByPose
 from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 from commands.smart_intake import SmartIntake
-from commands.system_interrupt import SystemInterrupt
-from commands.change_shooting_direction import ChangeShootingDirection
 
 
 class RobotContainer:
@@ -68,9 +62,6 @@ class RobotContainer:
         # set the default arm position - will use this to control shot speed.  Need this before the arm subsystems...
         self.arm_configuration = 'unknown'
         wpilib.SmartDashboard.putString('arm_config', self.arm_configuration)
-
-        #robot is shooting backwards for auto aim by default
-        self.shooting_backwards = True
 
         # The robot's subsystems
         self.drive = Swerve()
@@ -172,13 +163,16 @@ class RobotContainer:
         # TRIGGER B BOUND IN SWERVE SECTION
 
         # AUTO AIMING
-        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(self))
-        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(self, self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
+        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=True))
+        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=True))
+
+        self.trigger_shift_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=False))
+        self.trigger_shift_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=False))
 
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
 
-        self.trigger_l_trigger.debounce(0.05).onTrue(ChangeShootingDirection(container=self))
+        #todo: make it such that only x is leo auto aim, and shift x is arshan auto aim, rather than the thing commented below
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
 
         # DPAD
