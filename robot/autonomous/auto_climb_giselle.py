@@ -39,7 +39,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 4),
                           commands2.SequentialCommandGroup(
                     IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=None),
-                              commands2.InstantCommand(self.container.drive.set_brake_mode('coast')),
+                              commands2.InstantCommand(self.container.drive.set_brake_mode(mode='coast', report=True)),
                               ArmMove(container=self.container, arm=self.container.crank_arm,
                                       degrees=constants.k_crank_presets['shoot']['lower'], absolute=True,
                                       wait_to_finish=True),
