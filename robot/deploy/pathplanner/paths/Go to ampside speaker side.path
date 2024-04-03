@@ -61,7 +61,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Go to speaker",
   "previewStartingState": {
     "rotation": 36.15818543980829,
     "velocity": 0
