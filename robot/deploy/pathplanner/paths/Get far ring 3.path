@@ -3,36 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7121880748754352,
-        "y": 5.539225686154654
+        "x": 7.727856598570341,
+        "y": 4.119307667186764
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6121880748754351,
-        "y": 5.539225686154654
+        "x": 8.72785659857033,
+        "y": 4.119307667186764
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3140196323188638,
-        "y": 5.539225686154654
+        "x": 8.29957545629377,
+        "y": 4.119307667186764
       },
       "prevControl": {
-        "x": 1.4140196323188639,
-        "y": 5.539225686154654
+        "x": 7.29957545629377,
+        "y": 4.119307667186764
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
@@ -43,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Go to speaker",
+  "folder": "Far Rings",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

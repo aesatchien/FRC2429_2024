@@ -4,7 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "Cory",
-    "Leo"
+    "Far Rings",
+    "Leo",
+    "Near Rings",
+    "Go to speaker"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.0,
