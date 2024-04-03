@@ -34,7 +34,7 @@ class MoveArmByPose(commands2.CommandBase):
         
         self.far_range_distance_angle_offset_lookup_table = {
             1.4: 5,
-            3.92: 7.2
+            3.92: 7
         } #put upper crank arm (shooter arm) angle offset values in this table ; lower crank arm is 90 degrees, and upper crank arm is rotating in forward high shooting mode
 
         # self.addRequirements(self.container.)  # commandsv2 version of requirements
