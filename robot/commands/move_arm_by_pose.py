@@ -5,7 +5,7 @@ from wpimath.geometry import Translation2d
 
 import constants
 
-class MoveArmByPose(commands2.CommandBase):
+class MoveArmByPose(commands2.Command):
     # LHACK 3/11/2024 a command that uses linear interpolation to move the lower crank arm according to our distance to the speaker
 
     def __init__(self, container, shooting_backwards=True) -> None:

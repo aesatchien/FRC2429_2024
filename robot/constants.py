@@ -149,8 +149,9 @@ k_led_pwm_port = 9
 k_led_count = 44  # 26 old
 
 # ------------------- Standard Values -------------------
-k_indexer_output = 0.33  # was 1 (12V) when we had a 45:1, should be .33 (4V) for when we have a 15:1
-k_intake_output = 0.5
+k_speed_multiplier = 1.5
+k_indexer_output = 0.33 * k_speed_multiplier  # was 1 (12V) when we had a 45:1, should be .33 (4V) for when we have a 15:1
+k_intake_output = 0.5 * k_speed_multiplier
 
 # ------------------- CAMERA -------------------
 k_camera_name = "camera name" # todo: this is just a placeholder 2/28/24 LHACK

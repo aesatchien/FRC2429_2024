@@ -246,7 +246,7 @@ class RobotContainer:
                 for near_ring_num in range(1, 4):
                     NamedCommands.registerCommand(f'Intake {near_far} ring {near_ring_num}', GetRing(self, near_ring_num, near_far))
             else:
-                for far_ring_num in range(1, 2):
+                for far_ring_num in range(1, 6):
                     NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
 
         for speaker_side in ['ampside', 'middle', 'sourceside']:

@@ -31,7 +31,7 @@ class DriveAndAutoAimChassis(commands2.Command):
         self.robot_oriented_trigger = self.controller.rightBumper()
         self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
-        self.rotation_pid = PIDController(6, 0.06, 0) # Values taken from pathplanner's in the swerve subsystem
+        self.rotation_pid = PIDController(4, 0.01, 0) # Values taken from pathplanner's in the swerve subsystem
         self.rotation_pid.enableContinuousInput(-math.pi, math.pi)
 
     def initialize(self) -> None:

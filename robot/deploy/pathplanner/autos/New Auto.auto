@@ -32,12 +32,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "_drive_out_and_shoot"
+            "pathName": null
           }
         }
       ]
     }
   },
-  "folder": "Giselle",
+  "folder": null,
   "choreoAuto": false
 }
