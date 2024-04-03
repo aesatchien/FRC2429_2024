@@ -31,13 +31,13 @@ class DriveAndAutoAimChassis(commands2.Command):
         self.robot_oriented_trigger = self.controller.rightBumper()
         self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
-        self.rotation_pid = PIDController(6, 0.06, 0) # Values taken from pathplanner's in the swerve subsystem
+        self.rotation_pid = PIDController(4, 0.01, 0) # Values taken from pathplanner's in the swerve subsystem
         self.rotation_pid.enableContinuousInput(-math.pi, math.pi)
 
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
+        print(f"** Started {self.getName()} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():.1f} s **")
 
     def execute(self) -> None:

@@ -30,6 +30,8 @@ class Indexer(Subsystem):
         self.indexer_controller.setP(0.0001)
         self.kFF = 1.03 * 1/6784 # feed forward for a spark flex from shooter
         self.indexer_controller.setFF(self.kFF, 0)
+        if constants.k_burn_flash:
+            self.motor.burnFlash()
 
         self.indexer_on = False
 

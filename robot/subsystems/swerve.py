@@ -228,7 +228,7 @@ class Swerve (Subsystem):
         self.last_rotation_time = self.keep_angle_timer.get()  # reset the rotation time
         self.last_drive_time = self.keep_angle_timer.get()  # reset the drive time
         new_angle = self.get_angle()
-        print(f'resetting keep angle from {self.keep_angle:.1f} to {new_angle:.1f}', flush=True)
+        print(f'  resetting keep angle from {self.keep_angle:.1f} to {new_angle:.1f}', flush=True)
         self.keep_angle = new_angle
 
     def perform_keep_angle(self, xSpeed, ySpeed, rot):  # update rotation if we are drifting when trying to drive straight
@@ -270,7 +270,7 @@ class Swerve (Subsystem):
         for module in self.swerve_modules:
             module.drivingSparkMax.setIdleMode(idle_mode)
         if report:
-            print(f'setting swerve brake mode to {mode}')
+            print(f'  setting swerve brake mode to {mode}')
 
     def setX(self) -> None:
         """Sets the wheels into an X formation to prevent movement."""
@@ -386,7 +386,7 @@ class Swerve (Subsystem):
             robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
             face_tag = False
         else:
-            raise ValueError('location for get_nearest tag must be in ["stage", "amp"] etc')
+            raise ValueError('  location for get_nearest tag must be in ["stage", "amp"] etc')
 
         poses = [layout.getTagPose(tag).toPose2d() for tag in tags]
         distances = [current_pose.translation().distance(pose.translation()) for pose in poses]
@@ -405,7 +405,7 @@ class Swerve (Subsystem):
         updated_rotation = tag_rotation + geo.Rotation2d(math.pi) if face_tag else tag_rotation  # choose if we flip
         updated_pose = geo.Pose2d(translation=updated_translation, rotation=updated_rotation)  # drive to here
 
-        print(f'nearest {destination} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
+        print(f'  nearest {destination} is tag {sorted_tags[0]} at {nearest_pose.translation()}')
         return updated_pose
 
     def periodic(self) -> None:

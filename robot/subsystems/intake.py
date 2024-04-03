@@ -51,6 +51,7 @@ class Intake(Subsystem):
         self.counter += 1
         if self.counter % 20 == 0:
             if wpilib.RobotBase.isReal():
+                SmartDashboard.putNumber('intake_rpm', self.get_intake_velocity())
                 SmartDashboard.putNumber('intake_output', 12 * self.motor.getAppliedOutput())
             else:
                 SmartDashboard.putNumber('intake_output', self.motor.getAppliedOutput())

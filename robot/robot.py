@@ -50,7 +50,7 @@ class MyRobot(commands2.TimedCommandRobot):
 
         self.container.set_start_time()  # putting this after the scheduler is bad
         self.container.drive.set_brake_mode(mode='brake')
-        self.container.drive.set_use_apriltags(False)
+        self.container.drive.set_use_apriltags(True)
 
         self.autonomousCommand = self.container.get_autonomous_command()
 

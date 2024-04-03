@@ -41,6 +41,12 @@ class ArmSmartGoTo(commands2.Command):  # change the name for your command
 
     def initialize(self) -> None:
 
+        """Called just before this Command runs the first time."""
+        self.start_time = round(self.container.get_enabled_time(), 2)
+        print("\n" + f"** Started {self.getName()} at {self.start_time} s to {self.desired_position} **", flush=True)
+        SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+
+
         # let container remember where we are for shooter rpm - 20240319 CJH
         self.container.set_arm_configuration(self.desired_position)
         # get the current arm positions
@@ -73,7 +79,7 @@ class ArmSmartGoTo(commands2.Command):  # change the name for your command
                        .andThen(ArmMove(container=self.container, arm=self.crank_arm, degrees=constants.k_crank_presets['low_shoot']['lower'], absolute=True)))
 
         elif self.desired_position == 'intake':
-            print('moving to intake ...')
+            # print('moving to intake ...')
             self.led.set_indicator_with_timeout(Led.Indicator.INTAKE, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['intake']['lower']
             crank_goal = constants.k_crank_presets['intake']['upper']
@@ -81,7 +87,7 @@ class ArmSmartGoTo(commands2.Command):  # change the name for your command
                        .andThen(ArmMove(self.container, self.crank_arm, degrees=constants.k_crank_presets['intake']['lower'], absolute=True)))
 
         elif self.desired_position == 'amp':
-            print('moving to amp ...')
+            # print('moving to amp ...')
             self.led.set_indicator_with_timeout(Led.Indicator.AMP, self.led_time).schedule()
             shooter_goal = constants.k_crank_presets['amp']['lower']
             crank_goal = constants.k_crank_presets['amp']['upper']
@@ -121,13 +127,6 @@ class ArmSmartGoTo(commands2.Command):  # change the name for your command
 
         SmartDashboard.putString('arm_config', self.desired_position)
         commands2.CommandScheduler.getInstance().schedule(command)
-
-
-        """Called just before this Command runs the first time."""
-        self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s to {self.desired_position} **", flush=True)
-        SmartDashboard.putString("alert",
-                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:
         pass

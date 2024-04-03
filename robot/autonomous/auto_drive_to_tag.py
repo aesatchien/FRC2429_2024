@@ -49,11 +49,11 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         current_pose = self.drive.get_pose()
         start_pose = current_pose
         end_pose = target_pose
-        print(f'Driving from {current_pose} to {target_pose}\n   via {current_pose-target_pose}')
+        print(f'  Driving from {current_pose} to {target_pose}\n   via {current_pose-target_pose}')
 
         # see if it's worth moving - prevent the bezier from failing on us
         if current_pose.translation().distance(target_pose.translation()) < 0.1:  # bezier curve generation requires the robot to move a non-zero distance.
-            print("No point in driving there, already here!")
+            print("  No point in driving there, already here!")
             self.cmd = DriveSwerveAutoVelocity(container=self.container, drive=self.drive, velocity=0).withTimeout(0.1)
                         # .andThen(self.container.led.set_indicator_with_timeout(Led.Indicator.AMP, 0.75)))  # stop, flash red
 
@@ -77,7 +77,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
 
         self.drive.set_use_apriltags(True)  # dont update when moving
         self.cmd.schedule()  # this kills the current command if we required the drive, so don't!
-        print(f'scheduling {self.cmd.getName()} ...')
+        print(f'  scheduling {self.cmd.getName()} ...')
 
     def execute(self) -> None:
         pass
@@ -95,7 +95,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         if interrupted:
             # cancel the command we launched in the init phase if we let go of the button early, show failure
            self.scheduler.cancel(self.cmd)
-           print(f'CANCELING {self.cmd.getName()}', flush=True)
+           print(f'  CANCELING {self.cmd.getName()}', flush=True)
            self.led.set_indicator_with_timeout(Led.Indicator.AMP, 0.75).schedule()  # RED
 
         else:

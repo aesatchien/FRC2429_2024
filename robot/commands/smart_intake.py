@@ -9,7 +9,7 @@ from commands.arm_smart_go_to import ArmSmartGoTo
 import constants
 
 
-class SmartIntake(commands2.CommandBase):
+class SmartIntake(commands2.Command):
 
     def __init__(self, container, wait_to_finish=True) -> None:
         super().__init__()

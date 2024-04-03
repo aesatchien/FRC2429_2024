@@ -18,7 +18,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "_close_rings"
+                  "pathName": null
                 }
               },
               {
@@ -33,6 +33,6 @@
       ]
     }
   },
-  "folder": "Giselle",
+  "folder": null,
   "choreoAuto": false
 }

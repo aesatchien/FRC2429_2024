@@ -7,7 +7,7 @@ class CANStatus(commands2.Command):  # change the name for your command
 
     def __init__(self, container, ) -> None:
         super().__init__()
-        self.setName('CANStatusCheck')  # change this to something appropriate for this command
+        self.setName('CANStatusCheck')
         self.container = container
         #self.addRequirements()  # commandsv2 version of requirements
 
@@ -29,6 +29,11 @@ class CANStatus(commands2.Command):  # change the name for your command
                         25: {'name': 'drive', 'motor': self.container.drive.swerve_modules[2].drivingSparkMax},
                         27: {'name': 'drive', 'motor': self.container.drive.swerve_modules[3].drivingSparkMax}
                         }
+        self.fault_ids = {0:'kBrownout', 1:'kOvercurrent', 2:'kIWDTReset', 3:'kMotorFault', 4:'kSensorFault',
+                          5:'kStall', 6: 'kEEPROMCRC', 7: 'kCANTX', 8: 'kCANRX', 9: 'kHasReset',
+                          10: 'kDRVFault', 11: 'kOtherFault', 12: 'kSoftLimitFwd', 13: 'kSoftLimitRev',
+                            14:'kHardLimitFwd', 15:'kHardLimitRev'}
+
 
     def runsWhenDisabled(self) -> bool:
         return True
@@ -36,16 +41,28 @@ class CANStatus(commands2.Command):  # change the name for your command
     def initialize(self) -> None:
         """Called just before this Command runs the first time."""
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
+        print("\n" + f"** Started {self.getName()} at {self.start_time:.1f} s **", flush=True)
         SmartDashboard.putString("alert",
-                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+                                 f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.1f} s **")
 
-        print('Need to parse the sticky fault bits ...')
         for key in self.can_ids.keys():
             motor: rev.CANSparkBase =  self.can_ids[key]['motor']
-            sticky_faults = motor.getStickyFaults()
+
+            sticky_faults = motor.getStickyFaults()  # will be an integer representing the bit mask of the faults
+            active_faults = motor.getFaults()  # TODO - parse these too
+            motor.clearFaults()  # apparently does not clear sticky faults, active only
+
+            set_bits = []
+            binary_string = bin(sticky_faults)[2:]  # convert to binary and ignore the initial two 0b characters
+            for i, bit in enumerate(reversed(binary_string), start=0):
+                # Check if the bit is set (i.e., equals '1')
+                if bit == '1':
+                    # Add the position (0-based indexing) of the set bit to the list
+                    set_bits.append(i)
+
+            fault_codes = [self.fault_ids[id] for id in set_bits]
             self.can_ids[key].update({'sticky_faults': sticky_faults})
-            print(f"CANID {key:02d}: {self.can_ids[key]['name']:13} sticky_faults: {sticky_faults} ")
+            print(f"CANID {key:02d}: {self.can_ids[key]['name']:13} sticky_faults: {sticky_faults} {set_bits} {fault_codes}")
 
     def execute(self) -> None:
         pass

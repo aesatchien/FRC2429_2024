@@ -19,6 +19,7 @@ k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
 k_path_from_robot_to_pathplanner_autos = 'deploy/pathplanner/autos'
 k_path_to_abs_encoder_data = '/home/lvuser/abs_encoder_data.json'
 k_enable_copilot = True
+k_reset_sparks_to_default = False
 
 k_swerve_state_messages = True  # these currently send the pose data to the sim - keep them on
 k_swerve_debugging_messages = False  # these show the target angles and actual.  Only for debugging.
@@ -148,8 +149,9 @@ k_led_pwm_port = 9
 k_led_count = 44  # 26 old
 
 # ------------------- Standard Values -------------------
-k_indexer_output = 0.33  # was 1 (12V) when we had a 45:1, should be .33 (4V) for when we have a 15:1
-k_intake_output = 0.5
+k_speed_multiplier = 1.5
+k_indexer_output = 0.33 * k_speed_multiplier  # was 1 (12V) when we had a 45:1, should be .33 (4V) for when we have a 15:1
+k_intake_output = 0.5 * k_speed_multiplier
 
 # ------------------- CAMERA -------------------
 k_camera_name = "camera name" # todo: this is just a placeholder 2/28/24 LHACK

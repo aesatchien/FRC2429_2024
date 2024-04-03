@@ -359,6 +359,7 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_drive_to_stage_indicator': {'widget': self.qlabel_drive_to_stage_indicator, 'nt': '/SmartDashboard/ToStage/running', 'command': '/SmartDashboard/ToStage/running'},
         'qlabel_drive_to_speaker_indicator': {'widget': self.qlabel_drive_to_speaker_indicator, 'nt': '/SmartDashboard/ToSpeaker/running', 'command': '/SmartDashboard/ToSpeaker/running'},
         'qlabel_drive_to_amp_indicator': {'widget': self.qlabel_drive_to_amp_indicator, 'nt': '/SmartDashboard/ToAmp/running', 'command': '/SmartDashboard/ToAmp/running'},
+        'qlabel_can_report_indicator': {'widget': self.qlabel_can_report_indicator, 'nt': '/SmartDashboard/CANStatus/running', 'command': '/SmartDashboard/CANStatus/running'},
 
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},

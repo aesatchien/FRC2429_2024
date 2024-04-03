@@ -75,24 +75,24 @@ class AutoClimbSanjith(commands2.CommandBase):
         elif encoder_average > 120 and not self.toggle_servo_fired:  # 24.2 inches of rope
             self.shooter_arm.set_goal(math.radians(-90))
             self.climber.open_trap_servo()
-            print(f"Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
+            print(f"  Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
             self.toggle_servo_fired = True
         elif encoder_average > 110 and not self.shooter_half_down:  # 19 inches
             self.shooter_arm.set_goal(math.radians(-45))
             self.shooter_half_down = True
-            print(f"Moved shooter to -45 at {self.container.get_enabled_time()}s")
+            print(f"  Moved shooter to -45 at {self.container.get_enabled_time()}s")
         elif encoder_average > 100 and not self.servos_toggled:
             self.servos_toggled = True
             self.climber.close_servos()
-            print(f"Closing servos at {self.container.get_enabled_time()}s")
+            print(f"  Closing servos at {self.container.get_enabled_time()}s")
         elif encoder_average > 84 and not self.initial_slack_taken:  # just getting taut - 14.5"
-            print(f"Initial slack taken up {self.container.get_enabled_time()}s")
+            print(f"  Initial slack taken up {self.container.get_enabled_time()}s")
             self.voltage_boost = 0  # slow down the climbing at this point
             self.crank_arm.set_goal(math.radians(109))
             self.shooter_arm.set_goal(math.radians(0))
             self.initial_slack_taken = True
         elif encoder_average > 10 and not self.climb_started:  # just getting taut - 14.5"
-            print(f"Starting climb at {self.container.get_enabled_time()}s")
+            print(f"  Starting climb at {self.container.get_enabled_time()}s")
             self.shooter_arm.set_goal(math.radians(22))
             self.climb_started = True
 
