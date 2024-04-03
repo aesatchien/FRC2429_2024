@@ -131,7 +131,7 @@ class PhysicsEngine:
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
 
     def distance_to_ring(self):  # example way, but VERY rigid - can't drag robot
-        ring_x, ring_y  = 8.25, 4.1
+        ring_x, ring_y = 8.25, 4.1
         dx = self.x - ring_x
         dy = self.y - ring_y
         distance = (dx**2 + dy**2)**0.5

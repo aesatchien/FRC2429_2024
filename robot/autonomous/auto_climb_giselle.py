@@ -30,6 +30,7 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
         SmartDashboard.putString("alert",
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
+        self.container.climber.set_climb_started(True)  # allow trap to open
         self.container.set_arm_configuration('trap')  # keep track of config for shot speeds and folding up
         self.stage += 1
         print("\n" + f"** Started {self.getName()} at at stage < {self.stage} > {self.start_time} s **", flush=True)
