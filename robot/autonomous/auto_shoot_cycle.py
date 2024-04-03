@@ -10,7 +10,7 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
         super().__init__()
         self.setName('AutoShootCycle')  # change this to something appropriate for this command
         self.container = container
-
+        self.addCommands(commands2.PrintCommand('** BEGIN AUTO SHOOT CYCLE)'))
         # back up indexer, turn on shooter, wait, fire indexer full speed into,
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-1, force='on', timeout=0.1))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
@@ -21,4 +21,4 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
         self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='off'))
 
         if go_to_shoot:  # This only works in teleop.  3/13/14 lhack we don't use this anymore since only our shooter position (and not intake position) lets us go under the stage
-            self.addCommands(ArmSmartGoTo(container=self.container, desired_position='intake'))
+            self.addCommands(ArmSmartGoTo(container=self.container, desired_position='low_shoot'))

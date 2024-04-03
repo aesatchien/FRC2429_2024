@@ -1023,7 +1023,7 @@ TAG</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>20</y>
+         <y>193</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1057,7 +1057,7 @@ background-color:rgb(180,180,180);</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>86</y>
+         <y>59</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1091,7 +1091,7 @@ background-color:rgb(180,180,180);</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>53</y>
+         <y>26</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1125,7 +1125,7 @@ background-color:rgb(180,180,180);</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
+         <y>92</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1159,7 +1159,7 @@ background-color:rgb(180,180,180);</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>160</y>
+         <y>159</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1187,14 +1187,14 @@ background-color:rgb(180,180,180);</string>
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLabel2" name="qlabel_turret_calibration_indicator">
+      <widget class="QLabel2" name="qlabel_can_report_indicator">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>193</y>
+         <y>125</y>
          <width>161</width>
          <height>31</height>
         </rect>
@@ -1214,7 +1214,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
        </property>
        <property name="text">
-        <string>&lt;CMD&gt;</string>
+        <string>CAN Report</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -1227,7 +1227,7 @@ background-color:rgb(180,180,180);</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>230</y>
+         <y>241</y>
          <width>161</width>
          <height>31</height>
         </rect>

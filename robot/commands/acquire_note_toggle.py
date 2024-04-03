@@ -28,7 +28,7 @@ class AcquireNoteToggle(commands2.Command):
 
     def initialize(self) -> None:
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print(f"** Started {self.getName()} at {self.start_time} s with force {self.force}**", flush=True)
+        print(f"  ** Started {self.getName()} at {self.start_time} s with force {self.force}**", flush=True)
 
         self.timer.restart()
 

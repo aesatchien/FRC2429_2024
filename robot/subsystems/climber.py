@@ -63,7 +63,7 @@ class Climber(Subsystem):
         self.right_winch.setVoltage(right_volts)
         self.climber_enable = True
         if verbose:
-            print(f'setting volts to {right_volts} {left_volts}')
+            print(f'  setting volts to {right_volts} {left_volts}')
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
 
     def stop_climber(self):
@@ -103,24 +103,24 @@ class Climber(Subsystem):
         self.left_servo.setAngle(103)
         self.right_servo.setAngle(10)
         self.servos_open = True
-        print('OPENING CLIMBER SERVOS')
+        print('  OPENING CLIMBER SERVOS')
 
     def close_servos(self):
         self.left_servo.setAngle(10)
         self.right_servo.setAngle(103)
         self.servos_open = False
-        print('CLOSING CLIMBER SERVOS')
+        print('  CLOSING CLIMBER SERVOS')
 
     def open_trap_servo(self):
         self.trap_open = True
         # self.trap_servo.set(1)
         self.trap_servo.set(0)
-        print(f"OPENED TRAP SERVO")
+        print(f"  OPENED TRAP SERVO")
 
     def close_trap_servo(self):
         self.trap_open = False
         self.trap_servo.setAngle(180)
-        print(f"CLOSED TRAP SERVO")
+        print(f"  CLOSED TRAP SERVO")
 
     def toggle_trap_servo(self):
         if self.trap_open:

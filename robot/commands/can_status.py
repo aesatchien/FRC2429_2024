@@ -3,13 +3,11 @@ from wpilib import SmartDashboard
 import rev
 
 
-
-
 class CANStatus(commands2.Command):  # change the name for your command
 
     def __init__(self, container, ) -> None:
         super().__init__()
-        self.setName('CANStatusCheck')  # change this to something appropriate for this command
+        self.setName('CANStatusCheck')
         self.container = container
         #self.addRequirements()  # commandsv2 version of requirements
 
@@ -47,12 +45,11 @@ class CANStatus(commands2.Command):  # change the name for your command
         SmartDashboard.putString("alert",
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
-        print('Need to parse the sticky fault bits ...')
         for key in self.can_ids.keys():
             motor: rev.CANSparkBase =  self.can_ids[key]['motor']
 
             sticky_faults = motor.getStickyFaults()
-            faults = motor.getFaults()
+            faults = motor.getFaults()  # TODO - parse these too
             motor.clearFaults()
             binary_string = bin(sticky_faults)[2:]
 
