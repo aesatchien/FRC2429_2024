@@ -3,8 +3,6 @@ from wpilib import SmartDashboard
 import rev
 
 
-
-
 class CANStatus(commands2.Command):  # change the name for your command
 
     def __init__(self, container, ) -> None:
