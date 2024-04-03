@@ -135,11 +135,11 @@ class Climber(Subsystem):
         print(f"  CLOSED TRAP SERVO")
 
     def toggle_trap_servo(self):
+        print(f"  CALLED TOGGLE TRAP SERVO")
         if self.trap_open:
             self.close_trap_servo()
         else:
             self.open_trap_servo()
-        print(f"TOGGLED TRAP SERVO")
 
     def periodic(self) -> None:
 
