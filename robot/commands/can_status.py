@@ -31,6 +31,11 @@ class CANStatus(commands2.Command):  # change the name for your command
                         25: {'name': 'drive', 'motor': self.container.drive.swerve_modules[2].drivingSparkMax},
                         27: {'name': 'drive', 'motor': self.container.drive.swerve_modules[3].drivingSparkMax}
                         }
+        self.fault_ids = {0:'kBrownout', 1:'kOvercurrent', 2:'kIWDTReset', 3:'kMotorFault', 4:'kSensorFault',
+                          5:'kStall', 6: 'kEEPROMCRC', 7: 'kCANTX', 8: 'kCANRX', 9: 'kHasReset',
+                          10: 'kDRVFault', 11: 'kOtherFault', 12: 'kSoftLimitFwd', 13: 'kSoftLimitRev',
+                            14:'kHardLimitFwd', 15:'kHardLimitRev'}
+
 
     def runsWhenDisabled(self) -> bool:
         return True
@@ -45,9 +50,22 @@ class CANStatus(commands2.Command):  # change the name for your command
         print('Need to parse the sticky fault bits ...')
         for key in self.can_ids.keys():
             motor: rev.CANSparkBase =  self.can_ids[key]['motor']
+
             sticky_faults = motor.getStickyFaults()
+            faults = motor.getFaults()
+            motor.clearFaults()
+            binary_string = bin(sticky_faults)[2:]
+
+            set_bits = []
+            for i, bit in enumerate(reversed(binary_string), start=0):
+                # Check if the bit is set (i.e., equals '1')
+                if bit == '1':
+                    # Add the position (1-based indexing) of the set bit to the list
+                    set_bits.append(i)
+
+            faults = [self.fault_ids[id] for id in set_bits]
             self.can_ids[key].update({'sticky_faults': sticky_faults})
-            print(f"CANID {key:02d}: {self.can_ids[key]['name']:13} sticky_faults: {sticky_faults} ")
+            print(f"CANID {key:02d}: {self.can_ids[key]['name']:13} sticky_faults: {sticky_faults} {set_bits} {faults}")
 
     def execute(self) -> None:
         pass

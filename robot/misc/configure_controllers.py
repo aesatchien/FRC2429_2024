@@ -32,7 +32,7 @@ def configure_sparkmax(sparkmax: Union[rev.CANSparkMax, rev.CANSparkFlex], pid_c
     if burn_flash:
         start_time = time.time()
         can_error = sparkmax.burnFlash()
-        time.sleep(0.075)
+        time.sleep(0.05)
         print(f'Burn flash on controller {can_id}: {can_error} {int(1000 * (time.time() - start_time)):2d}ms after starting')
 
     return error_dict

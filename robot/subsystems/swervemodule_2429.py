@@ -30,7 +30,8 @@ class SwerveModule:
 
         #  ---------------- DRIVING  SPARKMAX  ------------------
         # Factory reset, so we get the SPARKS MAX to a known state before configuring them
-        self.drivingSparkMax.restoreFactoryDefaults()
+        if constants.k_reset_sparks_to_default:
+            self.drivingSparkMax.restoreFactoryDefaults()
         self.drivingSparkMax.setIdleMode(ModuleConstants.kDrivingMotorIdleMode)
         self.drivingSparkMax.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit)
         self.drivingSparkMax.setInverted(driving_inverted)
