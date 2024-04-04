@@ -136,6 +136,11 @@ class PhysicsEngine:
         dy = self.y - ring_y
         distance = (dx**2 + dy**2)**0.5
         rotation = math.atan2(dy, dx) * 180/math.pi
+        rotation += 180
+        while rotation > 180: # Desaturate so it's no more than +- 180
+            rotation -= 360
+        while rotation < -180:
+            rotation += 360
         return distance, rotation
 
 

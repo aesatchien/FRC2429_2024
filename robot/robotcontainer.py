@@ -30,6 +30,7 @@ from autonomous.auto_climb_giselle import AutoClimbGiselle
 from autonomous.drive_wait import DriveWait
 from autonomous.auto_climb_sanjith import AutoClimbSanjith
 from autonomous.auto_drive_to_tag import AutoDriveToTag
+from autonomous.auto_drive_to_note import AutoDriveToNote
 
 # commands
 from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
@@ -126,7 +127,7 @@ class RobotContainer:
         self.trigger_r = self.driver_command_controller.povRight()
         self.trigger_l = self.driver_command_controller.povLeft()
         self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
-        self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2)
+        self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2) # This is used as a gas pedal in drive_by_joystick_swerve
 
         # BUTTONS THAT WORK ONLY WITHOUT THE LB
         self.trigger_only_a = self.trigger_a.and_(self.trigger_lb.not_())
@@ -180,6 +181,11 @@ class RobotContainer:
 
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
+
+        self.trigger_l_trigger.whileTrue(commands2.ParallelCommandGroup(
+            AutoDriveToNote(self),
+            SmartIntake(self, wait_to_finish=True)
+        ))
 
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
 
@@ -240,14 +246,14 @@ class RobotContainer:
         return None
 
     def registerCommands(self):
-        print("!! Registering commands !!")
         for near_far in ['near', 'far']:
             if near_far == 'near':
                 for near_ring_num in range(1, 4):
                     NamedCommands.registerCommand(f'Intake {near_far} ring {near_ring_num}', GetRing(self, near_ring_num, near_far))
-            else:
-                for far_ring_num in range(1, 6):
-                    NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
+            # Commented because we don't have paths for all far rings; if we have paths for some far rings, do for far_ring_num in [1, 5] for example
+            # else:
+            #     for far_ring_num in range(1, 6):
+            #         NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
 
         for speaker_side in ['ampside', 'middle', 'sourceside']:
             NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
