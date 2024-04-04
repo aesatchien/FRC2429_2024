@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 3.3985485374679727,
+        "x": 2.890235494756704,
         "y": 5.539225686154654
       },
       "prevControl": {
-        "x": 3.13668627157041,
+        "x": 2.6283732288591413,
         "y": 5.539225686154654
       },
       "nextControl": null,
@@ -61,7 +61,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Near Rings",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

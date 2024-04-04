@@ -187,6 +187,7 @@ class RobotContainer:
             SmartIntake(self, wait_to_finish=True)
         ))
 
+        # WE SHOULD NOT BIND LB.  IT IS USED AS ROBOT-CENTRIC IN DRIVE AND AS A SHIFT BUTTON ON OTHER COMMANDS
         self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
 
         # DPAD
@@ -263,7 +264,11 @@ class RobotContainer:
         NamedCommands.registerCommand('Go to intake', GoToIntake(self))
         NamedCommands.registerCommand('Go to amp', GoToAmp(self))
         NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(container=self, shooting_backwards=True))
+        NamedCommands.registerCommand('Move arm by pose forward', MoveArmByPose(container=self, shooting_backwards=False))
+
         NamedCommands.registerCommand('Auto aim robot chassis towards speaker', DriveAndAutoAimChassis(container=self, swerve=self.drive, velocity_multiplier=1, shooting_backwards=True))
+        NamedCommands.registerCommand('Auto aim front of robot chassis towards speaker', DriveAndAutoAimChassis(self, self.drive, constants.k_field_centric, constants.k_rate_limited, shooting_backwards=False))
+
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
         NamedCommands.registerCommand('Move shooter to shoot position', ArmMove(container=self,arm=self.shooter_arm, degrees=constants.k_crank_presets['shoot']['upper'],

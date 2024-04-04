@@ -53,10 +53,19 @@ class Climber(Subsystem):
         self.servos_open = False
         self.trap_open = False
 
+        # use this to block accidentally opening the trap unless the climb has started
+        self.climb_started = False
+
         self.close_servos()  # Drew wanted servos to be "closed" on startup - JS
         self.close_trap_servo()
 
         SmartDashboard.putBoolean('climber_state', self.climber_enable)
+
+    def get_climb_started(self):
+        return self.climb_started
+
+    def set_climb_started(self, climb_started):
+        self.climb_started = climb_started
 
     def set_climber(self, left_volts, right_volts, verbose=True):
         self.left_winch.setVoltage(left_volts)
@@ -112,10 +121,13 @@ class Climber(Subsystem):
         print('  CLOSING CLIMBER SERVOS')
 
     def open_trap_servo(self):
-        self.trap_open = True
-        # self.trap_servo.set(1)
-        self.trap_servo.set(0)
-        print(f"  OPENED TRAP SERVO")
+        if self.get_climb_started():
+            self.trap_open = True
+            # self.trap_servo.set(1)
+            self.trap_servo.set(0)
+            print(f"  OPENED TRAP SERVO")
+        else:
+            print(f"  DENYING REQUEST TO OPEN TRAP SERVO - CLIMB NOT STARTED")
 
     def close_trap_servo(self):
         self.trap_open = False
@@ -123,11 +135,11 @@ class Climber(Subsystem):
         print(f"  CLOSED TRAP SERVO")
 
     def toggle_trap_servo(self):
+        print(f"  CALLED TOGGLE TRAP SERVO")
         if self.trap_open:
             self.close_trap_servo()
         else:
             self.open_trap_servo()
-        print(f"TOGGLED TRAP SERVO")
 
     def periodic(self) -> None:
 

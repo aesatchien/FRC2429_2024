@@ -8,13 +8,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Go to ampside and shoot"
+            "name": "Go to sourceside and shoot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake near ring 1"
+            "name": "Intake near ring 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Leave near ring 3"
           }
         },
         {
@@ -26,7 +32,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake far ring 2"
+            "name": "Intake far ring 5"
           }
         }
       ]

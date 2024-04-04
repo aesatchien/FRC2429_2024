@@ -20,13 +20,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot from anywhere"
+            "name": "Go to ampside and shoot"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Intake far ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot from midline"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Shoot Cycle"
           }
         }
       ]
