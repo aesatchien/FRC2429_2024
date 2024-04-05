@@ -125,10 +125,12 @@ class PhysicsEngine:
             "Flywheel", 6, 0, 10, wpilib.Color8Bit(wpilib.Color.kDarkRed)
         )
 
-
         wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
 
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
+
+        # simulating if the robot has a note
+        self.has_note = False
 
     def distance_to_ring(self):  # example way, but VERY rigid - can't drag robot
         ring_x, ring_y = 8.25, 4.1
@@ -142,6 +144,17 @@ class PhysicsEngine:
         while rotation < -180:
             rotation += 360
         return distance, rotation
+
+    def robot_on_note(self):  # determine if robot is over a note
+        note_locations = [(2.94, 7.00), (2.94, 5.57), (2.94, 4.10),
+                          (8.33, 7.46), (8.33, 5.76), (8.33, 4.10 ), (8.33, 2.42), (8.33, 0.76),
+                          (17.73, 7.00), (17.73, 5.57), (17.73, 4.10)]
+        robot_radius = 0.5
+        on_note = False
+        for loc in note_locations:
+            if distance ((self.x, self.y), loc) < robot_radius:
+                on_note = True
+        return on_note
 
 
     def update_sim(self, now: float, tm_diff: float) -> None:
@@ -247,6 +260,13 @@ class PhysicsEngine:
         self.strafe_entry.setDouble(0)
         self.rotation_entry.setDouble(self.theta - ring_rot)
 
+        # update note captured if we drive over a note 20240404 CJH
+        if self.robot.container.shooter.shooter_on:
+            self.has_note = False  # get rid of a note
+        if not self.has_note:
+            self.has_note = self.robot_on_note()  # add one if we drive over it
+        self.robot.container.shooter.ring_loaded = self.has_note  # update the shooter to return that we have a ring
+
 def crank_angle_to_sim(crank_angle):
     # for us 90 is straight up and the angle is positive CW (looking at robot from the right)
     # for sim 90 is up but we are positive CCW - so take 90=90 but we're reversed from there
@@ -257,3 +277,5 @@ def shooter_angle_to_sim(shooter_angle):
     # for the shooter our zero (horizontal or perpendicular to the arm) is the sim's 90
     return 90 - math.degrees(shooter_angle)
 
+def distance(p1, p2):
+    return math.sqrt( (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 )
