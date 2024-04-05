@@ -69,30 +69,32 @@ class AutoClimbSanjith(commands2.CommandBase):
         right_encoder, left_encoder = self.climber.get_encoders()
         encoder_average = (right_encoder + left_encoder) / 2
 
+        diameter_multiplier = 1.0
+
         # series of milestones and flags so they only get called once
-        if encoder_average > 145 and not self.at_top_of_climb:  # 24.2 inches of rope
+        if encoder_average > diameter_multiplier * 150 and not self.at_top_of_climb:  # 24.2 inches of rope
             self.led.set_indicator(Led.Indicator.CALIBRATION_SUCCESS)  # flash green
             self.at_top_of_climb = True
-        elif encoder_average > 120 and not self.toggle_servo_fired:  # 24.2 inches of rope
+        elif encoder_average > diameter_multiplier * 135 and not self.toggle_servo_fired:  # 24.2 inches of rope
             self.shooter_arm.set_goal(math.radians(-90))
             self.climber.open_trap_servo()
             print(f"  Moved Shooter to -90 and fired trap servo at {self.container.get_enabled_time()}s")
             self.toggle_servo_fired = True
-        elif encoder_average > 110 and not self.shooter_half_down:  # 19 inches
+        elif encoder_average > diameter_multiplier * 120 and not self.shooter_half_down:  # 19 inches
             self.shooter_arm.set_goal(math.radians(-45))
             self.shooter_half_down = True
             print(f"  Moved shooter to -45 at {self.container.get_enabled_time()}s")
-        elif encoder_average > 100 and not self.servos_toggled:
+        elif encoder_average > diameter_multiplier * 100 and not self.servos_toggled:
             self.servos_toggled = True
             self.climber.close_servos()
             print(f"  Closing servos at {self.container.get_enabled_time()}s")
-        elif encoder_average > 84 and not self.initial_slack_taken:  # just getting taut - 14.5"
+        elif encoder_average > diameter_multiplier * 84 and not self.initial_slack_taken:  # just getting taut - 14.5"
             print(f"  Initial slack taken up {self.container.get_enabled_time()}s")
             self.voltage_boost = 0  # slow down the climbing at this point
             self.crank_arm.set_goal(math.radians(109))
             self.shooter_arm.set_goal(math.radians(0))
             self.initial_slack_taken = True
-        elif encoder_average > 10 and not self.climb_started:  # just getting taut - 14.5"
+        elif encoder_average > diameter_multiplier * 10 and not self.climb_started:  # just getting taut - 14.5"
             print(f"  Starting climb at {self.container.get_enabled_time()}s")
             self.shooter_arm.set_goal(math.radians(22))
             self.climb_started = True

@@ -48,9 +48,10 @@ class ShooterToggle(commands2.Command):
         if 'amp' in arm_configuration.lower():
             rpm = self.amp_rpm
         elif 'trap' in arm_configuration.lower():
-            rpm = 900 # self.amp_rpm + 500
+            rpm = 775 #
         elif self.distance_to_speaker > 3:
             rpm = 4500
+            print(f'ATTEMPTED TO DO {rpm} FAST SHOT FROM ({x},{y}) AT DISTANCE {self.distance_to_speaker}')
         else:
             rpm = self.rpm
 

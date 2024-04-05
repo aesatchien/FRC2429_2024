@@ -40,6 +40,7 @@ class GetRing(commands2.SequentialCommandGroup):
                 )
             )
             # Note that this requires certain paths to be present
+            self.addCommands(AcquireNoteToggle(self.container, force='on', timeout=0.25))
             self.addCommands(AcquireNoteToggle(self.container, force='off', timeout=None))
 
 
@@ -48,23 +49,33 @@ class GoToSpeakerAndShoot(commands2.SequentialCommandGroup): #runs up to speaker
         super().__init__()
         self.setName(f'Shoot ring on side {side}')
         self.container = container
-
+        shooting_in_intake = True
         if not side in ['ampside', 'middle', 'sourceside']: raise ValueError('Invalid side of speaker!')
 
-        self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
-        self.addCommands(
-            commands2.ParallelRaceGroup(
-                MoveArmByPose(self.container, shooting_backwards=True),
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Go to {side} speaker side'))
+        if shooting_in_intake:
+            GoToIntake(self.container)
+            self.addCommands(
+                commands2.ParallelCommandGroup(
+                    GoToIntake(self.container),
+                    AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Go to {side} speaker side'))
+                )
             )
-        )
-        self.addCommands(
-            commands2.ParallelRaceGroup(
-                AutoShootCycle(self.container, go_to_shoot=False),
-                DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited, shooting_backwards=True)
+            self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
+
+        else:
+            self.addCommands(ArmMove(container=self.container, arm=self.container.shooter_arm, degrees=constants.k_crank_presets['low_shoot']['upper'], absolute=True, wait_to_finish=True))
+            self.addCommands(
+                commands2.ParallelRaceGroup(
+                    MoveArmByPose(self.container, shooting_backwards=True),
+                    AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Go to {side} speaker side'))
+                )
             )
-        )
-        # self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
+            self.addCommands(
+                commands2.ParallelRaceGroup(
+                    AutoShootCycle(self.container, go_to_shoot=False),
+                    DriveAndAutoAimChassis(self.container, self.container.drive, constants.k_field_centric, constants.k_rate_limited, shooting_backwards=True)
+                )
+            )
 
 class ShootFromAnywhere(commands2.SequentialCommandGroup): #
     def __init__(self, container) -> None:
@@ -89,7 +100,7 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.setName(f'Shoot preload after waiting {time_to_aim} seconds')
         self.container = container
 
-        self.addCommands(GoToShoot(self.container))
+        self.addCommands(GoToIntake(self.container))
         self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
 
 class GoToShoot(commands2.SequentialCommandGroup):

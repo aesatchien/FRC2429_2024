@@ -102,7 +102,7 @@ class Led(commands2.Subsystem):
 
                     elif self.indicator == Led.Indicator.AMP:
                         # solid red
-                        led.setRGB(255, 0, 0)
+                        led.setRGB(123, 30, 30)
 
                     elif self.indicator == Led.Indicator.INTAKE:
                         # solid blue
@@ -181,7 +181,7 @@ class Led(commands2.Subsystem):
                         if self.polka_counter == 1:
                             led.setRGB(0, 0, 0)
                         else:
-                            led.setRGB(255, 255, 255)
+                            led.setRGB(123, 123, 123)
 
                         if i == 0:
                             self.polka_counter *= -1

@@ -372,7 +372,7 @@ class Swerve (Subsystem):
         if destination == 'stage':
             # get all distances to the stage tags
             tags = [11, 12, 15, 16]  # the ones we can see from driver's station - does not matter if red or blue
-            x_offset, y_offset = -0.10, 0.12  # subtracting translations below makes +x INTO the tage, +y LEFT of tag
+            x_offset, y_offset = -0.10, 0.10  # subtracting translations below makes +x INTO the tage, +y LEFT of tag
             robot_offset = geo.Pose2d(geo.Translation2d(x_offset, y_offset), geo.Rotation2d(0))
             face_tag = True  # do we want to face the tag?
         elif destination == 'amp':

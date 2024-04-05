@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.57291628868972,
-        "y": 6.420842555970826
+        "x": 3.649056974434221,
+        "y": 6.929497334292796
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.71635400413658,
-        "y": 6.670053340106681
+        "x": 4.79249468988108,
+        "y": 7.17870811842865
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.387532203635836,
-        "y": 5.687869661453608
+        "x": 6.129975688522806,
+        "y": 6.420842555970826
       },
       "prevControl": {
-        "x": 7.947748466925505,
-        "y": 6.772669545339091
+        "x": 5.7918391349072795,
+        "y": 6.885780317192174
+      },
+      "nextControl": {
+        "x": 6.568667075918109,
+        "y": 5.817641898302285
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.368879701984275,
+        "y": 5.788286465840394
+      },
+      "prevControl": {
+        "x": 7.118879701984275,
+        "y": 5.788286465840394
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,31 +48,31 @@
     {
       "waypointRelativePos": 0,
       "rotationDegrees": 0.0,
-      "rotateFast": true
+      "rotateFast": false
     },
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -35.31,
-      "rotateFast": true
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -47.4501636306846,
+      "rotateFast": false
     },
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -32.385291636299456,
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 0,
       "rotateFast": true
     }
   ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.530765609948084,
-    "rotateFast": false
+    "rotation": 0.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Far Rings",
@@ -64,5 +80,5 @@
     "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

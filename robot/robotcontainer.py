@@ -51,6 +51,7 @@ from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
 from commands.smart_intake import SmartIntake
 from commands.system_interrupt import SystemInterrupt
 from commands.can_status import CANStatus
+from autonomous.auto_lob_cycle import AutoLobCycle
 
 
 class RobotContainer:
@@ -204,6 +205,7 @@ class RobotContainer:
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
+        self.co_trigger_y.onTrue(AutoLobCycle(container=self))  # shoot
         # self.co_trigger_y.onTrue(LedToggle(container=self))
 
         # intake / shoot control
@@ -216,8 +218,8 @@ class RobotContainer:
         direction = None
         self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
         self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
-        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=0.2, direction=direction)) # was 10 and -10 lhack testing 3/12/24
-        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-0.2, direction=direction))
+        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
 
         self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
         self.co_trigger_back.onTrue(AutoClimbGiselle(self))

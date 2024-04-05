@@ -58,7 +58,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
                         # .andThen(self.container.led.set_indicator_with_timeout(Led.Indicator.AMP, 0.75)))  # stop, flash red
 
         else:  # looks good to move
-            linear_speed_factor = 0.5
+            linear_speed_factor = 0.6
             angular_speed_factor = 1
             fast_turn = True
             final_velocity = 0
