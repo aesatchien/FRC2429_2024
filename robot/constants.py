@@ -165,14 +165,14 @@ def clamp(value: float, bottom: float, top: float) -> float:
     return max(bottom, min(value, top))
 
 # --------------  AMP POSITIONS  ---------------
-k_blue_amp = [1.9, 7.4, 90] #(x, y, rotation)
-k_red_amp = [14.75, 7.74, 90] #(x, y, rotation)
+k_blue_amp = [1.9, 7.4, 90]  # (x, y, rotation)
+k_red_amp = [14.75, 7.74, 90]  # (x, y, rotation)
 
 # --------------  SPEAKER POSITIONS  ---------------
-k_blue_speaker = [0, 5.55, 180] #(x, y, rotation)
-k_red_speaker = [16.5, 5.555, 0] #(x, y, rotation)
+k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
+k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
 
-k_speaker_opening_height = 2 #height of speaker opening
+k_speaker_opening_height = 2  # height of speaker opening
 
 #---------------- APRILTAG POSITIONS ---------------
-k_speaker_tags_poses = {"blue":[-0.038100, 5.547868], "red":[16.579342, 5.547868]}
+k_speaker_tags_poses = {"blue": [-0.038100, 5.547868], "red": [16.579342, 5.547868]}

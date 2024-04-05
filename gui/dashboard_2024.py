@@ -17,6 +17,7 @@ from PyQt5.QtCore import Qt, QTimer, QEvent, QThread, QObject, pyqtSignal
 import qlabel2
 
 from ntcore import NetworkTableType, NetworkTableInstance
+import wpimath.geometry as geo
 
 #print(f'Initializing GUI ...', flush=True)
 
@@ -354,11 +355,11 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_apriltag_back_target_indicator': {'widget': self.qlabel_apriltag_back_target_indicator, 'nt': '/SmartDashboard/tag_back_targets_exist', 'command': None},
         'qlabel_apriltag_front_target_indicator': {'widget': self.qlabel_apriltag_front_target_indicator, 'nt': '/SmartDashboard/tag_front_targets_exist', 'command': None},
         'qlabel_position_indicator': {'widget': self.qlabel_position_indicator, 'nt': '/SmartDashboard/arm_config', 'command': None},
-        'qlabel_note_captured_indicator': {'widget': self.qlabel_note_captured_indicator, 'nt': '/SmartDashboard/shooter_has_ring', 'command': None, 'flash': True},
+        'qlabel_note_captured_indicator': {'widget': self.qlabel_note_captured_indicator, 'nt': '/SmartDashboard/shooter_has_ring', 'command': None,},
         'qlabel_reset_gyro_from_pose_indicator': {'widget': self.qlabel_reset_gyro_from_pose_indicator, 'nt': '/SmartDashboard/GyroFromPose/running', 'command': '/SmartDashboard/GyroFromPose/running'},
         'qlabel_drive_to_stage_indicator': {'widget': self.qlabel_drive_to_stage_indicator, 'nt': '/SmartDashboard/ToStage/running', 'command': '/SmartDashboard/ToStage/running'},
         'qlabel_drive_to_speaker_indicator': {'widget': self.qlabel_drive_to_speaker_indicator, 'nt': '/SmartDashboard/ToSpeaker/running', 'command': '/SmartDashboard/ToSpeaker/running'},
-        'qlabel_drive_to_amp_indicator': {'widget': self.qlabel_drive_to_amp_indicator, 'nt': '/SmartDashboard/ToAmp/running', 'command': '/SmartDashboard/ToAmp/running'},
+        'qlabel_drive_to_amp_indicator': {'widget': self.qlabel_drive_to_amp_indicator, 'nt': '/SmartDashboard/ToAmp/run ning', 'command': '/SmartDashboard/ToAmp/running'},
         'qlabel_can_report_indicator': {'widget': self.qlabel_can_report_indicator, 'nt': '/SmartDashboard/CANStatus/running', 'command': '/SmartDashboard/CANStatus/running'},
 
             # NUMERIC INDICATORS
@@ -500,25 +501,47 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_robot.move(int(-new_size/2 + width * drive_pose[0] / x_lim ), int(-new_size/2 + height * (1 - drive_pose[1] / y_lim)))
         ## print(f'Pose X:{drive_pose[0]:2.2f} Pose Y:{drive_pose[1]:2.2f} Pose R:{drive_pose[2]:2.2f}', end='\r', flush=True)
 
+        # --------------  SPEAKER POSITIONS CALCULTATIONS  ---------------
+        k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
+        k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
+        if self.widget_dict['qlabel_alliance_indicator']['entry'].getBoolean(False):
+            translation_origin_to_speaker = geo.Translation2d(k_red_speaker[0], k_red_speaker[1])
+        else:
+            translation_origin_to_speaker = geo.Translation2d(k_blue_speaker[0], k_blue_speaker[1])
+        translation_origin_to_robot = geo.Translation2d(drive_pose[0], drive_pose[1])
+        translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
+        desired_angle = translation_robot_to_speaker.angle().rotateBy(geo.Rotation2d(np.radians(180)))  # shooting back
+        angle_to_speaker = drive_pose[2] - desired_angle.degrees()
+        angle_tolerance = 10
+
         # update the 2024 shot distance indicator
-        best_distance = 2  # is 2m our best distance?
-        tolerance = 0.4
+        best_distance = 1.7  # is 2m our best distance?
+        distance_tolerance = 0.4
         speaker_blue = (0, 5.56)
         speaker_red = (16.54, 5.56)
         speaker = speaker_red if self.widget_dict['qlabel_alliance_indicator']['entry'].getBoolean(False) else speaker_blue
         shot_distance = np.sqrt((speaker[0]-drive_pose[0])**2 + (speaker[1]-drive_pose[1])**2)  # robot to speaker center
-        if shot_distance <= best_distance - tolerance:  # too close
+        if shot_distance <= best_distance - distance_tolerance:  # too close
             shot_style = "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 0); color:rgb(200, 200, 200);"  # bright red
-        elif shot_distance > best_distance - tolerance and shot_distance < best_distance + tolerance:  # just right?
+        elif shot_distance > best_distance - distance_tolerance and shot_distance < best_distance + distance_tolerance:  # just right?
             grey_val = int(225 * np.abs(best_distance-shot_distance))  # make it a more saturated green
-            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
-            shot_style = f"border: 7px; border-radius: 7px; background-color:rgb({grey_val}, {int(225-grey_val)}, {grey_val}); color:rgb{text_color};"
-        elif shot_distance >= best_distance + tolerance:
+            # blink if the angle is good
+            if np.abs(angle_to_speaker) < angle_tolerance:
+                text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+                border_color = 'solid blue' if self.counter % 10 < 5 else 'solid black'  # make it blink
+                border_size = 6
+            else:
+                text_color = '(200, 200, 200)'  # still black if we don't have the shot
+                border_color = 'solid red'
+                border_size = 8
+            shot_style = f"border: {border_size}px {border_color}; border-radius: 7px; background-color:rgb({grey_val}, {int(225-grey_val)}, {grey_val}); color:rgb{text_color};"
+        elif shot_distance >= best_distance + distance_tolerance:
             shot_style = "border: 7px; border-radius: 7px; background-color:rgb(180, 180, 180); color:rgb(200, 200, 200);"
         else:
             shot_style = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(200, 200, 200);"
         self.qlabel_shot_distance: QtWidgets.QLabel
-        self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}')
+        # self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}')  # updated below
+        self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}m  {int(angle_to_speaker):>+3d}°')
         self.qlabel_shot_distance.setStyleSheet(shot_style)
 
         # update the 2024 arm configuration indicator

@@ -148,7 +148,7 @@ class PhysicsEngine:
     def robot_on_note(self):  # determine if robot is over a note
         note_locations = [(2.94, 7.00), (2.94, 5.57), (2.94, 4.10),
                           (8.33, 7.46), (8.33, 5.76), (8.33, 4.10 ), (8.33, 2.42), (8.33, 0.76),
-                          (17.73, 7.00), (17.73, 5.57), (17.73, 4.10)]
+                          (13.73, 7.00), (13.73, 5.57), (13.73, 4.10)]
         robot_radius = 0.5
         on_note = False
         for loc in note_locations:
