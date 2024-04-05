@@ -21,6 +21,7 @@ class ArmSmartGoTo(commands2.Command):  # change the name for your command
 
     # note: wait_for_finish doesn't work since the subsystem's goal doesn't seem to update immediately.
     # for certain pairs of setpoints, it works...
+    # Also: Do not use this in auto, something about it loves screwing autos up.
 
     def __init__(self, container, desired_position: str, wait_for_finish=False, timeout = None) -> None:
         super().__init__()
