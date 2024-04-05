@@ -118,10 +118,10 @@ class PhysicsEngine:
         self.indexer_mech = self.shooter_arm_mech.appendLigament(
             "Indexer", 5, 180, 15, wpilib.Color8Bit(wpilib.Color.kDarkRed)
         )
-        self.spacer_mech = self.indexer_mech.appendLigament(
-            "Spacer", 8, 0, 10, wpilib.Color8Bit(wpilib.Color.kYellow)
+        self.note_mech = self.indexer_mech.appendLigament(
+            "Spacer", 8, 0, 10, wpilib.Color8Bit(wpilib.Color.kOrange)
         )
-        self.flywheel_mech = self.spacer_mech.appendLigament(
+        self.flywheel_mech = self.note_mech.appendLigament(
             "Flywheel", 6, 0, 10, wpilib.Color8Bit(wpilib.Color.kDarkRed)
         )
 
@@ -130,7 +130,7 @@ class PhysicsEngine:
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
 
         # simulating if the robot has a note
-        self.has_note = False
+        self.has_note = True
 
     def distance_to_ring(self):  # example way, but VERY rigid - can't drag robot
         ring_x, ring_y = 8.25, 4.1
@@ -152,7 +152,7 @@ class PhysicsEngine:
         robot_radius = 0.5
         on_note = False
         for loc in note_locations:
-            if distance ((self.x, self.y), loc) < robot_radius:
+            if distance(p1=(self.x, self.y), p2=loc) < robot_radius:
                 on_note = True
         return on_note
 
@@ -205,7 +205,7 @@ class PhysicsEngine:
 
         # send our poses to the dashboard so we can use it with our trackers
         pose = self.physics_controller.get_pose()
-        self.x, self.y, self.theta  = pose.X(), pose.Y(), pose.rotation().degrees()
+        self.x, self.y, self.theta = pose.X(), pose.Y(), pose.rotation().degrees()
 
         # attempt to update the real robot's odometry
         self.distances = [pos + tm_diff * self.spark_dict[drive]['velocity'].value for pos, drive in zip(self.distances, self.spark_drives)]
@@ -241,15 +241,18 @@ class PhysicsEngine:
         self.crank_arm_mech.setAngle(crank_angle_to_sim(crank_angle))
         self.shooter_arm_mech.setAngle(shooter_angle_to_sim(shooter_arm_angle))
 
+        # update the shooter, indexer and intake sims
         indexer_on = math.fabs(self.spark_dict['indexer']['output'].value) > 0.1
         flywheel_on = math.fabs(self.spark_dict['t_shooter']['velocity'].value) > 0.1 or math.fabs(self.spark_dict['t_shooter']['output'].value) > 0.1
         intake_on = math.fabs(self.spark_dict['intake']['output'].value) > 0.1
         flywheel_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if flywheel_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
         indexer_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if indexer_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
         intake_color = wpilib.Color8Bit(wpilib.Color.kLimeGreen) if intake_on else wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        note_color = wpilib.Color8Bit(wpilib.Color.kOrange) if self.has_note else wpilib.Color8Bit(wpilib.Color.kYellow)
         self.flywheel_mech.setColor(flywheel_color)
         self.indexer_mech.setColor(indexer_color)
         self.intake_mech.setColor(intake_color)
+        self.note_mech.setColor(note_color)
 
         # update the vision
         ring_dist, ring_rot = self.distance_to_ring()
