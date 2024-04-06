@@ -28,13 +28,13 @@ class AutoDriveToNote(commands2.CommandBase):
         self.forward_pid.setTolerance(0.1)
         self.vision = container.vision
 
-        self.move_forward_time = 1/2
+        self.move_forward_time = 1/2  # now unused
         self.minimum_velocity = 0.2
-        self.move_forward_velocity = 0.25
+        self.move_forward_velocity = 0.25  # likely never going to be called
         self.reached_ring = False
         self.addRequirements(self.container.drive)  # commandsv2 version of requirements
 
-        self.pid_max = 0.4
+        self.pid_max = 0.1  # this will be a velocity based on the stick, so a % of max
 
     def initialize(self) -> None:
         self.forward_pid.setSetpoint(0)
@@ -73,10 +73,9 @@ class AutoDriveToNote(commands2.CommandBase):
                                        fieldRelative=False, rate_limited=False, keep_angle=True)
             self.counter += 1
 
-
     def isFinished(self) -> bool:
-        return self.counter >= 50 * self.move_forward_time
-
+        # return self.counter >= 50 * self.move_forward_time
+        return False  # let the button held down kill this command instead of any other end condition
 
     def end(self, interrupted: bool) -> None:
         self.intake.stop_intake()
