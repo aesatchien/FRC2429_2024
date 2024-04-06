@@ -101,6 +101,7 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.container = container
 
         self.addCommands(GoToIntake(self.container))
+        self.addCommands(commands2.WaitCommand(0.3))
         self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
 
 class GoToShoot(commands2.SequentialCommandGroup):

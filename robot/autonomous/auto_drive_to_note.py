@@ -29,9 +29,12 @@ class AutoDriveToNote(commands2.CommandBase):
         self.vision = container.vision
 
         self.move_forward_time = 1/2
-        self.move_forward_velocity = 0.5
+        self.minimum_velocity = 0.2
+        self.move_forward_velocity = 0.25
         self.reached_ring = False
         self.addRequirements(self.container.drive)  # commandsv2 version of requirements
+
+        self.pid_max = 0.4
 
     def initialize(self) -> None:
         self.forward_pid.setSetpoint(0)
@@ -56,8 +59,11 @@ class AutoDriveToNote(commands2.CommandBase):
 
         if not self.reached_ring:
             if not self.forward_pid.atSetpoint():
-                desired_rotation = constants.clamp(pid_rotation_output,-0.8, 0.8)
-                desired_forward = constants.clamp(pid_distance_output, -0.8, 0.8)
+                desired_rotation = constants.clamp(pid_rotation_output,-self.pid_max, self.pid_max)
+                if (math.fabs(distance) < 0.1):
+                    desired_forward = self.minimum_velocity
+                else:
+                    desired_forward = constants.clamp(pid_distance_output, -self.pid_max, self.pid_max)
                 self.swerve.drive(xSpeed=desired_forward, ySpeed=0, rot=desired_rotation, fieldRelative=False, rate_limited=True, keep_angle=True)
             else:  # forward pid is at setpoint, transition to pure forwards
                 self.reached_ring = True

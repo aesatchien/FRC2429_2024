@@ -183,7 +183,7 @@ class RobotContainer:
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
 
-        self.trigger_l_trigger.whileTrue(commands2.ParallelCommandGroup(
+        self.trigger_l_trigger.whileTrue(commands2.ParallelRaceGroup(
             AutoDriveToNote(self),
             SmartIntake(self, wait_to_finish=True)
         ))
