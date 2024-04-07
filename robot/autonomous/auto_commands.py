@@ -34,7 +34,7 @@ class GetRing(commands2.SequentialCommandGroup):
 
             self.addCommands(
                 commands2.ParallelCommandGroup(
-                    self.addCommands(AcquireNoteToggle(self.container, force='on', timeout=None)),
+                    AcquireNoteToggle(self.container, force='on', timeout=None),
                     GoToIntake(self.container),
                     commands2.WaitCommand(0.5).andThen(AutoBuilder.followPath(PathPlannerPath.fromPathFile(f'Get {near_or_far} ring {ring_num}')))
                 )
@@ -101,6 +101,7 @@ class ShootPreload(commands2.SequentialCommandGroup):
         self.container = container
 
         self.addCommands(GoToIntake(self.container))
+        self.addCommands(commands2.WaitCommand(0.3))
         self.addCommands(AutoShootCycle(self.container, go_to_shoot=False))
 
 class GoToShoot(commands2.SequentialCommandGroup):

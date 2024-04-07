@@ -11,6 +11,7 @@ from commands.arm_smart_go_to import ArmSmartGoTo
 from commands.toggle_climb_servos import ToggleClimbServos
 from commands.run_climber import RunClimber
 from subsystems.led import Led
+from commands.toggle_trap_servo import ToggleTrapServos
 
 
 class AutoClimbGiselle(commands2.Command):  # try to auto climb
@@ -68,13 +69,24 @@ class AutoClimbGiselle(commands2.Command):  # try to auto climb
 
                           )
                       )
-        elif self.stage > 1:  # make it so it only shoots trap now
+        elif self.stage == 2:  # make it so it only shoots trap now
+            command = commands2.ParallelCommandGroup(
+                self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 1),
+                commands2.SequentialCommandGroup(
+                    ToggleTrapServos(container=self.container, climber=self.container.climber, force='on'),
+                    commands2.WaitCommand(seconds=0.5),
+                    AutoShootCycle(container=self.container, go_to_shoot=False),
+                )
+            )
+
+        elif self.stage > 2:  # make it so it only shoots trap now
             command = commands2.ParallelCommandGroup(
                 self.container.led.set_indicator_with_timeout(Led.Indicator.CLIMB, 1),
                 commands2.SequentialCommandGroup(
                     AutoShootCycle(container=self.container, go_to_shoot=False),
                 )
             )
+
 
         elif self.stage == 2: # second part of climb - drive back and deploy servos
             command = commands2.PrintCommand("Nothing to do in stage 2 yet")

@@ -10,11 +10,11 @@ from wpimath.geometry import Translation2d
 from subsystems.upper_crank_trapezoid import UpperCrankArmTrapezoidal
 from subsystems.lower_crank_trapezoid import LowerCrankArmTrapezoidal
 
-class ShooterToggle(commands2.Command):
+class ShooterToggleLob(commands2.Command):
 
     def __init__(self, container, shooter, rpm=3500, amp_rpm=2000, auto_amp_slowdown=False, wait_for_spinup=False, force=None, timeout=3) -> None:
         super().__init__()
-        self.setName('ShooterToggle')
+        self.setName('ShooterToggleLob')
         self.container = container
         self.shooter = shooter
         self.shooter_arm: UpperCrankArmTrapezoidal = self.container.shooter_arm
@@ -48,10 +48,7 @@ class ShooterToggle(commands2.Command):
         if 'amp' in arm_configuration.lower():
             rpm = self.amp_rpm
         elif 'trap' in arm_configuration.lower():
-            rpm = 1050  # 775 was too low for trap in AVR in match 50, upped to 900
-        elif self.distance_to_speaker > 3:
-            rpm = 4500
-            print(f'ATTEMPTED TO DO {rpm} FAST SHOT FROM ({x},{y}) AT DISTANCE {self.distance_to_speaker}')
+            rpm = 775 #
         else:
             rpm = self.rpm
 

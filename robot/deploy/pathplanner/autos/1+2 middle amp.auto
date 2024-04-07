@@ -6,9 +6,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "1+3 starting shot"
+            "name": "Go to middle and shoot"
           }
         },
         {
@@ -27,18 +27,6 @@
           "type": "named",
           "data": {
             "name": "Intake near ring 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Go to middle and shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake near ring 3"
           }
         },
         {

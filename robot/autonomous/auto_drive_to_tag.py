@@ -36,7 +36,7 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         """Called just before this Command runs the first time."""
         self.scheduler = commands2.CommandScheduler.getInstance()
         self.start_time = round(self.container.get_enabled_time(), 2)
-        print("\n" + f"** Started {self.getName()} at {self.start_time} s **", flush=True)
+        print("\n" + f"** Started {self.getName()} to {self.destination} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert",
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
         # copying template from Josh
@@ -109,6 +109,6 @@ class AutoDriveToTag(commands2.Command):  # change the name for your command
         message = 'Interrupted' if interrupted else 'Ended'
         print_end_message = True
         if print_end_message:
-            print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
+            print(f"** {message} {self.getName()} to {self.destination} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **", flush=True)
             SmartDashboard.putString(f"alert",
                                      f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

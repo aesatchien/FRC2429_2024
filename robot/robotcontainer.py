@@ -183,7 +183,7 @@ class RobotContainer:
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
         self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
 
-        self.trigger_l_trigger.whileTrue(commands2.ParallelCommandGroup(
+        self.trigger_l_trigger.whileTrue(commands2.ParallelRaceGroup(
             AutoDriveToNote(self),
             SmartIntake(self, wait_to_finish=True)
         ))
@@ -254,9 +254,9 @@ class RobotContainer:
                 for near_ring_num in range(1, 4):
                     NamedCommands.registerCommand(f'Intake {near_far} ring {near_ring_num}', GetRing(self, near_ring_num, near_far))
             # Commented because we don't have paths for all far rings; if we have paths for some far rings, do for far_ring_num in [1, 5] for example
-            # else:
-            #     for far_ring_num in range(1, 6):
-            #         NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
+            else:
+                for far_ring_num in range(1, 6):
+                    NamedCommands.registerCommand(f'Intake {near_far} ring {far_ring_num}', GetRing(self, far_ring_num, near_far))
 
         for speaker_side in ['ampside', 'middle', 'sourceside']:
             NamedCommands.registerCommand(f'Go to {speaker_side} and shoot', GoToSpeakerAndShoot(self, speaker_side))
