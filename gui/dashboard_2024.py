@@ -120,6 +120,12 @@ class Ui(QtWidgets.QMainWindow):
                             'Raw Tag': 'http://10.24.29.12:1181/stream.mjpg',
                             'Raw FrontTag': 'http://10.24.29.13:1181/stream.mjpg'}
 
+        # --------------  CAMERA STATUS INDICATORS  ---------------
+        self.robot_timestamp = self.ntinst.getEntry('/SmartDashboard/_timestamp')
+        self.ringcam_timestamp = self.ntinst.getEntry('/Cameras/Ringcam/_timestamp')
+        self.tagcam_front_timestamp = self.ntinst.getEntry('/Cameras/Tagcam/_timestamp')
+        self.tagcam_back_timestamp = self.ntinst.getEntry('/Cameras/TagcamFront/_timestamp')
+
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
 
@@ -335,6 +341,10 @@ class Ui(QtWidgets.QMainWindow):
                                             'style_on': "border: 7px; border-radius: 7px; background-color:rgb(225, 0, 0); color:rgb(200, 200, 200);",
                                             'style_off': "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 225); color:rgb(200, 200, 200);"},
         'qlabel_camera_view': {'widget': self.qlabel_camera_view, 'nt': None, 'command': None},  # does this do anything? - can't remember
+        'qlabel_ringcam_indicator': {'widget': self.qlabel_ringcam_indicator, 'nt': None, 'command': None},
+        'qlabel_tagcam_back_indicator': {'widget': self.qlabel_tagcam_back_indicator, 'nt': None, 'command': None},
+        'qlabel_tagcam_front_indicator': {'widget': self.qlabel_tagcam_front_indicator, 'nt': None, 'command': None},
+
             # COMMANDS
         'qlabel_navx_reset_indicator': {'widget': self.qlabel_navx_reset_indicator, 'nt': '/SmartDashboard/GyroReset/running', 'command': '/SmartDashboard/GyroReset/running'},
         'qlabel_upper_crank_up_indicator': {'widget': self.qlabel_upper_crank_up_indicator, 'nt': '/SmartDashboard/UpperCrankMoveUp/running', 'command': '/SmartDashboard/UpperCrankMoveUp/running'},
@@ -446,12 +456,11 @@ class Ui(QtWidgets.QMainWindow):
                         d['widget'].setCurrentText(selected_routine)
                         d['widget'].blockSignals(False)
                 elif 'time' in key:
-
                     match_time = d['entry'].getDouble(0)
                     d['widget'].setText(str(int(match_time)))
                     if match_time < 30:
                         d['widget'].setText(f'* {int(match_time)} *')
-                        d['widget'].setStyleSheet(style_low)
+                        d['widget'].setStyleSheet(style_flash)
                     else:
                         d['widget'].setText(str(int(match_time)))
                         d['widget'].setStyleSheet(style_high)
@@ -501,7 +510,23 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_robot.move(int(-new_size/2 + width * drive_pose[0] / x_lim ), int(-new_size/2 + height * (1 - drive_pose[1] / y_lim)))
         ## print(f'Pose X:{drive_pose[0]:2.2f} Pose Y:{drive_pose[1]:2.2f} Pose R:{drive_pose[2]:2.2f}', end='\r', flush=True)
 
-        # --------------  SPEAKER POSITIONS CALCULTATIONS  ---------------
+        # --------------  CAMERA STATUS INDICATORS  ---------------
+        self.robot_timestamp = self.ntinst.getEntry('/SmartDashboard/_timestamp')
+        self.ringcam_timestamp = self.ntinst.getEntry('/Cameras/Ringcam/_timestamp')
+        self.tagcam_back_timestamp = self.ntinst.getEntry('/Cameras/Tagcam/_timestamp')
+        self.tagcam_front_timestamp = self.ntinst.getEntry('/Cameras/TagcamFront/_timestamp')
+
+        # set indicators to green if their timestamp matches the timestamp of the robot
+        timestamp = self.robot_timestamp.getDouble(1)
+        ringcam_style = style_on if timestamp - self.ringcam_timestamp.getDouble(-1) < 1 else style_off
+        self.qlabel_ringcam_indicator.setStyleSheet(ringcam_style)
+        tagcam_back_style = style_on if timestamp - self.tagcam_back_timestamp.getDouble(-1) < 1 else style_off
+        self.qlabel_tagcam_back_indicator.setStyleSheet(tagcam_back_style)
+        tagcam_front_style = style_on if timestamp - self.tagcam_front_timestamp.getDouble(-1) < 1 else style_off
+        self.qlabel_tagcam_front_indicator.setStyleSheet(tagcam_front_style)
+
+
+        # --------------  SPEAKER POSITIONS CALCULATIONS  ---------------
         k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
         k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
         if self.widget_dict['qlabel_alliance_indicator']['entry'].getBoolean(False):

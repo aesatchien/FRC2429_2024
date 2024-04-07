@@ -91,6 +91,7 @@ class PhysicsEngine:
         self.distance_entry = self.ringcam_table.getEntry(f"{key}/distance")
         self.strafe_entry = self.ringcam_table.getEntry(f"{key}/strafe")
         self.rotation_entry = self.ringcam_table.getEntry(f"{key}/rotation")
+        self.timestamp_entry = self.ringcam_table.getEntry(f"_timestamp")
 
         # sensors
 
@@ -262,6 +263,8 @@ class PhysicsEngine:
         self.distance_entry.setDouble(ring_dist)
         self.strafe_entry.setDouble(0)
         self.rotation_entry.setDouble(self.theta - ring_rot)
+        self.timestamp_entry.setDouble(wpilib.Timer.getFPGATimestamp())  # pretend the camera is live
+
 
         # update note captured if we drive over a note 20240404 CJH
         if self.robot.container.shooter.shooter_on:
