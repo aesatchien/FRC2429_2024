@@ -33,6 +33,8 @@ class Swerve (Subsystem):
 
         self.counter = 6
 
+        self.pdh = wpilib.PowerDistribution(1, wpilib.PowerDistribution.ModuleType.kRev)  # check power and other issues
+
         # Create SwerveModules
         self.frontLeft = SwerveModule(
             drivingCANId=dc.kFrontLeftDrivingCanId, turningCANId=dc.kFrontLeftTurningCanId,
@@ -465,6 +467,12 @@ class Swerve (Subsystem):
             # post yaw, pitch, roll so we can see what is going on with the climb
             ypr = [self.navx.getYaw(), self.get_pitch(), self.navx.getRoll(), self.navx.getRotation2d().degrees()]
             wpilib.SmartDashboard.putNumberArray('_navx_YPR', ypr)
+
+            # monitor power as well
+            voltage = self.pdh.getVoltage()
+            wpilib.SmartDashboard.putNumber('_pdh_voltage', voltage)
+            total_current = self.pdh.getTotalCurrent()
+            wpilib.SmartDashboard.putNumber('_pdh_voltage', total_current)
 
             if constants.k_swerve_debugging_messages:  # this is just a bit much unless debugging the swerve
                 angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]

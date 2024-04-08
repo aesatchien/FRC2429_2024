@@ -385,11 +385,14 @@ class Ui(QtWidgets.QMainWindow):
 
             # NUMERIC INDICATORS
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
-        'qlcd_upper_crank_angle': {'widget':self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
+        'qlcd_upper_crank_angle': {'widget': self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
         'qlcd_lower_crank_angle': {'widget': self.qlcd_lower_crank_angle, 'nt': '/SmartDashboard/crank_arm_degrees', 'command': None},
-        'qlcd_indexer_speed': {'widget':self.qlcd_indexer_speed, 'nt': '/SmartDashboard/indexer_output', 'command': None},
-        'qlcd_intake_speed': {'widget':self.qlcd_intake_speed, 'nt': '/SmartDashboard/intake_output', 'command': None},
+        'qlcd_indexer_speed': {'widget' :self.qlcd_indexer_speed, 'nt': '/SmartDashboard/indexer_output', 'command': None},
+        'qlcd_intake_speed': {'widget': self.qlcd_intake_speed, 'nt': '/SmartDashboard/intake_output', 'command': None},
         'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
+        'qlcd_voltage': {'widget': self.qlcd_voltage, 'nt': '/SmartDashboard/_pdh_voltage', 'command': None},
+        'qlcd_current': {'widget': self.qlcd_current, 'nt': '/SmartDashboard/_pdh_current', 'command': None},
+
             # LEFTOVER TO SORT FROM 2023
         #'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
         #'qlabel_arm_calibration_indicator': {'widget': self.qlabel_arm_calibration_indicator, 'nt': '/SmartDashboard/ArmCalibration/running', 'command': '/SmartDashboard/ArmCalibration/running'},

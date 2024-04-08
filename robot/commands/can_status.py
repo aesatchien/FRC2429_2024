@@ -1,6 +1,11 @@
+import random
+
 import commands2
+import wpilib
 from wpilib import SmartDashboard
 import rev
+import pickle as pkl
+import random
 
 
 class CANStatus(commands2.Command):  # change the name for your command
@@ -34,6 +39,7 @@ class CANStatus(commands2.Command):  # change the name for your command
                           10: 'kDRVFault', 11: 'kOtherFault', 12: 'kSoftLimitFwd', 13: 'kSoftLimitRev',
                             14:'kHardLimitFwd', 15:'kHardLimitRev'}
 
+        self.write_log = False
 
     def runsWhenDisabled(self) -> bool:
         return True
@@ -49,6 +55,8 @@ class CANStatus(commands2.Command):  # change the name for your command
             motor: rev.CANSparkBase =  self.can_ids[key]['motor']
 
             sticky_faults = motor.getStickyFaults()  # will be an integer representing the bit mask of the faults
+            if wpilib.RobotBase.isSimulation():
+                sticky_faults = random.randint(0,2048)
             active_faults = motor.getFaults()  # TODO - parse these too
             motor.clearFaults()  # apparently does not clear sticky faults, active only
 
@@ -62,7 +70,39 @@ class CANStatus(commands2.Command):  # change the name for your command
 
             fault_codes = [self.fault_ids[id] for id in set_bits]
             self.can_ids[key].update({'sticky_faults': sticky_faults})
+            self.can_ids[key].update({'set_bits': set_bits})
+            self.can_ids[key].update({'fault_codes': fault_codes})
             print(f"CANID {key:02d}: {self.can_ids[key]['name']:13} sticky_faults: {sticky_faults} {set_bits} {fault_codes}")
+
+        if self.write_log:
+            try:
+                with open('can.pkl', 'rb') as file:
+                    records = pkl.load(file)
+            except FileNotFoundError:  # start with a header row
+                header = [f"{key} {self.can_ids[key]['name']}" for key in self.can_ids.keys()]
+                records = [header]
+
+            output = {}
+            for key in self.can_ids: # can't pickle a motor
+                output.update({key:{'NAME': self.can_ids[key]['name'], 'STICKY_FAULTS': self.can_ids[key]['sticky_faults'],
+                                    'SET_BITS': self.can_ids[key]['set_bits'], 'FAULT_CODES': self.can_ids[key]['fault_codes']}})
+
+            just_faults = [self.can_ids[key]['fault_codes'] for key in self.can_ids.keys()]
+
+            records.append(just_faults)
+
+            with open('can.pkl', 'wb') as file:
+                pkl.dump(records, file)
+            print('Wrote CAN faults to can.pkl')
+
+            # to read, just do this script
+            # import pickle as pkl
+            # import pandas as pd
+            # with open('can.pkl', 'rb') as file:
+            #     data = pkl.load(file)
+            # column_names = data[0]
+            # df = pd.DataFrame(data[1:], columns=column_names)
+            # df
 
     def execute(self) -> None:
         pass
