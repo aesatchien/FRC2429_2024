@@ -121,10 +121,21 @@ class Ui(QtWidgets.QMainWindow):
                             'Raw FrontTag': 'http://10.24.29.13:1181/stream.mjpg'}
 
         # --------------  CAMERA STATUS INDICATORS  ---------------
-        self.robot_timestamp = self.ntinst.getEntry('/SmartDashboard/_timestamp')
-        self.ringcam_timestamp = self.ntinst.getEntry('/Cameras/Ringcam/_timestamp')
-        self.tagcam_front_timestamp = self.ntinst.getEntry('/Cameras/Tagcam/_timestamp')
-        self.tagcam_back_timestamp = self.ntinst.getEntry('/Cameras/TagcamFront/_timestamp')
+        self.robot_timestamp_entry = self.ntinst.getEntry('/SmartDashboard/_timestamp')
+        self.ringcam_timestamp_entry = self.ntinst.getEntry('/Cameras/Ringcam/_timestamp')
+        self.ringcam_connections_entry = self.ntinst.getEntry('/Cameras/Ringcam/_connections')
+        self.tagcam_back_timestamp_entry = self.ntinst.getEntry('/Cameras/Tagcam/_timestamp')
+        self.tagcam_back_connections_entry = self.ntinst.getEntry('/Cameras/Tagcam/_connections')
+        self.tagcam_front_timestamp_entry = self.ntinst.getEntry('/Cameras/TagcamFront/_timestamp')
+        self.tagcam_front_connections_entry = self.ntinst.getEntry('/Cameras/TagcamFront/_connections')
+        self.ringcam_connections = 0
+        self.tagcam_back_connections = 0
+        self.tagcam_front_connections = 0
+        self.ringcam_alive = False
+        self.tagcam_back_alive = False
+        self.tagcam_front_alive = False
+
+
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
@@ -219,7 +230,7 @@ class Ui(QtWidgets.QMainWindow):
     def toggle_camera_thread(self):
         # ToDo: check to see if the thread is running, then start again
 
-        # check if server is running
+        # check if server is running - at the moment we are focusing on ringcam
         if self.check_url(self.camera_dict['Ringcam']) or self.check_url(self.camera_dict['Tagcam']):
             if self.thread is None:  # first time through we need to make the thread
                 self.thread = QThread()  # create a QThread object
@@ -511,22 +522,46 @@ class Ui(QtWidgets.QMainWindow):
         ## print(f'Pose X:{drive_pose[0]:2.2f} Pose Y:{drive_pose[1]:2.2f} Pose R:{drive_pose[2]:2.2f}', end='\r', flush=True)
 
         # --------------  CAMERA STATUS INDICATORS  ---------------
-        self.robot_timestamp = self.ntinst.getEntry('/SmartDashboard/_timestamp')
-        self.ringcam_timestamp = self.ntinst.getEntry('/Cameras/Ringcam/_timestamp')
-        self.tagcam_back_timestamp = self.ntinst.getEntry('/Cameras/Tagcam/_timestamp')
-        self.tagcam_front_timestamp = self.ntinst.getEntry('/Cameras/TagcamFront/_timestamp')
+        # set indicators to green if their timestamp matches the timestamp of the robot, tally the connections
+        allowed_delay = 0.5  # how long before we call a camera dead
+        timestamp = self.robot_timestamp_entry.getDouble(1)
 
-        # set indicators to green if their timestamp matches the timestamp of the robot
-        timestamp = self.robot_timestamp.getDouble(1)
-        ringcam_style = style_on if timestamp - self.ringcam_timestamp.getDouble(-1) < 1 else style_off
+        # look for a disconnect - just in ringcam for now since that's the one we watch
+        if self.thread is not None:  # camera stream view has been started
+            if self.thread.isRunning():  # camera is on
+                if self.ringcam_alive and timestamp - self.ringcam_timestamp_entry.getDouble(-1) > allowed_delay:  # ringcam died
+                    self.ringcam_alive = False
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected loss of Ringcam - KILLING camera thread')
+                    self.toggle_camera_thread()
+                else:
+                    pass
+            else:  # we started the camera but the thread is not running
+                if not self.ringcam_alive and timestamp - self.ringcam_timestamp_entry.getDouble(-1) < allowed_delay:  # ringcam alive again
+                    self.ringcam_alive = True
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected Ringcam - RESTARTING camera thread')
+                    self.toggle_camera_thread()
+
+        self.ringcam_alive = timestamp - self.ringcam_timestamp_entry.getDouble(-1) < allowed_delay
+        ringcam_style = style_on if self.ringcam_alive else style_off
+        self.ringcam_connections = int(self.ringcam_connections_entry.getDouble(0))
+        self.qlabel_ringcam_indicator.setText(f'RINGCAM: {self.ringcam_connections:2d}')
         self.qlabel_ringcam_indicator.setStyleSheet(ringcam_style)
-        tagcam_back_style = style_on if timestamp - self.tagcam_back_timestamp.getDouble(-1) < 1 else style_off
+
+        self.tagcam_back_alive = timestamp - self.tagcam_back_timestamp_entry.getDouble(-1) < allowed_delay
+        tagcam_back_style = style_on if self.tagcam_back_alive else style_off
+        self.tagcam_back_connections = int(self.tagcam_back_connections_entry.getDouble(0))
+        self.qlabel_tagcam_back_indicator.setText(f'TAGCAM B: {self.tagcam_back_connections:2d}')
         self.qlabel_tagcam_back_indicator.setStyleSheet(tagcam_back_style)
-        tagcam_front_style = style_on if timestamp - self.tagcam_front_timestamp.getDouble(-1) < 1 else style_off
+
+        self.tagcam_front_alive = timestamp - self.tagcam_front_timestamp_entry.getDouble(-1) < allowed_delay
+        tagcam_front_style = style_on if self.tagcam_front_alive else style_off
+        self.tagcam_front_connections = int(self.tagcam_front_connections_entry.getDouble(0))
+        self.qlabel_tagcam_front_indicator.setText(f'TAGCAM F: {self.tagcam_front_connections:2d}')
         self.qlabel_tagcam_front_indicator.setStyleSheet(tagcam_front_style)
 
+        # try to reset the camera
 
-        # --------------  SPEAKER POSITIONS CALCULATIONS  ---------------
+        # --------------  SPEAKER POSITION CALCULATIONS  ---------------
         k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
         k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
         if self.widget_dict['qlabel_alliance_indicator']['entry'].getBoolean(False):

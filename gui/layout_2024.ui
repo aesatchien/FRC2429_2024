@@ -30,7 +30,7 @@
       <x>730</x>
       <y>457</y>
       <width>721</width>
-      <height>51</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="verticalScrollBarPolicy">
@@ -1295,7 +1295,7 @@ background-color:rgb(127, 127, 127);</string>
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>28</x>
         <y>310</y>
         <width>61</width>
         <height>16</height>
@@ -1715,7 +1715,7 @@ background-color:rgb(0, 20, 250);</string>
     <property name="geometry">
      <rect>
       <x>740</x>
-      <y>520</y>
+      <y>550</y>
       <width>711</width>
       <height>141</height>
      </rect>
@@ -1891,8 +1891,8 @@ color:rgb(230,230,230);</string>
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>357</y>
-      <width>81</width>
+      <y>353</y>
+      <width>95</width>
       <height>21</height>
      </rect>
     </property>
@@ -1910,7 +1910,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
     </property>
     <property name="text">
-     <string>RINGCAM</string>
+     <string>RINGCAM: 0</string>
     </property>
     <property name="textFormat">
      <enum>Qt::AutoText</enum>
@@ -1926,8 +1926,8 @@ background-color:rgb(180,180,180);</string>
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>380</y>
-      <width>81</width>
+      <y>376</y>
+      <width>95</width>
       <height>21</height>
      </rect>
     </property>
@@ -1945,7 +1945,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
     </property>
     <property name="text">
-     <string>TAGCAM B</string>
+     <string>TAGCAM B: 0</string>
     </property>
     <property name="textFormat">
      <enum>Qt::AutoText</enum>
@@ -1961,8 +1961,8 @@ background-color:rgb(180,180,180);</string>
     <property name="geometry">
      <rect>
       <x>730</x>
-      <y>404</y>
-      <width>81</width>
+      <y>400</y>
+      <width>95</width>
       <height>21</height>
      </rect>
     </property>
@@ -1980,7 +1980,7 @@ border-radius: 7px;
 background-color:rgb(180,180,180);</string>
     </property>
     <property name="text">
-     <string>TAGCAM F</string>
+     <string>TAGCAM F: 0</string>
     </property>
     <property name="textFormat">
      <enum>Qt::AutoText</enum>

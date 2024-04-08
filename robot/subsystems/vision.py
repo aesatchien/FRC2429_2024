@@ -26,6 +26,7 @@ class Vision(SubsystemBase):
         for ix, key in enumerate(self.camera_dict.keys()):  # colors on top
             table = self.tables[ix]
             nt_key = 'orange' if key == 'orange' else 'tags'
+            self.camera_dict[key].update({'timestamp_entry': table.getDoubleTopic(f"_timestamp").subscribe(0)})
             self.camera_dict[key].update({'id_entry': table.getDoubleTopic(f"{nt_key}/id").subscribe(0)})
             self.camera_dict[key].update({'targets_entry': table.getDoubleTopic(f"{nt_key}/targets").subscribe(0)})
             self.camera_dict[key].update({'distance_entry': table.getDoubleTopic(f"{nt_key}/distance").subscribe(0)})
@@ -36,7 +37,9 @@ class Vision(SubsystemBase):
 
 
     def target_available(self, target='front_tags'):
-        return self.camera_dict[target]['targets_entry'].get() > 0
+        target_available = self.camera_dict[target]['targets_entry'].get() > 0
+        time_stamp_good = wpilib.Timer.getFPGATimestamp() - self.camera_dict[target]['timestamp_entry'].get() < 1
+        return target_available and time_stamp_good
 
     def get_tag_strafe(self, target='front_tags'):
         tag_available = self.target_available(target)
@@ -90,8 +93,8 @@ class Vision(SubsystemBase):
                 self.camera_values[key]['rotation'] = self.camera_dict[key]['rotation_entry'].get()
                 self.camera_values[key]['strafe'] = self.camera_dict[key]['strafe_entry'].get()
 
-            wpilib.SmartDashboard.putBoolean('orange_targets_exist', self.target_available('orange'))
             if wpilib.RobotBase.isReal():
+                wpilib.SmartDashboard.putBoolean('orange_targets_exist', self.target_available('orange'))
                 wpilib.SmartDashboard.putBoolean('tag_front_targets_exist', self.target_available('front_tags'))
                 wpilib.SmartDashboard.putBoolean('tag_back_targets_exist', self.target_available('back_tags'))
             else:  # test the keys
