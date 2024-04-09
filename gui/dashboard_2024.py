@@ -538,11 +538,24 @@ class Ui(QtWidgets.QMainWindow):
                     self.toggle_camera_thread()
                 else:
                     pass
+                if self.tagcam_back_alive and timestamp - self.tagcam_back_timestamp_entry.getDouble(-1) > allowed_delay:  # back tagcam died
+                    self.tagcam_back_alive = False
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected loss of Back Tagcam - information only')
+                if self.tagcam_front_alive and timestamp - self.tagcam_front_timestamp_entry.getDouble(-1) > allowed_delay:  # front tagcam died
+                    self.tagcam_front_alive = False
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected loss of Front Tagcam - information only')
+
             else:  # we started the camera but the thread is not running
                 if not self.ringcam_alive and timestamp - self.ringcam_timestamp_entry.getDouble(-1) < allowed_delay:  # ringcam alive again
                     self.ringcam_alive = True
                     self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected Ringcam - RESTARTING camera thread')
                     self.toggle_camera_thread()
+                if not self.tagcam_back_alive and timestamp - self.tagcam_back_timestamp_entry.getDouble(-1) < allowed_delay:  # back tagcam alive again
+                    self.tagcam_back_alive = True
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected Back Tagcam - information only')
+                if not self.tagcam_front_alive and timestamp - self.tagcam_front_timestamp_entry.getDouble(-1) < allowed_delay:  # front tagcam alive again
+                    self.tagcam_front_alive = True
+                    self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Detected Front Tagcam - information only')
 
         self.ringcam_alive = timestamp - self.ringcam_timestamp_entry.getDouble(-1) < allowed_delay
         ringcam_style = style_on if self.ringcam_alive else style_off
