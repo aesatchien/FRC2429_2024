@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QTimer, QEvent, QThread, QObject, pyqtSignal
 #from PyQt5.QtWidgets import  QApplication, QTreeWidget, QTreeWidgetItem
 
 import qlabel2
+from warning_label import WarningLabel
 
 from ntcore import NetworkTableType, NetworkTableInstance
 import wpimath.geometry as geo
