@@ -469,10 +469,18 @@ class Swerve (Subsystem):
             wpilib.SmartDashboard.putNumberArray('_navx_YPR', ypr)
 
             # monitor power as well
-            voltage = self.pdh.getVoltage()
+            if wpilib.RobotBase.isReal():
+                voltage = self.pdh.getVoltage()
+                total_current = self.pdh.getTotalCurrent()
+            else:
+                # make up a current based on how fast we're going
+                total_current = 2 + 10 * sum([math.fabs(module.drivingEncoder.getVelocity()) for module in self.swerve_modules])
+                voltage = 12.5 - 0.02 * total_current
+
             wpilib.SmartDashboard.putNumber('_pdh_voltage', voltage)
-            total_current = self.pdh.getTotalCurrent()
             wpilib.SmartDashboard.putNumber('_pdh_current', total_current)
+
+
 
             if constants.k_swerve_debugging_messages:  # this is just a bit much unless debugging the swerve
                 angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]

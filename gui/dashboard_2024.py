@@ -382,15 +382,15 @@ class Ui(QtWidgets.QMainWindow):
         'qlabel_drive_to_amp_indicator': {'widget': self.qlabel_drive_to_amp_indicator, 'nt': '/SmartDashboard/ToAmp/run ning', 'command': '/SmartDashboard/ToAmp/running'},
         'qlabel_can_report_indicator': {'widget': self.qlabel_can_report_indicator, 'nt': '/SmartDashboard/CANStatus/running', 'command': '/SmartDashboard/CANStatus/running'},
 
-            # NUMERIC INDICATORS
+            # NUMERIC INDICATORS - LCDS should be phased out since they are a legacy item (and not particularly cool anyway)
         'qlcd_navx_heading': {'widget': self.qlcd_navx_heading, 'nt': '/SmartDashboard/_navx', 'command': None},
         'qlcd_upper_crank_angle': {'widget': self.qlcd_upper_crank_angle, 'nt':'/SmartDashboard/upper_arm_degrees', 'command': None},
         'qlcd_lower_crank_angle': {'widget': self.qlcd_lower_crank_angle, 'nt': '/SmartDashboard/crank_arm_degrees', 'command': None},
         'qlcd_indexer_speed': {'widget' :self.qlcd_indexer_speed, 'nt': '/SmartDashboard/indexer_output', 'command': None},
         'qlcd_intake_speed': {'widget': self.qlcd_intake_speed, 'nt': '/SmartDashboard/intake_output', 'command': None},
         'qlcd_shooter_speed': {'widget': self.qlcd_shooter_speed, 'nt': '/SmartDashboard/shooter_rpm', 'command': None},
-        'qlcd_voltage': {'widget': self.qlcd_voltage, 'nt': '/SmartDashboard/_pdh_voltage', 'command': None},
-        'qlcd_current': {'widget': self.qlcd_current, 'nt': '/SmartDashboard/_pdh_current', 'command': None},
+        'qlabel_pdh_voltage_monitor': {'widget': self.qlabel_pdh_voltage_monitor, 'nt': '/SmartDashboard/_pdh_voltage', 'command': None},
+        'qlabel_pdh_current_monitor': {'widget': self.qlabel_pdh_current_monitor, 'nt': '/SmartDashboard/_pdh_current', 'command': None},
 
             # LEFTOVER TO SORT FROM 2023
         #'qlabel_align_to_target_indicator': {'widget': self.qlabel_align_to_target_indicator, 'nt': '/SmartDashboard/AutoSetupScore/running', 'command': '/SmartDashboard/AutoSetupScore/running'},
@@ -451,10 +451,14 @@ class Ui(QtWidgets.QMainWindow):
                     else:  # default style behaviour
                         style = style_on if d['entry'].getBoolean(False) else style_off
                     d['widget'].setStyleSheet(style)
-                elif 'lcd' in key:
+                elif 'lcd' in key:  # old-style LCDs
                     #  print(f'LCD: {key}')
                     value = int(d['entry'].getDouble(0))
                     d['widget'].display(str(value))
+                elif 'monitor' in key:  # labels acting as numeric monitors
+                    # voltage needs a decimal, current does not
+                    value = f"{d['entry'].getDouble(0):0.1f}" if 'volt' in key else f"{int(d['entry'].getDouble(0)):3d}"
+                    d['widget'].setText(f'{value}')
                 elif 'combo' in key:  # ToDo: need a simpler way to update the combo boxes
                     new_list = d['entry'].getStringArray([])
                     if new_list != self.autonomous_list:
@@ -574,8 +578,6 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_tagcam_front_indicator.setText(f'TAGCAM F: {self.tagcam_front_connections:2d}')
         self.qlabel_tagcam_front_indicator.setStyleSheet(tagcam_front_style)
 
-        # try to reset the camera
-
         # --------------  SPEAKER POSITION CALCULATIONS  ---------------
         k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
         k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
@@ -618,6 +620,29 @@ class Ui(QtWidgets.QMainWindow):
         # self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}')  # updated below
         self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}m  {int(angle_to_speaker):>+3d}°')
         self.qlabel_shot_distance.setStyleSheet(shot_style)
+
+        # update the PDH measurements colors
+        voltage = self.widget_dict['qlabel_pdh_voltage_monitor']['entry'].getDouble(0)
+        text_color = '(0,0,0)'
+        if voltage < 8:
+            hue = 0  # red
+            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+        elif voltage > 12:
+            hue = 100  # green
+        else:
+            hue = int(100 - 100 * (12 - voltage) / 4 )
+        voltage_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb{text_color};"
+        self.qlabel_pdh_voltage_monitor.setStyleSheet(voltage_style)
+
+        current = self.widget_dict['qlabel_pdh_current_monitor']['entry'].getDouble(0)
+        if current > 160:
+            hue = 0  # red
+        elif current < 60:
+            hue = 100  # green
+        else:
+            hue = max(0, min(100, 100 - int(current - 60)))  # lock the current hue between 0 (red) and 100 (green)
+        current_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb(0, 0, 0);"
+        self.qlabel_pdh_current_monitor.setStyleSheet(current_style)
 
         # update the 2024 arm configuration indicator
         config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
