@@ -472,7 +472,7 @@ class Swerve (Subsystem):
             voltage = self.pdh.getVoltage()
             wpilib.SmartDashboard.putNumber('_pdh_voltage', voltage)
             total_current = self.pdh.getTotalCurrent()
-            wpilib.SmartDashboard.putNumber('_pdh_voltage', total_current)
+            wpilib.SmartDashboard.putNumber('_pdh_current', total_current)
 
             if constants.k_swerve_debugging_messages:  # this is just a bit much unless debugging the swerve
                 angles = [m.turningEncoder.getPosition() for m in self.swerve_modules]
