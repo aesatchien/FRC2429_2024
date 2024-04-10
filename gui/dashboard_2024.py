@@ -32,7 +32,7 @@ class CameraWorker(QObject):
         self.qtgui = qtgui
         self.frames = 0
         self.previous_read_time = 0
-        self.max_fps = 30
+        self.max_fps = 60
         self.error_count = 0
 
     def stop(self):
@@ -61,21 +61,20 @@ class CameraWorker(QObject):
             old_url = url
 
             now = time.time()
-            if now - self.previous_read_time > 1 / self.max_fps:
+            if now - self.previous_read_time >  1.0 / self.max_fps:
                 try:
                     ret, frame = cap.read()
                     self.frames += 1
                     pixmap = self.qtgui.convert_cv_qt(frame, self.qtgui.qlabel_camera_view)
                     self.qtgui.qlabel_camera_view.setPixmap(pixmap)
                     self.qtgui.qlabel_camera_view: QtWidgets.QLabel
-                    #self.qtgui.qlabel_camera_view.repaint()
-                    #self.qtgui.qlabel_camera_view.repaint()
                     #self.qtgui.qlabel_camera_view.repaint()  # do not repaint in the thread.  the main loop takes care of that.
                     # self.progress.emit(1)
                     self.previous_read_time = now
                 except Exception as e:
                     self.error_count += 1
-                    if self.error_count % 100000 == 0:
+                    self.previous_read_time = now
+                    if self.error_count % 100 == 0:
                         print(f'{datetime.today().strftime("%H%M%S")} error count:{self.error_count}: cv read error: {e}')
                     # should I stop the thread here? or just let the user fix it by restarting manually?
 
@@ -631,12 +630,12 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_position_indicator.setStyleSheet(postion_style)
 
         self.counter += 1
-        if self.counter % 80 == 0:  # display an FPS every 2s or so
+        if self.counter % 80 == 0:  # display an FPS every 2s or so  REMEMBER THIS MAX IS SET BY THE STREAMER
             current_time = time.time()
             time_delta = current_time - self.previous_time
             frames = self.worker.frames if self.worker is not None else 0
 
-            msg = f'Current Gui Updates/s : {100/(time_delta):.1f}, Camera updates/s : {(frames-self.previous_frames)/time_delta:.1f}'
+            msg = f'Current Gui Updates/s : {100/(time_delta):.1f}, Camera updates/s : {(frames-self.previous_frames)/time_delta:.1f} (server enforced BW limit)'
             self.statusBar().showMessage(msg)
             self.previous_time = current_time
             self.previous_frames = frames
