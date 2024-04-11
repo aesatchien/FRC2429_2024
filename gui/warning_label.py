@@ -1,9 +1,10 @@
 # i wanted to be able to set all of these properties from QtDesigner but I can't get them to show up, so this isn't used
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QColor
-from PyQt5.QtCore import pyqtProperty, Qt
+from PyQt5.QtCore import pyqtProperty, Qt, pyqtSignal
 
 class WarningLabel(QLabel):
+    clicked = pyqtSignal()
     def __init__(self, parent=None):
         super().__init__(parent)
         self._min_val = 0
@@ -12,6 +13,10 @@ class WarningLabel(QLabel):
         self._display_float = False
 
     @pyqtProperty(int, designable=True)
+    def min_val(self):
+        return self._min_val
+
+    @min_val.getter
     def min_val(self):
         return self._min_val
 
