@@ -493,7 +493,7 @@ class Ui(QtWidgets.QMainWindow):
             bg_color = green if d['entry'].getBoolean(True) else white
             self.qlistwidget_commands.item(ix).setBackground(bg_color)
 
-        # update the ball position on the hub target image
+        # update the ball position on the hub target image - left over from 2022 that I need to get rid of
         hub_targets = self.widget_dict['hub_targets']['entry'].getDouble(0)
         hub_rotation = self.widget_dict['hub_rotation']['entry'].getDouble(0) - 5
         hub_distance = self.widget_dict['hub_distance']['entry'].getDouble(0)
@@ -622,7 +622,7 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_shot_distance.setText(f'SHOT DIST\n{shot_distance:.1f}m  {int(angle_to_speaker):>+3d}°')
         self.qlabel_shot_distance.setStyleSheet(shot_style)
 
-        # update the PDH measurements colors
+        # update the PDH measurements colors - all of this can actually be done in the WarningLabel class except the blinking
         voltage = self.widget_dict['qlabel_pdh_voltage_monitor']['entry'].getDouble(0)
         text_color = '(0,0,0)'
         if voltage < 8:
