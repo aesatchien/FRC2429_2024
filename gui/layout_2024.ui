@@ -1331,7 +1331,7 @@ background-color:rgb(127, 127, 127);</string>
        <string>PDH Current</string>
       </property>
      </widget>
-     <widget class="QLabel2" name="qlabel_pdh_voltage_monitor">
+     <widget class="WarningLabel" name="qlabel_pdh_voltage_monitor">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -1351,8 +1351,8 @@ background-color:rgb(127, 127, 127);</string>
       </property>
       <property name="font">
        <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>14</pointsize>
+        <family>Arial</family>
+        <pointsize>18</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -1373,7 +1373,7 @@ background-color:rgb(127, 127, 127);
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLabel2" name="qlabel_pdh_current_monitor">
+     <widget class="WarningLabel" name="qlabel_pdh_current_monitor">
       <property name="enabled">
        <bool>true</bool>
       </property>
@@ -1387,8 +1387,8 @@ background-color:rgb(127, 127, 127);
       </property>
       <property name="font">
        <font>
-        <family>MS Shell Dlg 2</family>
-        <pointsize>14</pointsize>
+        <family>Arial</family>
+        <pointsize>18</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -1914,7 +1914,7 @@ background-color:rgb(0, 20, 250);</string>
      <string>Reconnect NT</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="qt_button_test">
+   <widget class="QPushButton" name="qt_button_swap_sim">
     <property name="geometry">
      <rect>
       <x>590</x>
@@ -2103,7 +2103,7 @@ background-color:rgb(180,180,180);</string>
    <zorder>qcombobox_cameras</zorder>
    <zorder>qradiobutton_autoswitch</zorder>
    <zorder>qt_button_reconnect</zorder>
-   <zorder>qt_button_test</zorder>
+   <zorder>qt_button_swap_sim</zorder>
    <zorder>qlabel_camera_view</zorder>
    <zorder>qlabel_alliance_indicator</zorder>
    <zorder>qlabel_ringcam_indicator</zorder>
@@ -2151,6 +2151,11 @@ background-color:rgb(180,180,180);</string>
    <class>QLabel2</class>
    <extends>QLabel</extends>
    <header>qlabel2.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarningLabel</class>
+   <extends>QLabel</extends>
+   <header>warning_label</header>
   </customwidget>
  </customwidgets>
  <resources>

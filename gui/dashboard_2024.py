@@ -93,7 +93,7 @@ class Ui(QtWidgets.QMainWindow):
         # trick to inherit all the UI elements from the design file  - DO NOT CODE THE LAYOUT!
         uic.loadUi('layout_2024.ui', self)  # if this isn't in the directory, you got no program
 
-        # set up network tables
+        # set up network tables - TODO need to really see which of these is necessary
         self.ntinst = NetworkTableInstance.getDefault()
         self.servers = ["10.24.29.2", "127.0.0.1"] #  "roboRIO-2429-FRC.local"]  # need to add the USB one here
         # self.ntinst.startClient3(identity=f'PyQt Dashboard {datetime.today().strftime("%H%M%S")}')
@@ -103,6 +103,7 @@ class Ui(QtWidgets.QMainWindow):
         #self.ntinst.setServer(servers=self.servers)  # does not seem to work in round-robin in 2023 code
         self.ntinst.setServerTeam(2429)
         self.connected = self.ntinst.isConnected()
+
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
@@ -135,7 +136,10 @@ class Ui(QtWidgets.QMainWindow):
         self.tagcam_back_alive = False
         self.tagcam_front_alive = False
 
-
+        # set up the warning labels - much of the formatting is handled in the widget class itself
+        self.qlabel_pdh_voltage_monitor: WarningLabel
+        self.qlabel_pdh_voltage_monitor.update_settings(min_val=8, max_val=12, red_high=False, display_float=True)
+        self.qlabel_pdh_current_monitor.update_settings(min_val=60, max_val=160, red_high=True, display_float=False)
 
         self.initialize_widgets()
         #QTimer.singleShot(2000, self.initialize_widgets())  # wait 2s for NT to initialize
@@ -161,7 +165,7 @@ class Ui(QtWidgets.QMainWindow):
 
         # button connections
         self.qt_button_set_key.clicked.connect(self.update_key)
-        self.qt_button_test.clicked.connect(self.test)
+        self.qt_button_swap_sim.clicked.connect(self.increment_server)
         self.qt_button_reconnect.clicked.connect(self.reconnect)
         # self.qt_button_camera_enable.clicked.connect(lambda _: setattr(self, 'camera_enabled', not self.camera_enabled))
         self.qt_button_camera_enable.clicked.connect(self.toggle_camera_thread)
@@ -190,7 +194,7 @@ class Ui(QtWidgets.QMainWindow):
 
     # ------------------- FUNCTIONS, MISC FOR NOW  --------------------------
 
-    def reconnect(self):  # reconnect to NT4 server
+    def reconnect(self):  # reconnect to NT4 server - do i ever need this?
         sleep_time = 0.1
 
         self.ntinst.stopClient()
@@ -202,6 +206,20 @@ class Ui(QtWidgets.QMainWindow):
         self.ntinst.setServerTeam(2429)
         time.sleep(sleep_time)
         self.connected = self.ntinst.isConnected()
+
+    def increment_server(self):  # changes to next server in server list - TODO - figure our how to make this immediate
+        current_server = self.servers[self.server_index]
+        self.server_index = (self.server_index + 1) % len(self.servers)
+        self.ntinst.setServer(server_name=self.servers[self.server_index])
+
+        print(f'Changed server from {current_server} to {self.servers[self.server_index]}')
+        self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Changed server from {current_server} to {self.servers[self.server_index]} ... wait 5s')
+
+        # nothing seems to help speed this up - none of the following do anything useful
+        # self.ntinst.flush()  # seems to take like 5s to change servers - flush does not help, disconnect does not help
+        # self.ntinst.stopClient()  # makes things worse by hanging until the new connection is active
+        # self.ntinst.startClient4(identity=f'PyQt Dashboard {datetime.today().strftime("%H%M%S")}')
+        # self.connected = self.ntinst.isConnected()
 
     def check_url(self, url):
         try:
@@ -284,11 +302,7 @@ class Ui(QtWidgets.QMainWindow):
             self.qlabel_camera_view.repaint()"""
 
     def test(self):  # test function for checking new signals
-        # print('Test was called', flush=True)
-        current_server = self.servers[self.server_index]
-        self.server_index = (self.server_index + 1 ) % len(self.servers)
-        self.ntinst.setServer(server_name=self.servers[self.server_index])
-        print(f'Changed server from {current_server} to {self.servers[self.server_index]}')
+        print('Test was called', flush=True)
 
 
     def filter_nt_keys_combo(self):  # used to simplify the nt key list combo box entries
@@ -457,9 +471,11 @@ class Ui(QtWidgets.QMainWindow):
                     value = int(d['entry'].getDouble(0))
                     d['widget'].display(str(value))
                 elif 'monitor' in key:  # labels acting as numeric monitors
-                    # voltage needs a decimal, current does not
-                    value = f"{d['entry'].getDouble(0):0.1f}" if 'volt' in key else f"{int(d['entry'].getDouble(0)):3d}"
-                    d['widget'].setText(f'{value}')
+                    # voltage needs a decimal, current does not - handled in the WarningLabel class
+                    # value = f"{d['entry'].getDouble(0):0.1f}" if 'volt' in key else f"{int(d['entry'].getDouble(0)):3d}"
+                    # d['widget'].setText(f'{value}')
+                    value = d['entry'].getDouble(0)
+                    d['widget'].set_value(value)
                 elif 'combo' in key:  # ToDo: need a simpler way to update the combo boxes
                     new_list = d['entry'].getStringArray([])
                     if new_list != self.autonomous_list:
@@ -623,27 +639,27 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_shot_distance.setStyleSheet(shot_style)
 
         # update the PDH measurements colors - all of this can actually be done in the WarningLabel class except the blinking
-        voltage = self.widget_dict['qlabel_pdh_voltage_monitor']['entry'].getDouble(0)
-        text_color = '(0,0,0)'
-        if voltage < 8:
-            hue = 0  # red
-            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
-        elif voltage > 12:
-            hue = 100  # green
-        else:
-            hue = int(100 - 100 * (12 - voltage) / 4 )
-        voltage_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb{text_color};"
-        self.qlabel_pdh_voltage_monitor.setStyleSheet(voltage_style)
-
-        current = self.widget_dict['qlabel_pdh_current_monitor']['entry'].getDouble(0)
-        if current > 160:
-            hue = 0  # red
-        elif current < 60:
-            hue = 100  # green
-        else:
-            hue = max(0, min(100, 100 - int(current - 60)))  # lock the current hue between 0 (red) and 100 (green)
-        current_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb(0, 0, 0);"
-        self.qlabel_pdh_current_monitor.setStyleSheet(current_style)
+        # voltage = self.widget_dict['qlabel_pdh_voltage_monitor']['entry'].getDouble(0)
+        # text_color = '(0,0,0)'
+        # if voltage < 8:
+        #     hue = 0  # red
+        #     text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+        # elif voltage > 12:
+        #     hue = 100  # green
+        # else:
+        #     hue = int(100 - 100 * (12 - voltage) / 4 )
+        # voltage_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb{text_color};"
+        # self.qlabel_pdh_voltage_monitor.setStyleSheet(voltage_style)
+        #
+        # current = self.widget_dict['qlabel_pdh_current_monitor']['entry'].getDouble(0)
+        # if current > 160:
+        #     hue = 0  # red
+        # elif current < 60:
+        #     hue = 100  # green
+        # else:
+        #     hue = max(0, min(100, 100 - int(current - 60)))  # lock the current hue between 0 (red) and 100 (green)
+        # current_style = f"border: 7px; border-radius: 7px; background-color:hsv({hue}, 240, 240); color:rgb(0, 0, 0);"
+        # self.qlabel_pdh_current_monitor.setStyleSheet(current_style)
 
         # update the 2024 arm configuration indicator
         config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
