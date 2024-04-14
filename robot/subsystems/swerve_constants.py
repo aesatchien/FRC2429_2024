@@ -9,7 +9,7 @@ class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
     k_drive_controller_type = CANSparkFlex
-    kMaxSpeedMetersPerSecond = 4.75  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out
+    kMaxSpeedMetersPerSecond = 4.75  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out on NEOs
     kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
     kMaxTotalSpeed = 1.1 * math.sqrt(2) * kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
@@ -125,7 +125,8 @@ class ModuleConstants:
     kDrivingMotorIdleMode = DriveConstants.k_drive_controller_type.IdleMode.kBrake
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
 
-    kDrivingMotorCurrentLimit = 80  # amp
+    # 2024 0414 CJH - 80A allows the drive motors to pull WAY too much and we brown out (AVR)
+    kDrivingMotorCurrentLimit = 50  # amp - set to 50 for worlds to make sure no brownouts - maybe 60 will still be safe
     kTurningMotorCurrentLimit = 40  # amp
 
 class AutoConstants:  # retaining this from original swerve code template, but we don't use (yet)
