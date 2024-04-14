@@ -102,7 +102,7 @@ class PhysicsEngine:
         self.physics_controller.move_robot(geo.Transform2d(self.x, self.y, 0))
 
         # Create a Mechanism2d display of an Arm
-        self.mech2d = wpilib.Mechanism2d(60, 60)
+        self.mech2d = wpilib.Mechanism2d(40, 60, backgroundColor=wpilib.Color8Bit(wpilib.Color.kNavy))
         self.armBase = self.mech2d.getRoot("ArmBase", 30, 20)
         self.chassisBase = self.mech2d.getRoot("chassisBase", 5, 13)
         self.chassis = self.chassisBase.appendLigament(
