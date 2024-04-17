@@ -102,7 +102,7 @@ class Led(commands2.Subsystem):
 
                     elif self.indicator == Led.Indicator.AMP:
                         # solid red
-                        led.setRGB(123, 30, 30)
+                        led.setRGB(180, 30, 30)
 
                     elif self.indicator == Led.Indicator.INTAKE:
                         # solid blue

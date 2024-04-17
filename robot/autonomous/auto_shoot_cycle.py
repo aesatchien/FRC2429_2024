@@ -12,7 +12,8 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
         self.container = container
         self.addCommands(commands2.PrintCommand('** BEGIN AUTO SHOOT CYCLE)'))
         # back up indexer, turn on shooter, wait, fire indexer full speed into,
-        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-0.33, force='on', timeout=0.1))
+        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-0.33, force='on', timeout=0.1
+                                       ))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
         # in AV speaker shots keep bouncing out - so we lowered from 3500 to 3200 rmp  20240404 CJH
         self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='on', rpm=3200, amp_rpm=1500, # usually rpm=3500, amp_rpm=2000
