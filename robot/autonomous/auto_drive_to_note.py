@@ -34,7 +34,8 @@ class AutoDriveToNote(commands2.CommandBase):
         self.reached_ring = False
         self.addRequirements(self.container.drive)  # commandsv2 version of requirements
 
-        self.pid_max = 0.1  # this will be a velocity based on the stick, so a % of max
+        self.pid_forward_max = 0.25  # changes from 0.1, was too slow, number is % of max velociy
+        self.pid_turning_max = 0.15  # changed from 0.1 at beginning to 0.15 - slightly stronger turn
 
     def initialize(self) -> None:
         self.forward_pid.setSetpoint(0)
@@ -59,11 +60,11 @@ class AutoDriveToNote(commands2.CommandBase):
 
         if not self.reached_ring:
             if not self.forward_pid.atSetpoint():
-                desired_rotation = constants.clamp(pid_rotation_output,-self.pid_max, self.pid_max)
+                desired_rotation = constants.clamp(pid_rotation_output, -self.pid_turning_max, self.pid_turning_max)
                 if (math.fabs(distance) < 0.1):
                     desired_forward = self.minimum_velocity
                 else:
-                    desired_forward = constants.clamp(pid_distance_output, -self.pid_max, self.pid_max)
+                    desired_forward = constants.clamp(pid_distance_output, -self.pid_forward_max, self.pid_forward_max) + 0.1
                 self.swerve.drive(xSpeed=desired_forward, ySpeed=0, rot=desired_rotation, fieldRelative=False, rate_limited=True, keep_angle=True)
             else:  # forward pid is at setpoint, transition to pure forwards
                 self.reached_ring = True
