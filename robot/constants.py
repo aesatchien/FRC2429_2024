@@ -81,8 +81,8 @@ k_crank_arm_dict = {
     'encoder_position_conversion_factor': 2 * math.pi / k_lower_crank_gear_ratio,  # using sparkmax internal encoder
     'k_motor_count': 1,  #
     'k_kArmOffsetRads': 1.57,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-    'k_MaxVelocityRadPerSecond': 2.75,  # was 1.5 starting Tempe
-    'k_MaxAccelerationRadPerSecSquared': 2.75,  # was 1.0 starting Tempe
+    'k_MaxVelocityRadPerSecond': 3.0,  # was 1.5 starting Tempe
+    'k_MaxAccelerationRadPerSecSquared': 3.0,  # was 1.0 starting Tempe
     'k_kSVolts': 0.01,  # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.51 / 1,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 5.85,  # stays the same with one or two motors, based on the NEO itself and gear ratio
@@ -112,12 +112,12 @@ k_shooter_arm_dict = {
     'name': 'upper_arm',
     'max_angle': 109, 'min_angle': -95,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset':  0.575,  # 0.45, # 0.420,  # makes horizontal 0 with no position factor
+    'abs_encoder_zero_offset':  0.595,  # 0.45, # 0.420,  # makes horizontal 0 with no position factor
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal
-    'k_MaxVelocityRadPerSecond': 5,  # was 3 starting Tempe (but we added a spring)
-    'k_MaxAccelerationRadPerSecSquared': 5,  # was 3 starting Tempe
+    'k_MaxVelocityRadPerSecond': 5.5,  # was 3 starting Tempe (but we added a spring)
+    'k_MaxAccelerationRadPerSecSquared': 5.5,  # was 3 starting Tempe
     'k_kSVolts': 1.0,  # was 0.3 before chain # not estimated by recalc, so we have to make something up
     'k_kGVolts': 0.71 / 2,  # cuts in half with two motors, goes up with mass and distance, down with efficiency
     'k_kVVoltSecondPerRad': 1.95,  # stays the same with one or two motors, based on the NEO itself and gear ratio

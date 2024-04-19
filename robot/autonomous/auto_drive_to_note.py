@@ -29,7 +29,7 @@ class AutoDriveToNote(commands2.CommandBase):
         self.vision = container.vision
 
         self.move_forward_time = 1/2  # now unused
-        self.minimum_velocity = 0.2
+        self.minimum_velocity = 0.25
         self.move_forward_velocity = 0.25  # likely never going to be called
         self.reached_ring = False
         self.addRequirements(self.container.drive)  # commandsv2 version of requirements
@@ -64,7 +64,7 @@ class AutoDriveToNote(commands2.CommandBase):
                 if (math.fabs(distance) < 0.1):
                     desired_forward = self.minimum_velocity
                 else:
-                    desired_forward = constants.clamp(pid_distance_output, -self.pid_forward_max, self.pid_forward_max) + 0.1
+                    desired_forward = constants.clamp(pid_distance_output, -self.pid_forward_max, self.pid_forward_max) + 0.2
                 self.swerve.drive(xSpeed=desired_forward, ySpeed=0, rot=desired_rotation, fieldRelative=False, rate_limited=True, keep_angle=True)
             else:  # forward pid is at setpoint, transition to pure forwards
                 self.reached_ring = True

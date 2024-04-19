@@ -126,7 +126,7 @@ class ModuleConstants:
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
 
     # 2024 0414 CJH - 80A allows the drive motors to pull WAY too much and we brown out (AVR)
-    kDrivingMotorCurrentLimit = 50  # amp - set to 50 for worlds to make sure no brownouts - maybe 60 will still be safe
+    kDrivingMotorCurrentLimit = 55  # amp - set to 50 for worlds to make sure no brownouts - maybe 60 will still be safe
     kTurningMotorCurrentLimit = 40  # amp
 
 class AutoConstants:  # retaining this from original swerve code template, but we don't use (yet)
