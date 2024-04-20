@@ -47,7 +47,7 @@ k_bumper_height = 0.22
 # k_left_winch_neo_port = 3
 k_left_servo_port = 0
 k_right_servo_port = 1
-k_trap_servo_port = 2
+k_trap_servo_port = 3  # we broke 2 at Houston
 
 k_follower_winch_neo_port =3
 k_left_winch_neo_port = 4
@@ -58,7 +58,7 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-68, 'lower': 46},  # was 63
+    'intake': {'upper':-67, 'lower': 46},  # was 63
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 52, 'lower': 100},
