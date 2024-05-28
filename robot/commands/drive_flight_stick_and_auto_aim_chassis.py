@@ -7,30 +7,27 @@ import wpilib
 
 from subsystems.swerve import Swerve  # allows us to access the definitions
 from wpilib import SmartDashboard
-from commands2.button import CommandXboxController
+from commands2.button import CommandJoystick
 from wpimath.geometry import Translation2d, Rotation2d
 from wpimath.filter import Debouncer
 from wpimath.controller import PIDController
 import constants
 from subsystems.swerve_constants import DriveConstants as dc
 
-class DriveAndAutoAimChassis(commands2.Command):
-    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False, shooting_backwards=True) -> None:
+class DriveFlightStickAndAutoAimChassis(commands2.Command):
+    def __init__(self, container, swerve: Swerve, flight_stick: CommandJoystick, velocity_multiplier=None, field_oriented=True, rate_limited=False, shooting_backwards=True) -> None:
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
         self.shooting_backwards = shooting_backwards
         self.swerve = swerve
+        self.flight_stick = flight_stick
         self.velocity_multiplier = velocity_multiplier
         self.field_oriented = field_oriented  # Sanjith wants this on a button instead
         self.rate_limited = rate_limited
         self.addRequirements(*[self.swerve])
         # can't import container and don't want to pass lambdas just yet
-        self.controller: typing.Optional[CommandXboxController] = self.container.driver_command_controller
-        self.slow_mode_trigger = self.controller.leftBumper()
-        self.robot_oriented_trigger = self.controller.rightBumper()
-        self.debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
-        self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
+        # self.robot_oriented_debouncer = Debouncer(0.1, Debouncer.DebounceType.kBoth)
         self.rotation_pid = PIDController(4, 0.01, 0) # Values taken from pathplanner's in the swerve subsystem
         self.rotation_pid.enableContinuousInput(-math.pi, math.pi)
 
@@ -42,12 +39,7 @@ class DriveAndAutoAimChassis(commands2.Command):
 
     def execute(self) -> None:
 
-        slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
-
-        if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
-            self.field_oriented = False
-        else:
-            self.field_oriented = True
+        slowmode_multiplier = 0.2 + 0.8 * (1 - self.flight_stick.getThrottle())/2
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
 
@@ -66,7 +58,7 @@ class DriveAndAutoAimChassis(commands2.Command):
             desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
         else:
             desired_angle = translation_robot_to_speaker.angle()
-        self.rotation_pid.setSetpoint(desired_angle.radians())
+        self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards speaker since we shoot like that
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
@@ -78,8 +70,8 @@ class DriveAndAutoAimChassis(commands2.Command):
             desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * self.velocity_multiplier, db_low=0)
         else:
             desired_rot = self.apply_deadband(self.apply_deadband(pid_output, db_low=0) * max_angular, db_low=0)
-        desired_fwd = -self.input_transform(1.0 * self.controller.getLeftY()) * max_linear
-        desired_strafe = -self.input_transform(1.0 * self.controller.getLeftX()) * max_linear
+        desired_fwd = -self.input_transform(1.0 * self.flight_stick.getY()) * max_linear
+        desired_strafe = -self.input_transform(1.0 * self.flight_stick.getX()) * max_linear
         # desired_rot = self.rotation_pid.calculate(self.swerve.get_pose().rotation().radians())
 
         if wpilib.RobotBase.isSimulation():

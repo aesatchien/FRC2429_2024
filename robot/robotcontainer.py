@@ -4,7 +4,7 @@ import time
 
 import commands2
 import wpilib
-from commands2.button import CommandXboxController
+from commands2.button import CommandXboxController, CommandJoystick
 
 # pathplanner
 from pathplannerlib.auto import NamedCommands, PathPlannerPath
@@ -33,7 +33,7 @@ from autonomous.auto_drive_to_tag import AutoDriveToTag
 from autonomous.auto_drive_to_note import AutoDriveToNote
 
 # commands
-from commands.drive_by_joystick_swerve import DriveByJoystickSwerve
+from commands.drive_by_flight_stick_swerve import DriveByFlightStickSwerve
 from commands.gyro_reset import GyroReset
 from commands.led_toggle import LedToggle
 from commands.acquire_note_toggle import AcquireNoteToggle
@@ -48,7 +48,7 @@ from commands.eject_all import EjectAll
 from commands.calibrate_lower_crank_by_limit_switch import CalibrateLowerCrankByLimitSwitch
 from commands.arm_coast import CrankArmCoast
 from commands.move_arm_by_pose import MoveArmByPose
-from commands.drive_and_auto_aim_chassis import DriveAndAutoAimChassis
+from commands.drive_flight_stick_and_auto_aim_chassis import DriveFlightStickAndAutoAimChassis
 from commands.smart_intake import SmartIntake
 from commands.system_interrupt import SystemInterrupt
 from commands.can_status import CANStatus
@@ -91,7 +91,7 @@ class RobotContainer:
         self.configure_driver_joystick()
         self.configure_swerve_bindings()
         # swerve driving
-        self.drive.setDefaultCommand(DriveByJoystickSwerve(container=self, swerve=self.drive,
+        self.drive.setDefaultCommand(DriveByFlightStickSwerve(container=self, swerve=self.drive, flight_stick=self.driver_command_flightstick,
                             field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
 
         # optionally skip the copilot and non-drivetrain subsystems for debugging
@@ -102,7 +102,7 @@ class RobotContainer:
                 self.bind_copilot_buttons()
 
         # this has to be before initialize_dashboard but after configuring controls 3/22/24 LHACK
-        self.registerCommands()
+        # self.registerCommands()
 
         self.initialize_dashboard()
 
@@ -114,33 +114,58 @@ class RobotContainer:
 
     def configure_driver_joystick(self):
         # The driver's controller
-        self.driver_command_controller = CommandXboxController(constants.k_driver_controller_port)  # 2024 way
-        self.trigger_a = self.driver_command_controller.a()  # 2024 way
-        self.trigger_b = self.driver_command_controller.b()
-        self.trigger_x = self.driver_command_controller.x()
-        self.trigger_y = self.driver_command_controller.y()
-        self.trigger_rb = self.driver_command_controller.rightBumper()
-        self.trigger_lb = self.driver_command_controller.leftBumper()
-        self.trigger_start = self.driver_command_controller.start()
-        self.trigger_back = self.driver_command_controller.back()
-        self.trigger_d = self.driver_command_controller.povDown()
-        self.trigger_u = self.driver_command_controller.povUp()
-        self.trigger_r = self.driver_command_controller.povRight()
-        self.trigger_l = self.driver_command_controller.povLeft()
-        self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
-        self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2) # This is used as a gas pedal in drive_by_joystick_swerve
+        self.driver_command_flightstick = CommandJoystick(constants.k_driver_controller_port)
+        self.driver_command_flightstick.setThrottleChannel(2)
+        self.driver_command_flightstick.setTwistChannel(3)
+        self.trigger_1 = self.driver_command_flightstick.button(1)  # trigger
+        self.trigger_2 = self.driver_command_flightstick.button(2)
+        self.trigger_3 = self.driver_command_flightstick.button(3)
+        self.trigger_4 = self.driver_command_flightstick.button(4)
+        self.trigger_5 = self.driver_command_flightstick.button(5)
+        self.trigger_6 = self.driver_command_flightstick.button(6)
+        self.trigger_7_shift = self.driver_command_flightstick.button(7)
+        self.trigger_8 = self.driver_command_flightstick.button(8)
+        self.trigger_9 = self.driver_command_flightstick.button(9)
+        self.trigger_10 = self.driver_command_flightstick.button(10)
+        self.trigger_11 = self.driver_command_flightstick.button(11)  # SE
+        self.trigger_12 = self.driver_command_flightstick.button(12)  # ST
+        self.trigger_left_rudder = self.driver_command_flightstick.axisLessThan(4, -0.4)
+        self.trigger_right_rudder = self.driver_command_flightstick.axisGreaterThan(4, 0.4)
 
-        # BUTTONS THAT WORK ONLY WITHOUT THE LB
-        self.trigger_only_a = self.trigger_a.and_(self.trigger_lb.not_())
-        self.trigger_only_b = self.trigger_b.and_(self.trigger_lb.not_())
-        self.trigger_only_x = self.trigger_x.and_(self.trigger_lb.not_())
-        self.trigger_only_y = self.trigger_y.and_(self.trigger_lb.not_())
+        self.trigger_shift_1 = self.trigger_1.and_(self.trigger_7_shift)
+        self.trigger_shift_2 = self.trigger_2.and_(self.trigger_7_shift)
+        self.trigger_shift_4 = self.trigger_4.and_(self.trigger_7_shift)
+        self.trigger_shift_8 = self.trigger_8.and_(self.trigger_7_shift)
 
-        # SHIFT BUTTONS THAT WORK ONLY WITH THE LB
-        self.trigger_shift_a = self.trigger_a.and_(self.trigger_lb)
-        self.trigger_shift_b = self.trigger_b.and_(self.trigger_lb)
-        self.trigger_shift_x = self.trigger_x.and_(self.trigger_lb)
-        self.trigger_shift_y = self.trigger_y.and_(self.trigger_lb)
+        self.trigger_only_1 = self.trigger_1.and_(self.trigger_7_shift.not_())
+        self.trigger_only_2 = self.trigger_2.and_(self.trigger_7_shift.not_())
+        self.trigger_only_4 = self.trigger_4.and_(self.trigger_7_shift.not_())
+        self.trigger_only_8 = self.trigger_8.and_(self.trigger_7_shift.not_())
+        # self.trigger_b = self.driver_command_controller.b()
+        # self.trigger_x = self.driver_command_controller.x()
+        # self.trigger_y = self.driver_command_controller.y()
+        # self.trigger_rb = self.driver_command_controller.rightBumper()
+        # self.trigger_lb = self.driver_command_controller.leftBumper()
+        # self.trigger_start = self.driver_command_controller.start()
+        # self.trigger_back = self.driver_command_controller.back()
+        # self.trigger_d = self.driver_command_controller.povDown()
+        # self.trigger_u = self.driver_command_controller.povUp()
+        # self.trigger_r = self.driver_command_controller.povRight()
+        # self.trigger_l = self.driver_command_controller.povLeft()
+        # self.trigger_l_trigger = self.driver_command_controller.leftTrigger(0.2)
+        # self.trigger_r_trigger = self.driver_command_controller.rightTrigger(0.2) # This is used as a gas pedal in drive_by_joystick_swerve
+
+        # # BUTTONS THAT WORK ONLY WITHOUT THE LB
+        # self.trigger_only_a = self.trigger_a.and_(self.trigger_lb.not_())
+        # self.trigger_only_b = self.trigger_b.and_(self.trigger_lb.not_())
+        # self.trigger_only_x = self.trigger_x.and_(self.trigger_lb.not_())
+        # self.trigger_only_y = self.trigger_y.and_(self.trigger_lb.not_())
+
+        # # SHIFT BUTTONS THAT WORK ONLY WITH THE LB
+        # self.trigger_shift_a = self.trigger_a.and_(self.trigger_lb)
+        # self.trigger_shift_b = self.trigger_b.and_(self.trigger_lb)
+        # self.trigger_shift_x = self.trigger_x.and_(self.trigger_lb)
+        # self.trigger_shift_y = self.trigger_y.and_(self.trigger_lb)
 
 
     def configure_copilot_joystick(self):
@@ -162,47 +187,51 @@ class RobotContainer:
         self.co_trigger_back = self.co_pilot_command_controller.back()
 
     def configure_swerve_bindings(self):
-        self.trigger_only_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
+        self.trigger_only_8.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
         # self.trigger_y.whileTrue(DriveSwervePointTrajectory(container=self,drive=self.drive,pointlist=None,velocity=None,acceleration=None))
 
     def bind_driver_buttons(self):
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
 
-        self.trigger_only_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
-        self.trigger_shift_a.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
-        # TRIGGER B BOUND IN SWERVE SECTION
-
-        # AUTO AIMING
-        self.trigger_only_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=True))
-        self.trigger_only_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=True))
-
-        self.trigger_shift_x.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=False))
-        self.trigger_shift_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=False))
-
-        self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
-        self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
-
-        self.trigger_l_trigger.whileTrue(commands2.ParallelRaceGroup(
+        self.trigger_only_1.whileTrue(commands2.ParallelRaceGroup(
             AutoDriveToNote(self),
             SmartIntake(self, wait_to_finish=True)
         ))
+        self.trigger_shift_1.onTrue(SmartIntake(container=self, wait_to_finish=True))
+        # self.trigger_shift_1.onTrue(AcquireNoteToggle(container=self, force='on')) in case of emergencies, ideally we don't need :)
 
-        # WE SHOULD NOT BIND LB.  IT IS USED AS ROBOT-CENTRIC IN DRIVE AND AS A SHIFT BUTTON ON OTHER COMMANDS
-        self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
+        # TRIGGER 8 BOUND IN SWERVE SECTION
 
-        # DPAD
-        self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
+        # AUTO AIMING
+        self.trigger_only_2.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=True))
+        self.trigger_only_2.debounce(0.05).whileTrue(DriveFlightStickAndAutoAimChassis(container=self, swerve=self.drive, flight_stick=self.driver_command_flightstick,
+                                                                                       field_oriented=constants.k_field_centric,
+                                                                                       rate_limited=constants.k_rate_limited, shooting_backwards=True))
+
+        self.trigger_shift_2.debounce(0.05).whileTrue(MoveArmByPose(container=self, shooting_backwards=False))
+        self.trigger_shift_2.debounce(0.05).whileTrue(DriveFlightStickAndAutoAimChassis(container=self, swerve=self.drive, flight_stick=self.driver_command_flightstick,
+                                                                                        field_oriented=constants.k_field_centric,
+                                                                                        rate_limited=constants.k_rate_limited, shooting_backwards=False))
+
+        self.trigger_only_4.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
+        self.trigger_shift_4.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
+
+        # WE SHOULD NOT BIND 7.  IT IS USED AS A SHIFT BUTTON ON OTHER COMMANDS
+        self.trigger_9.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
+
+        # DPAD IS USED FOR HEADING SNAPPING
+        self.trigger_9.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
         climber_voltage = 4  # was 3 until Tempe
-        self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
-        self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
-        self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
+        self.trigger_10.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        self.trigger_left_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
+        self.trigger_right_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
-        self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        self.trigger_11.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
         # SHIFT COMMANDS - using left bumper as a button multiplier
         #self.trigger_shift_a.onTrue(commands2.PrintCommand('You pressed A and LB - and nothing else happened'))
-        self.trigger_shift_b.onTrue(commands2.PrintCommand('You pressed B and LB - and nothing else happened'))
+        # self.trigger_shift_b.onTrue(commands2.PrintCommand('You pressed B and LB - and nothing else happened'))
         # self.trigger_shift_x.onTrue(commands2.PrintCommand('You pressed X and LB - and nothing else happened'))
         # self.trigger_shift_y.onTrue(commands2.PrintCommand('You pressed Y and LB - and nothing else happened'))
 
@@ -268,8 +297,8 @@ class RobotContainer:
         NamedCommands.registerCommand('Move arm by pose', MoveArmByPose(container=self, shooting_backwards=True))
         NamedCommands.registerCommand('Move arm by pose forward', MoveArmByPose(container=self, shooting_backwards=False))
 
-        NamedCommands.registerCommand('Auto aim robot chassis towards speaker', DriveAndAutoAimChassis(container=self, swerve=self.drive, velocity_multiplier=1, shooting_backwards=True))
-        NamedCommands.registerCommand('Auto aim front of robot chassis towards speaker', DriveAndAutoAimChassis(self, self.drive, constants.k_field_centric, constants.k_rate_limited, shooting_backwards=False))
+        NamedCommands.registerCommand('Auto aim robot chassis towards speaker', DriveFlightStickAndAutoAimChassis(container=self, swerve=self.drive, velocity_multiplier=1, shooting_backwards=True))
+        NamedCommands.registerCommand('Auto aim front of robot chassis towards speaker', DriveFlightStickAndAutoAimChassis(self, self.drive, constants.k_field_centric, constants.k_rate_limited, shooting_backwards=False))
 
         NamedCommands.registerCommand('Move crank to shoot position', ArmMove(container=self, arm=self.crank_arm, degrees=constants.k_crank_presets['shoot']['lower'],
                                                                               absolute=True, wait_to_finish=True))
@@ -326,7 +355,7 @@ class RobotContainer:
         wpilib.SmartDashboard.putData('ShooterOff', ShooterToggle(container=self, shooter=self.shooter, force='off'))
         wpilib.SmartDashboard.putData('AutoShootCycle', AutoShootCycle(container=self))
         wpilib.SmartDashboard.putData('MoveArmbyPose', MoveArmByPose(container=self))
-        wpilib.SmartDashboard.putData('Drive and auto aim chassis', DriveAndAutoAimChassis(container=self, swerve=self.drive))
+        # wpilib.SmartDashboard.putData('Drive and auto aim chassis', DriveFlightStickAndAutoAimChassis(container=self, swerve=self.drive))
         # wpilib.SmartDashboard.putData('Gaslight encoders', GaslightCrankEncoders(self, self.crank_arm))
         wpilib.SmartDashboard.putData('ToStage', AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
         wpilib.SmartDashboard.putData('ToAmp', AutoDriveToTag(container=self, drive=self.drive, destination='amp'))

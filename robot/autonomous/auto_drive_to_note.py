@@ -17,7 +17,7 @@ class AutoDriveToNote(commands2.CommandBase):
 
     def __init__(self, container) -> None:
         super().__init__()
-        self.setName('AutomateIntake')  # change this to something appropriate for this command
+        self.setName('AutoDriveToNote')  # change this to something appropriate for this command
         self.container = container
         self.swerve = self.container.drive
         self.intake = self.container.intake
