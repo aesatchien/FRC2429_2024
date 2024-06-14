@@ -671,6 +671,18 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_position_indicator.setText(f'POS: {config.upper()}')
         self.qlabel_position_indicator.setStyleSheet(postion_style)
 
+        if self.counter == 1:
+            self.prev_lap_time = -1
+
+        self.lap_times_entry = self.ntinst.getEntry('/SmartDashboard/latest_lap')
+        # print('get double thingy result: ', self.lap_times_entry.getDouble(-1))
+        latest_lap_time = self.lap_times_entry.getDouble(-1)
+
+        # print(f'latest lap time: {latest_lap_time}')
+        if latest_lap_time != self.prev_lap_time:
+            print(f'NEW LATEST LAP!!! IT IS {latest_lap_time}!!!')
+            self.prev_lap_time = latest_lap_time
+
         self.counter += 1
         if self.counter % 80 == 0:  # display an FPS every 2s or so  REMEMBER THIS MAX IS SET BY THE STREAMER
             current_time = time.time()

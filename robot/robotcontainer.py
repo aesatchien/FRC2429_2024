@@ -53,6 +53,7 @@ from commands.smart_intake import SmartIntake
 from commands.system_interrupt import SystemInterrupt
 from commands.can_status import CANStatus
 from autonomous.auto_lob_cycle import AutoLobCycle
+from commands.lap_timer import LapTimer
 
 
 class RobotContainer:
@@ -109,7 +110,7 @@ class RobotContainer:
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
 
-    def get_enabled_time(self):  # call when we want to know the start/elapsed time for status and debug messages
+    def get_enabled_time(self):  # time since enabled; call when we want to know the start/elapsed time for status and debug messages
         return time.time() - self.start_time
 
     def configure_driver_joystick(self):
@@ -229,6 +230,8 @@ class RobotContainer:
 
         self.trigger_11.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
+        self.trigger_12.toggleOnTrue(LapTimer(self, self.drive, 0.5))
+
         # SHIFT COMMANDS - using left bumper as a button multiplier
         #self.trigger_shift_a.onTrue(commands2.PrintCommand('You pressed A and LB - and nothing else happened'))
         # self.trigger_shift_b.onTrue(commands2.PrintCommand('You pressed B and LB - and nothing else happened'))
@@ -336,8 +339,8 @@ class RobotContainer:
 
         wpilib.SmartDashboard.putData('autonomous routines', self.autonomous_chooser)
 
-        self.position_chooser = wpilib.SendableChooser()
-        wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
+        # self.position_chooser = wpilib.SendableChooser()
+        # wpilib.SmartDashboard.putData('Position Chooser', self.position_chooser)
         # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfiguration.on_the_fly_path(self.drive, {"x": constants.k_blue_amp[0]-self.drive.get_pose().X(), "y": constants.k_blue_amp[1]-self.drive.get_pose().Y(), "rotation": constants.k_blue_amp[2]-self.drive.get_angle()}, 0, speed_factor=0.5))
         # self.autonomous_chooser.addOption("To Blue Amp from anywhere", PathPlannerConfigurationCommand(self, self.drive, {"x": constants.k_blue_amp[0], "y": constants.k_blue_amp[1], "rotation": constants.k_blue_amp[2]}, 0, speed_factor=0.5, fast_turn=True))
 
