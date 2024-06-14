@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
     <file>png/blockhead.ico</file>
+    <file>folder-horizontal.png</file>
   </qresource>
 </RCC>

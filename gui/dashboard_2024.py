@@ -8,6 +8,8 @@ from pathlib import Path
 import urllib.request
 import cv2
 import numpy as np
+import csv
+import os
 import setuptools
 
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
@@ -169,9 +171,13 @@ class Ui(QtWidgets.QMainWindow):
         self.qt_button_reconnect.clicked.connect(self.reconnect)
         # self.qt_button_camera_enable.clicked.connect(lambda _: setattr(self, 'camera_enabled', not self.camera_enabled))
         self.qt_button_camera_enable.clicked.connect(self.toggle_camera_thread)
+        # TODO: add fancy file dialog thing to choose where to save/append
+        self.qbutton_save_practices.clicked.connect(lambda: self.save_practice_data('../lap_times.csv'))
 
         # hide networktables
         self.qt_tree_widget_nt.hide()
+
+        self.lap_times = []  # for keeping track of drive practice
 
         # at the end of init, you need to show yourself
         self.show()
@@ -350,6 +356,16 @@ class Ui(QtWidgets.QMainWindow):
         toggled_state = not self.widget_dict[label]['command_entry'].getBoolean(True)
         print(f'You clicked {label} whose command is currently {not toggled_state}.  Firing command at {datetime.today().strftime("%H:%M:%S")} ...', flush=True)
         self.widget_dict[label]['command_entry'].setBoolean(toggled_state)
+
+    def save_practice_data(self, practice_data_filepath: str):
+
+        if len(self.lap_times) == 0: return  # no point in saving nothing
+
+        mode = 'a' if os.path.isfile(practice_data_filepath) else 'w'
+        with open(practice_data_filepath, mode, newline='') as practice_data:
+            writer = csv.writer(practice_data)
+            for lap in self.lap_times:
+                writer.writerow([lap])
 
     # ------------------- INITIALIZING WIDGETS --------------------------
     # set up appropriate entries for all the widgets we care about
@@ -675,12 +691,11 @@ class Ui(QtWidgets.QMainWindow):
             self.prev_lap_time = -1
 
         self.lap_times_entry = self.ntinst.getEntry('/SmartDashboard/latest_lap')
-        # print('get double thingy result: ', self.lap_times_entry.getDouble(-1))
         latest_lap_time = self.lap_times_entry.getDouble(-1)
 
-        # print(f'latest lap time: {latest_lap_time}')
-        if latest_lap_time != self.prev_lap_time:
-            print(f'NEW LATEST LAP!!! IT IS {latest_lap_time}!!!')
+        if latest_lap_time != self.prev_lap_time and latest_lap_time >= 0: # to exclude -1, which could be reached by a robot disconnect
+            print(f'New latest lap: {latest_lap_time}s')
+            self.lap_times.append(latest_lap_time)
             self.prev_lap_time = latest_lap_time
 
         self.counter += 1
