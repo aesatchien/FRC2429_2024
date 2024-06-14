@@ -17,7 +17,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>FRC 2429 Blockhead Dashboard</string>
+   <string>FRC 2429 Blockhead Dashboard (flight stick mode)</string>
   </property>
   <property name="windowIcon">
    <iconset>

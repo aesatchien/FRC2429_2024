@@ -14,6 +14,7 @@ import setuptools
 
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtCore import Qt, QTimer, QEvent, QThread, QObject, pyqtSignal
+from PyQt5.QtWidgets import QFileDialog
 #from PyQt5.QtWidgets import  QApplication, QTreeWidget, QTreeWidgetItem
 
 import qlabel2
@@ -360,7 +361,9 @@ class Ui(QtWidgets.QMainWindow):
     def save_practice_data(self, practice_data_filepath: str):
 
         if len(self.lap_times) == 0: return  # no point in saving nothing
-
+        practice_data_filepath = QFileDialog.getOpenFileName(self, 'Open file',
+                                            '.', "CSV (*.csv)")[0]
+        print(practice_data_filepath)
         mode = 'a' if os.path.isfile(practice_data_filepath) else 'w'
         with open(practice_data_filepath, mode, newline='') as practice_data:
             writer = csv.writer(practice_data)
