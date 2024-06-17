@@ -361,7 +361,7 @@ class Ui(QtWidgets.QMainWindow):
     def save_practice_data(self, practice_data_filepath: str):
 
         if len(self.lap_times) == 0: return  # no point in saving nothing
-        practice_data_filepath = QFileDialog.getOpenFileName(self, 'Open file',
+        practice_data_filepath = QFileDialog.getSaveFileName(self, 'Open file',
                                             '.', "CSV (*.csv)")[0]
         print(practice_data_filepath)
         mode = 'a' if os.path.isfile(practice_data_filepath) else 'w'
