@@ -69,7 +69,8 @@ class Ui(QtWidgets.QMainWindow):
             self.qlabel_nt_connected.setStyleSheet('color: red')
             self.qlabel_nt_connected.setText('nt disconnected')
 
-        # ------ LAP SCREEN ------
+        # ------ LAP TAB ------
+
         latest_lap_time = self.ntinst.getEntry("/SmartDashboard/latest_lap_time").getDouble(-1)
         prev_lap_time = -1 if len(self.lap_times) == 0 else self.lap_times[-1]
 
@@ -89,6 +90,9 @@ class Ui(QtWidgets.QMainWindow):
             else:
                 self.qlabel_lap_delta.setStyleSheet('color: green')
 
+        # ------ DEFAULT TAB ------
+        self.qlabel_lower_crank_angle.setText(f'lower: {self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
+        self.qlabel_upper_crank_angle.setText(f'upper: {self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
 
     def increment_server(self):  # changes to next server in server list - TODO - figure our how to make this immediate
         current_server = self.servers[self.server_index]
