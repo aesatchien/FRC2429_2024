@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.497586995173991,
+        "y": 6.948583040023223
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.377586995173991,
+        "y": 6.948583040023223
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.7939330164374621,
+        "y": 6.684712797997025
+      },
+      "prevControl": {
+        "x": 0.8763646344757453,
+        "y": 6.684712797997025
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -121.60750224624884,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Start moving arm by pose",
+      "waypointRelativePos": 0.75,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Move arm by pose"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 100.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 53.13010235415597,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Go to speaker",
+  "previewStartingState": {
+    "rotation": 36.15818543980829,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

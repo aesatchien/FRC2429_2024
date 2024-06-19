@@ -8,15 +8,15 @@ from rev import CANSparkMax, CANSparkFlex
 class DriveConstants:
     # Driving Parameters - Note that these are not the maximum capable speeds of
     # the robot, rather the allowed maximum speeds
-    k_drive_controller_type = CANSparkFlex
-    kMaxSpeedMetersPerSecond = 4.75  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out on NEOs
-    kMaxAngularSpeed = 0.75 * math.tau # 0.5 * math.tau  # radians per second was 0.5 tau through AVR - too slow
+    k_drive_controller_type = CANSparkMax
+    kMaxSpeedMetersPerSecond = 4.75  # Sanjith started at 3.7, 4.25 was Haochen competition, 4.8 is full out
+    kMaxAngularSpeed = 0.5 * math.tau  # radians per second
     # TODO: actually figure out what the total max speed should be - vector sum?
     kMaxTotalSpeed = 1.1 * math.sqrt(2) * kMaxSpeedMetersPerSecond  # sum of angular and rotational, should probably do hypotenuse
     # set the acceleration limits used in driving using the SlewRateLimiter tool
     kMagnitudeSlewRate = 5  # hundred percent per second (1 = 100%)
     kRotationalSlewRate = 5  # hundred percent per second (1 = 100%)
-    k_inner_deadband = 0.02  # use deadbands for joystick transformations and keepangle calculations
+    k_inner_deadband = 0.08  # use deadbands for joystick transformations and keepangle calculations
     k_outer_deadband = 0.95  # above this you just set it to 1 - makes going diagonal easier
     # k_minimum_rotation = kMaxAngularSpeed * k_inner_deadband
 
@@ -40,10 +40,10 @@ class DriveConstants:
     kDriveKinematics = SwerveDrive4Kinematics(*kModulePositions)
 
     # which motors need to be inverted - depends on if on top or bottom
-    k_drive_motors_inverted = True  # False for 2023 - motors below
-    k_turn_motors_inverted = False  # True for 2023 - motors below
+    k_drive_motors_inverted = False  # False for 2023 - motors below
+    k_turn_motors_inverted = True  # True for 2023 - motors below
     # incorrect gyro inversion will make the pose odometry have the wrong sign on rotation
-    kGyroReversed = True  # False for 2023 (was upside down), True for 2024?
+    kGyroReversed = False  # False for 2023 (was upside down), True for 2024?
     # used in the swerve modules themselves to reverse the direction of the analog encoder
     # note turn motors and analog encoders must agree - or you go haywire
     k_reverse_analog_encoders = False  # False for 2024 and probably always.
@@ -55,11 +55,10 @@ class DriveConstants:
 
     # absolute encoder values when wheels facing forward  - 20230322 CJH
     # NOW IN RADIANS to feed right to the AnalogPotentiometer on the module
-    k_lf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.829)  #  rad
-    k_rf_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.783)  #  rad   billet gear out on rf
-    k_lb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.436)  #  rad
-    k_rb_zero_offset = k_analog_encoder_scale_factor * math.tau * (0.986)  #  rad  billet gear out on rb
-    k_analog_encoder_offsets = {'lf':0.829, 'rf':0.783, 'lb':0.304, 'rb':0.986}  # use in sim
+    k_lf_zero_offset = 1.011 * math.tau * 0.836  # 0.105 rad
+    k_rf_zero_offset = 1.011 * math.tau * 0.745  # 4.682 rad   billet gear out on rf
+    k_lb_zero_offset = 1.011 * math.tau * 0.723  # 4.531 rad
+    k_rb_zero_offset = 1.011 * math.tau * 0.872  # 5.478 rad  billet gear out on rf    k_analog_encoder_offsets = {'lf':0.829, 'rf':0.783, 'lb':0.304, 'rb':0.986}  # use in sim
 
     # SPARK MAX CAN IDs
     kFrontLeftDrivingCanId = 21
@@ -125,8 +124,7 @@ class ModuleConstants:
     kDrivingMotorIdleMode = DriveConstants.k_drive_controller_type.IdleMode.kBrake
     kTurningMotorIdleMode = CANSparkMax.IdleMode.kCoast  # for now it's easier to move by hand when testing
 
-    # 2024 0414 CJH - 80A allows the drive motors to pull WAY too much and we brown out (AVR)
-    kDrivingMotorCurrentLimit = 60  # amp - set to 50 for worlds to make sure no brownouts - maybe 60 will still be safe
+    kDrivingMotorCurrentLimit = 80  # amp
     kTurningMotorCurrentLimit = 40  # amp
 
 class AutoConstants:  # retaining this from original swerve code template, but we don't use (yet)

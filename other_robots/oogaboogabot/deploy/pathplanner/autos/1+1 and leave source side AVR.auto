@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Go to sourceside and shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake far ring 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Leave mid source side"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Go to sourceside and shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
