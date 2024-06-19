@@ -693,8 +693,9 @@ class Ui(QtWidgets.QMainWindow):
         if self.counter == 1:
             self.prev_lap_time = -1
 
-        self.lap_times_entry = self.ntinst.getEntry('/SmartDashboard/latest_lap')
-        latest_lap_time = self.lap_times_entry.getDouble(-1)
+        # self.lap_times_entry = self.ntinst.getEntry('/SmartDashboard/latest_lap_time')
+        # latest_lap_time = self.lap_times_entry.getDouble(-1)
+        latest_lap_time = self.ntinst.getEntry('/SmartDashboard/latest_lap_time').getDouble(-1)
 
         if latest_lap_time != self.prev_lap_time and latest_lap_time >= 0: # to exclude -1, which could be reached by a robot disconnect
             print(f'New latest lap: {latest_lap_time}s')

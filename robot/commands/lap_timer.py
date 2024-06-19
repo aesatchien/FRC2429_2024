@@ -39,7 +39,7 @@ class LapTimer(commands2.Command):  # change the name for your command
         elif in_finish_zone and not self.prev_in_finish_zone: # Just entered the finish zone, lap ended
             # self.laps.append(self.timer.get())
             print(f'LAP FINISHED AFTER {self.timer.get()} SECONDS!!')
-            SmartDashboard.putNumber('latest_lap', self.timer.get())
+            SmartDashboard.putNumber('latest_lap_time', self.timer.get())
             self.lap_publisher.set(self.timer.get())
             # send data here
 

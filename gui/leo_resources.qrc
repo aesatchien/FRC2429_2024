@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="stuff">
+    <file>greenblackatag.png</file>
+    <file>redblackatag.png</file>
+  </qresource>
+</RCC>
