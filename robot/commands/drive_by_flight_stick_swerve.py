@@ -50,56 +50,39 @@ class DriveByFlightStickSwerve(commands2.Command):
 
         # TODO: experiment with which transforms feel nicest at the shop
 
-        # If we plug X and Y into input_transform directly, the commanded speed is constant along any circle centered on the
-        # joystick's origin.  Since the range of motion of the joystick is square, not circular, we want the commanded speed
-        # to be constant along any square centered on the origin.
-        # This code divides the joystick's translation vector by the length of the line from the origin to the square
-        # which bounds the joystick's range of motion
+
+        equispeed_squares = False
+        circular_cap = True
+
         joystick_translation = Translation2d(self.flight_stick.getX(), -self.flight_stick.getY())
 
-        theta = abs(joystick_translation.angle().radians())
-        while theta > math.pi/2:
-            theta -= math.pi/2
-        if theta > math.pi/4:
-            theta = math.pi/2 - theta
+        if equispeed_squares:
+            # If we plug X and Y into input_transform directly, the commanded speed is constant along any circle centered on the
+            # joystick's origin.  Since the range of motion of the joystick is square, not circular, we want the commanded speed
+            # to be constant along any square centered on the origin.
+            # This code divides the joystick's translation vector by the length of the line from the origin to the square
+            # which bounds the joystick's range of motion
 
-        length_from_origin_to_square_side = 1/math.cos(theta)
-        transformed_joystick_translation = joystick_translation/length_from_origin_to_square_side
+            theta = abs(joystick_translation.angle().radians())
+            while theta > math.pi/2:
+                theta -= math.pi/2
+            if theta > math.pi/4:
+                theta = math.pi/2 - theta
 
+            length_from_origin_to_square_side = 1/math.cos(theta)
+            transformed_joystick_translation = joystick_translation/length_from_origin_to_square_side
 
-        # print(f'flight stick y: {self.flight_stick.getY()}')
-        # print(f'angle to joystick, radians: {joystick_translation.angle()}')
-        # if self.flight_stick.getY() == 0:
-        #     print(f'vector from origin to edge of square: 1 because theta is 0')
-        #     transformed_joystick_translation = joystick_translation * 1
-        # else:
-        #     print(f'magnitude of vector from origin to edge of square: {joystick_translation.Y() / math.sin(joystick_translation.angle().radians())}')
-        #     transformed_joystick_translation = joystick_translation * math.sin(self.flight_stick.getDirectionRadians()/self.flight_stick.getY())
+        elif circular_cap:
+            # Capping the magnitude of the joystick translation ensures the max diagonal isn't faster than the max along cardinal directions
+            transformed_joystick_translation = joystick_translation / joystick_translation.norm() if joystick_translation.norm() > 1 else joystick_translation
+
+        else:
+            transformed_joystick_translation = joystick_translation
 
 
         desired_fwd = self.input_transform_linear(1.0 * transformed_joystick_translation.Y()) * max_linear
         desired_strafe = -self.input_transform_linear(1.0 * transformed_joystick_translation.X()) * max_linear
-        desired_rot = -self.input_transform_linear(0.5 * self.flight_stick.getTwist()) * max_angular
-
-        # Thrustmaster's corner position reads 1,1 so none of the commented out is necessary
-        # linear_mapping = True  # two ways to make sure diagonal is at "full speed"
-        # if linear_mapping:
-        #     # this lets you go full speed diagonal at the cost of sensitivity on the low end
-        #     desired_fwd = -self.input_transform_linear(1.0 * joystick_fwd) * max_linear
-        #     desired_strafe = -self.input_transform_linear(1.0 * joystick_strafe) * max_linear
-        #     desired_rot = -self.input_transform_linear(1.0 * self.flight_stick.getTwist()) * max_angular
-        # else:
-        #     # correcting for the x^2 + y^2 = 1 of the joysticks so we don't have to use a linear mapping
-        #     angle = math.atan2(joystick_fwd, joystick_strafe)
-        #     correction = math.fabs(math.cos(angle) * (math.sin(angle)))  # peaks at 45 degrees
-        #     fwd = joystick_fwd * (1 + 0.3 * math.copysign(correction, joystick_fwd))  # they max out at .77, so add the remainder at 45 degrees to make 1
-        #     strafe = joystick_strafe * (1 + 0.3 * math.copysign(correction, joystick_strafe))
-        #     if wpilib.RobotBase.isSimulation():
-        #         wpilib.SmartDashboard.putNumberArray('joysticks',[joystick_fwd, joystick_strafe, correction, fwd, strafe])
-
-        #     desired_fwd = -self.input_transform(1.0 * fwd) * max_linear
-        #     desired_strafe = -self.input_transform(1.0 * strafe) * max_linear
-        #     desired_rot = -self.input_transform(1.0 * self.controller.getRightX()) * max_angular
+        desired_rot = -self.input_transform(0.5 * self.flight_stick.getTwist()) * max_angular
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
@@ -136,7 +119,7 @@ class DriveByFlightStickSwerve(commands2.Command):
     def input_transform(self, value, a=0.9, b=0.1):
         # 1706 uses a nice transform
         db_value = self.apply_deadband(value)
-        return a * db_value**3 + b * db_value
+        return a * math.copysign(db_value**2, value) + b * db_value
 
     def input_transform_linear(self, value, a=0.9, b=0.1):
         # 1706 uses a nice transform
