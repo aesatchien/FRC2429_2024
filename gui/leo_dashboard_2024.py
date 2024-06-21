@@ -1,10 +1,12 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QBrush, QPen
 from ntcore import NetworkTableInstance
 from pathlib import Path
 from datetime import datetime
 import os
 import csv
+import math
 # from datetime import datetime
 class Ui(QtWidgets.QMainWindow):
     # set the root dir for the project, knowing we're one deep
@@ -37,11 +39,14 @@ class Ui(QtWidgets.QMainWindow):
         self.initialize_widgets()
 
 
-        self.refresh_time = 40  # milliseconds before refreshing
+        self.counter = 1
+        self.refresh_time = 21  # milliseconds before refreshing
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_widgets)
         self.timer.start(self.refresh_time)
         self.lap_times = []
+        self.robot_prev_crashed = False
+        self.robot_crashes_current_lap = 0
 
         self.show()
 
@@ -58,9 +63,18 @@ class Ui(QtWidgets.QMainWindow):
         '''
         self.qbutton_swap_sim.clicked.connect(self.increment_server)
         self.qbutton_save_practice_data.clicked.connect(self.save_practice_data)
+        self.qgraphicsscene = QtWidgets.QGraphicsScene(0, 0, 8.2, 16.4)
+        self.qgraphicsscene.setBackgroundBrush(Qt.gray)
+        self.robot_rect = self.qgraphicsscene.addRect(0, 0, 1, 1)
+        self.robot_rect.setBrush(QBrush(Qt.red))
+        self.robot_rect.setPen(QPen(Qt.black))
+        self.qgraphicsview_field.setScene(self.qgraphicsscene)
+        self.qgraphicsview_field.rotate(-90) # -90 for blue alliance, 90 for red. TODO: add intelligent switching based on alliance
 
 
     def update_widgets(self):
+        self.counter += 1
+
         if self.ntinst.isConnected():
             self.qlabel_nt_connected.setStyleSheet('color: green')
             self.qlabel_nt_connected.setText(f'nt connected to {self.servers[self.server_index]}')
@@ -74,25 +88,42 @@ class Ui(QtWidgets.QMainWindow):
         latest_lap_time = self.ntinst.getEntry("/SmartDashboard/latest_lap_time").getDouble(-1)
         prev_lap_time = -1 if len(self.lap_times) == 0 else self.lap_times[-1]
 
+        if self.ntinst.getEntry('/SmartDashboard/robot_crashed').getBoolean(False) and not self.robot_prev_crashed:
+            self.robot_crashes_current_lap += 1
+            self.robot_prev_crashed = True
+        elif self.robot_prev_crashed and not self.ntinst.getEntry('/SmartDashboard/robot_crashed').getBoolean(False):
+            self.robot_prev_crashed = False
+
         if latest_lap_time != prev_lap_time and latest_lap_time >= 0: # to exclude -1, which could be reached by a robot disconnect
             print(f'New latest lap: {latest_lap_time}s')
             self.lap_times.append(latest_lap_time)
 
             self.qlabel_lap_number.setText(f'lap {len(self.lap_times)}')
-
             self.qlabel_lap_time.setText(f'time: {latest_lap_time:.1f}')
-
-            self.qlabel_lap_delta.setText(f'delta: {latest_lap_time - prev_lap_time:.1f}')
-            if abs(latest_lap_time - prev_lap_time) < 0.1:
-                self.qlabel_lap_delta.setStyleSheet('color: white')
-            elif latest_lap_time > prev_lap_time:
-                self.qlabel_lap_delta.setStyleSheet('color: red')
+            self.qlabel_lap_crashes.setText(f'crashes: {self.robot_crashes_current_lap}')
+            if self.robot_crashes_current_lap == 0:
+                self.qlabel_lap_crashes.setStyleSheet('color: rgb(15, 254, 24)')
             else:
-                self.qlabel_lap_delta.setStyleSheet('color: green')
+                self.qlabel_lap_crashes.setStyleSheet('color: rgb(255, 170, 255)')
+
+            self.robot_crashes_current_lap = 0
 
         # ------ DEFAULT TAB ------
-        self.qlabel_lower_crank_angle.setText(f'lower: {self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
-        self.qlabel_upper_crank_angle.setText(f'upper: {self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
+        self.qlabel_lower_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
+        self.qlabel_upper_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
+
+        print(f"bot x: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0]}\n" +
+              f"bot y: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1]}")
+
+        # print(f"type of mystery array thing: {type(self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray(-999))}")
+
+        self.qgraphicsview_field.fitInView(self.qgraphicsscene.sceneRect(), Qt.KeepAspectRatio)
+        self.robot_rect.setX((self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0] + 3) * 1/2)
+        self.robot_rect.setY((-self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1] + 8.2) * 2)
+        self.robot_rect.setRotation(self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[2])
+
+        # self.robot_rect.setX(100*math.sin(self.counter/40))
+        # self.robot_rect.setY(100*math.cos(self.counter/40))
 
     def increment_server(self):  # changes to next server in server list - TODO - figure our how to make this immediate
         current_server = self.servers[self.server_index]

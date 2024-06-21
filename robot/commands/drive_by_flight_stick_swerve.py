@@ -49,9 +49,37 @@ class DriveByFlightStickSwerve(commands2.Command):
         # not all swerves are the same - some require inversion of drive and or turn motors
 
         # TODO: experiment with which transforms feel nicest at the shop
-        desired_fwd = -self.input_transform_linear(1.0 * self.flight_stick.getY()) * max_linear
-        desired_strafe = -self.input_transform_linear(1.0 * self.flight_stick.getX()) * max_linear
-        desired_rot = -self.input_transform_linear(1.0 * self.flight_stick.getTwist()) * max_angular
+
+        # If we plug X and Y into input_transform directly, the commanded speed is constant along any circle centered on the
+        # joystick's origin.  Since the range of motion of the joystick is square, not circular, we want the commanded speed
+        # to be constant along any square centered on the origin.
+        # This code divides the joystick's translation vector by the length of the line from the origin to the square
+        # which bounds the joystick's range of motion
+        joystick_translation = Translation2d(self.flight_stick.getX(), -self.flight_stick.getY())
+
+        theta = abs(joystick_translation.angle().radians())
+        while theta > math.pi/2:
+            theta -= math.pi/2
+        if theta > math.pi/4:
+            theta = math.pi/2 - theta
+
+        length_from_origin_to_square_side = 1/math.cos(theta)
+        transformed_joystick_translation = joystick_translation/length_from_origin_to_square_side
+
+
+        # print(f'flight stick y: {self.flight_stick.getY()}')
+        # print(f'angle to joystick, radians: {joystick_translation.angle()}')
+        # if self.flight_stick.getY() == 0:
+        #     print(f'vector from origin to edge of square: 1 because theta is 0')
+        #     transformed_joystick_translation = joystick_translation * 1
+        # else:
+        #     print(f'magnitude of vector from origin to edge of square: {joystick_translation.Y() / math.sin(joystick_translation.angle().radians())}')
+        #     transformed_joystick_translation = joystick_translation * math.sin(self.flight_stick.getDirectionRadians()/self.flight_stick.getY())
+
+
+        desired_fwd = self.input_transform_linear(1.0 * transformed_joystick_translation.Y()) * max_linear
+        desired_strafe = -self.input_transform_linear(1.0 * transformed_joystick_translation.X()) * max_linear
+        desired_rot = -self.input_transform_linear(0.5 * self.flight_stick.getTwist()) * max_angular
 
         # Thrustmaster's corner position reads 1,1 so none of the commented out is necessary
         # linear_mapping = True  # two ways to make sure diagonal is at "full speed"

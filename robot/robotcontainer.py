@@ -137,11 +137,13 @@ class RobotContainer:
         self.trigger_shift_2 = self.trigger_2.and_(self.trigger_7_shift)
         self.trigger_shift_4 = self.trigger_4.and_(self.trigger_7_shift)
         self.trigger_shift_8 = self.trigger_8.and_(self.trigger_7_shift)
+        self.trigger_shift_11 = self.trigger_11.and_(self.trigger_7_shift)
 
         self.trigger_only_1 = self.trigger_1.and_(self.trigger_7_shift.not_())
         self.trigger_only_2 = self.trigger_2.and_(self.trigger_7_shift.not_())
         self.trigger_only_4 = self.trigger_4.and_(self.trigger_7_shift.not_())
         self.trigger_only_8 = self.trigger_8.and_(self.trigger_7_shift.not_())
+        self.trigger_only_11 = self.trigger_11.and_(self.trigger_7_shift.not_())
         # self.trigger_b = self.driver_command_controller.b()
         # self.trigger_x = self.driver_command_controller.x()
         # self.trigger_y = self.driver_command_controller.y()
@@ -228,7 +230,13 @@ class RobotContainer:
         self.trigger_left_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
         self.trigger_right_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
-        self.trigger_11.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+        self.trigger_shift_11.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
+
+        # to keep track of crashes
+        self.trigger_only_11.onTrue(commands2.InstantCommand(lambda: wpilib.SmartDashboard.putBoolean('robot_crashed', True))
+                                    .andThen(commands2.PrintCommand("putting robot crashed!"))
+                                    .andThen(commands2.WaitCommand(0.1))
+                                    .andThen(commands2.InstantCommand(lambda: wpilib.SmartDashboard.putBoolean('robot_crashed', False))))
 
         self.trigger_12.toggleOnTrue(LapTimer(self, self.drive, 0.5))
 

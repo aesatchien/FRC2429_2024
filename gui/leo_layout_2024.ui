@@ -476,6 +476,7 @@ QLabel {
 	alignment
 }
 
+
 QPushButton {
 color: 'white';
 background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(20, 20, 20, 255), stop:1 rgba(70, 70, 70, 255));
@@ -539,7 +540,7 @@ QTabBar::tab:selected {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -564,10 +565,12 @@ QTabBar::tab:selected {
            <bool>false</bool>
           </property>
           <property name="styleSheet">
-           <string notr="true">font-style: italic</string>
+           <string notr="true">color: rgb(85, 255, 255);
+font: 72pt &quot;Trender&quot;;
+font-style: italic;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;lap 0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>lap 0</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -583,10 +586,12 @@ QTabBar::tab:selected {
            <bool>false</bool>
           </property>
           <property name="styleSheet">
-           <string notr="true">font-style: italic</string>
+           <string notr="true">color: rgb(255, 170, 0);
+font: 72pt &quot;Trender&quot;;
+font-style: italic</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;time: n/a&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>time: n/a</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -597,7 +602,7 @@ QTabBar::tab:selected {
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="qlabel_lap_delta">
+         <widget class="QLabel" name="qlabel_lap_crashes">
           <property name="palette">
            <palette>
             <active>
@@ -605,7 +610,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -659,7 +664,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -677,7 +682,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -751,7 +756,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -805,7 +810,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -823,7 +828,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -897,7 +902,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -951,7 +956,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -969,7 +974,7 @@ QTabBar::tab:selected {
               <brush brushstyle="SolidPattern">
                <color alpha="255">
                 <red>255</red>
-                <green>255</green>
+                <green>170</green>
                 <blue>255</blue>
                </color>
               </brush>
@@ -1044,10 +1049,12 @@ QTabBar::tab:selected {
            <bool>false</bool>
           </property>
           <property name="styleSheet">
-           <string notr="true">font-style: italic</string>
+           <string notr="true">color: rgb(255, 170, 255);
+font: 72pt &quot;Trender&quot;;
+font-style: italic;</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;delta: n/a&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>crashes: n/a</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -1573,6 +1580,9 @@ QTabBar::tab:selected {
          </layout>
         </item>
         <item>
+         <widget class="QGraphicsView" name="qgraphicsview_field"/>
+        </item>
+        <item>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
            <number>20</number>
@@ -1588,12 +1598,15 @@ QTabBar::tab:selected {
           </property>
           <item>
            <widget class="QLabel" name="qlabel_upper_crank_angle">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; color:#616130;&quot;&gt;Upper crank angle, in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">color: rgb(255, 255, 127);
 font: 72pt &quot;Trender&quot;;</string>
             </property>
             <property name="text">
-             <string>upper: n/a</string>
+             <string>n/a</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -1602,12 +1615,18 @@ font: 72pt &quot;Trender&quot;;</string>
           </item>
           <item>
            <widget class="QLabel" name="qlabel_lower_crank_angle">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; color:#00007f;&quot;&gt;Lower crank angle, in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="styleSheet">
              <string notr="true">color: rgb(85, 170, 255);
-font: 72pt &quot;Trender&quot;;</string>
+font: 72pt &quot;Trender&quot;;
+QToolTip {
+	font: 8pt &quot;MS Shell Dlg 2&quot;;
+}</string>
             </property>
             <property name="text">
-             <string>lower: n/a</string>
+             <string>n/a</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
