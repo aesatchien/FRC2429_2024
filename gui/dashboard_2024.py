@@ -1,5 +1,6 @@
 # pyqt example for teaching GUI development for FRC dashboard
 # make sure to pip install pyqt5 pyqt5-tools
+# good guide for learning this stuff:https://www.pythonguis.com/pyqt5/
 
 # print(f'Loading Modules ...', flush=True)
 import time

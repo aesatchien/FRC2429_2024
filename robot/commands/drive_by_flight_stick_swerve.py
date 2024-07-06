@@ -37,8 +37,8 @@ class DriveByFlightStickSwerve(commands2.Command):
     def execute(self) -> None:
 
         # Weird math is because this stick's throttle goes from 1 to -1 as it's pushed forwards
-        slowmode_multiplier = 0.2 + 0.8 * (1 - self.flight_stick.getThrottle())/2
-        angular_slowmode_multiplier = 0.5 + 0.5 * (1 - self.flight_stick.getThrottle())/2
+        slowmode_multiplier = 0.1 + 0.9 * (1 - self.flight_stick.getThrottle())/2
+        angular_slowmode_multiplier = 0.1 + 0.9 * (1 - self.flight_stick.getThrottle())/2
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
         max_angular = 1 * angular_slowmode_multiplier
@@ -63,6 +63,8 @@ class DriveByFlightStickSwerve(commands2.Command):
             # This code divides the joystick's translation vector by the length of the line from the origin to the square
             # which bounds the joystick's range of motion
 
+            # success!!!
+
             theta = abs(joystick_translation.angle().radians())
             while theta > math.pi/2:
                 theta -= math.pi/2
@@ -82,7 +84,7 @@ class DriveByFlightStickSwerve(commands2.Command):
 
         desired_fwd = self.input_transform_linear(1.0 * transformed_joystick_translation.Y()) * max_linear
         desired_strafe = -self.input_transform_linear(1.0 * transformed_joystick_translation.X()) * max_linear
-        desired_rot = -self.input_transform(0.5 * self.flight_stick.getTwist()) * max_angular
+        desired_rot = -self.input_transform(1 * self.flight_stick.getTwist()) * max_angular
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])
