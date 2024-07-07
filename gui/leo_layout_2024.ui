@@ -540,7 +540,7 @@ QTabBar::tab:selected {
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -1092,26 +1092,7 @@ font-style: italic;</string>
            <number>20</number>
           </property>
           <item>
-           <widget class="QLabel" name="qlabel_apriltag">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap>../../Downloads/redblackatag.png</pixmap>
-            </property>
-            <property name="scaledContents">
-             <bool>false</bool>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="margin">
-             <number>12</number>
-            </property>
-           </widget>
+           <widget class="QGraphicsView" name="qgraphicsview_note_status"/>
           </item>
           <item>
            <widget class="QLabel" name="qlabel_apriltag_time">

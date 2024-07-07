@@ -2,5 +2,8 @@
   <qresource prefix="stuff">
     <file>greenblackatag.png</file>
     <file>redblackatag.png</file>
+    <file>note_blank.png</file>
+    <file>note_detected.png</file>
+    <file>note_orange.png</file>
   </qresource>
 </RCC>

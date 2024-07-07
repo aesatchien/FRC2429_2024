@@ -201,7 +201,9 @@ class RobotContainer:
             AutoDriveToNote(self),
             SmartIntake(self, wait_to_finish=True)
         ))
-        self.trigger_shift_1.onTrue(SmartIntake(container=self, wait_to_finish=True))
+
+        self.trigger_shift_1.onTrue(AcquireNoteToggle(container=self, force='on'))
+        self.trigger_shift_1.onFalse(AcquireNoteToggle(container=self, force='off'))
         # self.trigger_shift_1.onTrue(AcquireNoteToggle(container=self, force='on')) in case of emergencies, ideally we don't need :)
 
         # TRIGGER 8 BOUND IN SWERVE SECTION

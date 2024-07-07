@@ -1,11 +1,12 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QBrush, QPen
+from PyQt5.QtGui import QBrush, QPen, QColor
 from ntcore import NetworkTableInstance
 from pathlib import Path
 from datetime import datetime
 import os
 import csv
+from wpimath.filter import Debouncer
 import math
 # from datetime import datetime
 class Ui(QtWidgets.QMainWindow):
@@ -47,6 +48,8 @@ class Ui(QtWidgets.QMainWindow):
         self.lap_times = []
         self.robot_prev_crashed = False
         self.robot_crashes_current_lap = 0
+        self.prev_note_acquired = False
+        self.count_when_note_acquired = -999
 
         self.show()
 
@@ -63,13 +66,25 @@ class Ui(QtWidgets.QMainWindow):
         '''
         self.qbutton_swap_sim.clicked.connect(self.increment_server)
         self.qbutton_save_practice_data.clicked.connect(self.save_practice_data)
-        self.qgraphicsscene = QtWidgets.QGraphicsScene(0, 0, 8.2, 16.4)
-        self.qgraphicsscene.setBackgroundBrush(Qt.gray)
-        self.robot_rect = self.qgraphicsscene.addRect(0, 0, 1, 1)
+        self.qgraphicsscene_field = QtWidgets.QGraphicsScene(0, 0, 8.2, 16.4)
+        self.qgraphicsscene_field.setBackgroundBrush(Qt.gray)
+        self.robot_rect = self.qgraphicsscene_field.addRect(0, 0, 1, 1)
         self.robot_rect.setBrush(QBrush(Qt.red))
         self.robot_rect.setPen(QPen(Qt.black))
-        self.qgraphicsview_field.setScene(self.qgraphicsscene)
+        self.qgraphicsview_field.setScene(self.qgraphicsscene_field)
         self.qgraphicsview_field.rotate(-90) # -90 for blue alliance, 90 for red. TODO: add intelligent switching based on alliance
+
+        self.qgraphicsscene_note_status = QtWidgets.QGraphicsScene(0, 0, 360, 360)
+
+        self.note_symbol = self.qgraphicsscene_note_status.addEllipse(0, 0, 360, 360)
+        self.note_symbol.setBrush(QColor(27, 27, 27))
+        self.note_symbol.setPen(QPen(Qt.lightGray, 8))
+
+        self.note_symbol_hole = self.qgraphicsscene_note_status.addEllipse(60, 60, 240, 240)
+        self.note_symbol_hole.setBrush(QColor(27, 27, 27))
+        self.note_symbol_hole.setPen(QPen(Qt.lightGray, 8))
+
+        self.qgraphicsview_note_status.setScene(self.qgraphicsscene_note_status)
 
 
     def update_widgets(self):
@@ -78,10 +93,12 @@ class Ui(QtWidgets.QMainWindow):
         if self.ntinst.isConnected():
             self.qlabel_nt_connected.setStyleSheet('color: green')
             self.qlabel_nt_connected.setText(f'nt connected to {self.servers[self.server_index]}')
+            # self.setStyleSheet('background-color: rgb(27, 27, 27)')
         else:
             # todo: fix.  This is broken in the main dashboard and mine- it never goes back to being disconnected.
             self.qlabel_nt_connected.setStyleSheet('color: red')
             self.qlabel_nt_connected.setText('nt disconnected')
+            # self.setStyleSheet('background-color: rgb(100, 27, 27)')
 
         # ------ LAP TAB ------
 
@@ -96,7 +113,7 @@ class Ui(QtWidgets.QMainWindow):
 
         if latest_lap_time != prev_lap_time and latest_lap_time >= 0: # to exclude -1, which could be reached by a robot disconnect
             print(f'New latest lap: {latest_lap_time}s')
-            self.lap_times.append(latest_lap_time)
+            self.lap_times.append((latest_lap_time, self.robot_crashes_current_lap))
 
             self.qlabel_lap_number.setText(f'lap {len(self.lap_times)}')
             self.qlabel_lap_time.setText(f'time: {latest_lap_time:.1f}')
@@ -109,18 +126,40 @@ class Ui(QtWidgets.QMainWindow):
             self.robot_crashes_current_lap = 0
 
         # ------ DEFAULT TAB ------
-        self.qlabel_lower_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
-        self.qlabel_upper_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
+        self.qlabel_lower_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
+        self.qlabel_upper_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
 
-        print(f"bot x: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0]}\n" +
-              f"bot y: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1]}")
+        # print(f"bot x: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0]}\n" +
+        #       f"bot y: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1]}")
 
         # print(f"type of mystery array thing: {type(self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray(-999))}")
 
-        self.qgraphicsview_field.fitInView(self.qgraphicsscene.sceneRect(), Qt.KeepAspectRatio)
+        self.qgraphicsview_field.fitInView(self.qgraphicsscene_field.sceneRect(), Qt.KeepAspectRatio)
         self.robot_rect.setX((self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0] + 3) * 1/2)
         self.robot_rect.setY((-self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1] + 8.2) * 2)
         self.robot_rect.setRotation(self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[2])
+
+        if self.ntinst.getEntry('/SmartDashboard/shooter_has_ring').getBoolean(False):
+            if not self.prev_note_acquired:
+                print('RISING EDGE NOTE ACQUIRED!')
+                self.count_when_note_acquired = self.counter
+                self.prev_note_acquired = True
+            scaled_counts_since_note_acquired = (self.counter - self.count_when_note_acquired) * 20
+            self.note_symbol.setBrush(QColor(min(scaled_counts_since_note_acquired, 255), max(255 - scaled_counts_since_note_acquired, 127), 0))
+        elif self.ntinst.getEntry('/SmartDashboard/orange_targets_exist').getBoolean(False):
+            self.prev_note_acquired = False
+            self.note_symbol.setBrush(QColor(0, 255, 255))
+        else:
+            self.prev_note_acquired = False
+            self.note_symbol.setBrush(QColor(27, 27, 27))
+        # if note held:
+        #   if not prev_note_held:
+        #       set last note detect time to this one
+        #   set color to green or orange or whatever based on how long it's been
+        # else if note detected:
+        #   set color to blue
+        # else:
+        #   set color to blank
 
         # self.robot_rect.setX(100*math.sin(self.counter/40))
         # self.robot_rect.setY(100*math.cos(self.counter/40))
