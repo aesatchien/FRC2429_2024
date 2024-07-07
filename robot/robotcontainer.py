@@ -94,6 +94,7 @@ class RobotContainer:
         self.drive.setDefaultCommand(DriveByJoystickSwerve(container=self, swerve=self.drive,
                             field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited))
 
+
         # optionally skip the copilot and non-drivetrain subsystems for debugging
         if not constants.k_swerve_only:  # only test the swerve - no other subsystems
             self.bind_driver_buttons()
@@ -237,7 +238,7 @@ class RobotContainer:
         # A move to shoot position
         # B move to amp positon
         # Y activate intake
-        # use that trigger command to call something like intake drive by trigger if the trigger is greater than sometbing
+        # use that trigger command to call something li ke intake drive by trigger if the trigger is greater than sometbing
 
 
     def set_automated_path(self, command : PathPlannerPath):

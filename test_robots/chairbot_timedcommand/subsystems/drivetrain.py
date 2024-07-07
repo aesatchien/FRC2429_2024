@@ -4,6 +4,7 @@ from commands2 import SubsystemBase
 from wpilib import SmartDashboard, DriverStation
 from ntcore import NetworkTableInstance
 import rev
+from rev import CANSparkMax, CANSparkFlex
 from wpimath.filter import SlewRateLimiter
 import ntcore
 
@@ -21,7 +22,7 @@ class Drivetrain(SubsystemBase):
         self.analog_pedal = wpilib.AnalogInput(0)
         self.steering_encoder = wpilib.DutyCycleEncoder(6)
         # motors
-        motor_type = rev.CANSparkMaxLowLevel.MotorType.kBrushless
+        motor_type = rev.CANSparkMax.MotorType.kBrushless
         self.drive_l1 = rev.CANSparkMax(1, motor_type)
         self.drive_l2 = rev.CANSparkMax(2, motor_type)
         self.drive_r1 = rev.CANSparkMax(3, motor_type)
