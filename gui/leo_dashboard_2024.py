@@ -103,7 +103,7 @@ class Ui(QtWidgets.QMainWindow):
         # ------ LAP TAB ------
 
         latest_lap_time = self.ntinst.getEntry("/SmartDashboard/latest_lap_time").getDouble(-1)
-        prev_lap_time = -1 if len(self.lap_times) == 0 else self.lap_times[-1]
+        prev_lap_time = -1 if len(self.lap_times) == 0 else self.lap_times[-1][0]
 
         if self.ntinst.getEntry('/SmartDashboard/robot_crashed').getBoolean(False) and not self.robot_prev_crashed:
             self.robot_crashes_current_lap += 1
@@ -113,7 +113,8 @@ class Ui(QtWidgets.QMainWindow):
 
         if latest_lap_time != prev_lap_time and latest_lap_time >= 0: # to exclude -1, which could be reached by a robot disconnect
             print(f'New latest lap: {latest_lap_time}s')
-            self.lap_times.append((latest_lap_time, self.robot_crashes_current_lap))
+            # append time, crashes, and throttle
+            self.lap_times.append((latest_lap_time, self.robot_crashes_current_lap, self.ntinst.getEntry('SmartDashboard/slowmode_multiplier').getDouble(-999)))
 
             self.qlabel_lap_number.setText(f'lap {len(self.lap_times)}')
             self.qlabel_lap_time.setText(f'time: {latest_lap_time:.1f}')
@@ -128,11 +129,6 @@ class Ui(QtWidgets.QMainWindow):
         # ------ DEFAULT TAB ------
         self.qlabel_lower_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/crank_arm_degrees").getDouble(-999):.1f}')
         self.qlabel_upper_crank_angle.setText(f'{self.ntinst.getEntry("/SmartDashboard/upper_arm_degrees").getDouble(-999):.1f}')
-
-        # print(f"bot x: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0]}\n" +
-        #       f"bot y: {self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[1]}")
-
-        # print(f"type of mystery array thing: {type(self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray(-999))}")
 
         self.qgraphicsview_field.fitInView(self.qgraphicsscene_field.sceneRect(), Qt.KeepAspectRatio)
         self.robot_rect.setX((self.ntinst.getEntry('/SmartDashboard/drive_pose').getDoubleArray([-999, -999, -999])[0] + 3) * 1/2)
@@ -152,17 +148,8 @@ class Ui(QtWidgets.QMainWindow):
         else:
             self.prev_note_acquired = False
             self.note_symbol.setBrush(QColor(27, 27, 27))
-        # if note held:
-        #   if not prev_note_held:
-        #       set last note detect time to this one
-        #   set color to green or orange or whatever based on how long it's been
-        # else if note detected:
-        #   set color to blue
-        # else:
-        #   set color to blank
 
-        # self.robot_rect.setX(100*math.sin(self.counter/40))
-        # self.robot_rect.setY(100*math.cos(self.counter/40))
+        self.qlabel_power.setText(f"pwr: {self.ntinst.getEntry('/SmartDashboard/slowmode_multiplier').getDouble(-9.99) * 100:.0f}")
 
     def increment_server(self):  # changes to next server in server list - TODO - figure our how to make this immediate
         current_server = self.servers[self.server_index]

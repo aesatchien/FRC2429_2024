@@ -39,6 +39,7 @@ class DriveByFlightStickSwerve(commands2.Command):
         # Weird math is because this stick's throttle goes from 1 to -1 as it's pushed forwards
         slowmode_multiplier = 0.1 + 0.9 * (1 - self.flight_stick.getThrottle())/2
         angular_slowmode_multiplier = 0.1 + 0.9 * (1 - self.flight_stick.getThrottle())/2
+        SmartDashboard.putNumber("slowmode_multiplier", slowmode_multiplier)
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
         max_angular = 1 * angular_slowmode_multiplier
@@ -62,8 +63,6 @@ class DriveByFlightStickSwerve(commands2.Command):
             # to be constant along any square centered on the origin.
             # This code divides the joystick's translation vector by the length of the line from the origin to the square
             # which bounds the joystick's range of motion
-
-            # success!!!
 
             theta = abs(joystick_translation.angle().radians())
             while theta > math.pi/2:
