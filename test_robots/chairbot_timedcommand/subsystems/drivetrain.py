@@ -122,9 +122,7 @@ class Drivetrain(SubsystemBase):
         if self.counter % 10 == 0:
             # read networktables for updates to our mode/limit values
             nt_control_mode = self.control_mode_sub.get()
-            print(f'nt_control_mode: {nt_control_mode}')
             if nt_control_mode != self.control_mode:
-                print('new nt control mode!!!')
                 if nt_control_mode in ['remote', 'onboard']:
                     self.control_mode = nt_control_mode
                     print(f'setting control_mode to {self.control_mode}')
@@ -133,15 +131,13 @@ class Drivetrain(SubsystemBase):
                     pass
 
             nt_thrust_limit = self.thrust_limit_sub.get()
-            if self.counter % 120 == 0: print(f'nt thrust limit: {self.thrust_limit_sub.get()}')
             if nt_thrust_limit != self.thrust_limit:
-                print('new thrust limit!')
                 if 0.1 <= nt_thrust_limit <= 1:
                     self.thrust_limit = nt_thrust_limit
                     print(f'setting thrust_limit to {self.thrust_limit}')
                     # wpilib.SmartDashboard.putNumber('thrust_limit', self.thrust_limit)
                 else:
-                    print('rejecting out-of-bounds thrust limit')
+                    pass
                     # self.thrust_limit_pub.set(self.thrust_limit)
 
             nt_max_thrust_change = self.max_thrust_change_sub.get()

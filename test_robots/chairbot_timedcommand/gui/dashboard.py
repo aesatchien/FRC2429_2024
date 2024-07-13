@@ -92,8 +92,9 @@ class Ui(QtWidgets.QMainWindow):
             self.qlabel_nt_connected.setText('nt disconnected')
             # self.setStyleSheet('background-color: rgb(100, 27, 27)')
 
-        self.qlabel_translation_percent.setText(f'{self.ntinst.getEntry("datatable/thrust_limit").getDouble(-999) * 100:.0f}%')
-        self.qlabel_twist_percent.setText(f'{self.ntinst.getEntry("datatable/twist_limit").getDouble(-999) * 100:.0f}%')
+        # self.qlabel_translation_percent.setText(f'{self.ntinst.getEntry("datatable/thrust_limit").getDouble(-999) * 100:.0f}%')
+        self.qlabel_twist_percent.setText(f'{self.qslider_twist.value() * 10:.0f}%')
+        self.qlabel_translation_percent.setText(f'{self.qslider_translation.value() * 10:.0f}%')
 
     def increment_server(self):  # changes to next server in server list - TODO - figure our how to make this immediate
         current_server = self.servers[self.server_index]
