@@ -62,12 +62,8 @@ class Ui(QtWidgets.QMainWindow):
         self.qslider_translation.setMaximum(10)
         self.qslider_twist.setMinimum(1)
         self.qslider_twist.setMaximum(10)
-        self.qslider_translation.sliderReleased.connect(lambda: self.translation_limit_publisher.set(self.qslider_translation.value()/10))
-        self.qslider_twist.sliderReleased.connect(lambda: self.twist_limit_publisher.set(self.qslider_twist.value()/10))
-
-    def set_twist_or_thrust(self, value=0.1):
-        print(f'setting translation limit; value is {value}')
-        self.translation_limit_publisher.set((value * 9 / 1000) + 0.1)
+        self.qslider_translation.valueChanged.connect(lambda: self.translation_limit_publisher.set(self.qslider_translation.value()/10))
+        self.qslider_twist.valueChanged.connect(lambda: self.twist_limit_publisher.set(self.qslider_twist.value()/10))
 
     def switch_control_modes(self):
         if self.robot_control_mode == 'remote':
@@ -85,14 +81,11 @@ class Ui(QtWidgets.QMainWindow):
         if self.ntinst.isConnected():
             self.qlabel_nt_connected.setStyleSheet('color: rgb(50, 255, 50)')
             self.qlabel_nt_connected.setText(f'nt connected to {self.servers[self.server_index]}')
-            # self.setStyleSheet('background-color: rgb(27, 27, 27)')
         else:
             # todo: fix.  This is broken in the main dashboard and mine- it never goes back to being disconnected.
             self.qlabel_nt_connected.setStyleSheet('color: red')
             self.qlabel_nt_connected.setText('nt disconnected')
-            # self.setStyleSheet('background-color: rgb(100, 27, 27)')
 
-        # self.qlabel_translation_percent.setText(f'{self.ntinst.getEntry("datatable/thrust_limit").getDouble(-999) * 100:.0f}%')
         self.qlabel_twist_percent.setText(f'{self.qslider_twist.value() * 10:.0f}%')
         self.qlabel_translation_percent.setText(f'{self.qslider_translation.value() * 10:.0f}%')
 
