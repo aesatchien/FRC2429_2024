@@ -31,6 +31,8 @@ class Ui(QtWidgets.QMainWindow):
         self.ntinst.setServerTeam(2429)
         self.connected = self.ntinst.isConnected()
 
+        self.table = self.ntinst.getTable("datatable")
+        self.control_mode_publisher = self.table.getStringTopic("control_mode").publish()
         # self.sorted_tree = None  # keep a global list of all the nt addresses
         # self.autonomous_list = []  # set up an autonomous list
 
@@ -54,17 +56,17 @@ class Ui(QtWidgets.QMainWindow):
     def initialize_widgets(self):
         self.qbutton_swap_sim.clicked.connect(self.increment_server)
         self.qbutton_control_mode_switch.clicked.connect(self.switch_control_modes)
-        self.qslider_translation.sliderReleased.connect(lambda value: self.ntinst.getEntry('datatable/thrust_limit').setValue((value * 9 / 1000) + 0.1))
-        self.qslider_twist.sliderReleased.connect(lambda value: self.ntinst.getEntry('datatable/twist_limit').setValue((value * 9 / 1000) + 0.1))
+        self.qslider_translation.sliderReleased.connect(lambda value=0.1: self.ntinst.getEntry('datatable/thrust_limit').setValue((value * 9 / 1000) + 0.1))
+        self.qslider_twist.sliderReleased.connect(lambda value=0.1: self.ntinst.getEntry('datatable/twist_limit').setValue((value * 9 / 1000) + 0.1))
     def switch_control_modes(self):
         if self.robot_control_mode == 'remote':
-            self.ntinst.getEntry('datatable/control_mode').setString('onboard')
+            print('setting to onboard')
+            self.control_mode_publisher.set('onboard')
             self.robot_control_mode = 'onboard'
-            self.qbutton_control_mode_switch.setText('switch to remote control')
         else:
-            self.ntinst.getEntry('datatable/control_mode').setString('remote')
+            print('setting to remote')
+            self.control_mode_publisher.set('remote')
             self.robot_control_mode = 'remote'
-            self.qbutton_control_mode_switch.setText('switch to onboard control')
 
     def update_widgets(self):
         self.counter += 1

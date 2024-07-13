@@ -61,11 +61,11 @@ class Drivetrain(SubsystemBase):
         self.thrust_limit_pub = self.table.getDoubleTopic("thrust_limit").publish()
         self.max_thrust_change_pub = self.table.getDoubleTopic("max_thrust_change").publish()
         self.twist_limit_pub = self.table.getDoubleTopic("twist_limit").publish()
-        self.control_mode_pub = self.table.getStringTopic("control_mode").publish()
+        # self.control_mode_pub = self.table.getStringTopic("control_mode").publish()
         self.thrust_limit_pub.set(self.thrust_limit)
         self.max_thrust_change_pub.set(self.max_thrust_change)
         self.twist_limit_pub.set(self.twist_limit)
-        self.control_mode_pub.set(self.control_mode)
+        # self.control_mode_pub.set(self.control_mode)
         # subscribers - call the get() function to read them
         self.thrust_limit_sub = self.table.getDoubleTopic("thrust_limit").subscribe(self.thrust_limit)
         self.max_thrust_change_sub = self.table.getDoubleTopic("max_thrust_change").subscribe(self.max_thrust_change)
@@ -122,7 +122,9 @@ class Drivetrain(SubsystemBase):
         if self.counter % 10 == 0:
             # read networktables for updates to our mode/limit values
             nt_control_mode = self.control_mode_sub.get()
+            print(f'nt_control_mode: {nt_control_mode}')
             if nt_control_mode != self.control_mode:
+                print('new nt control mode!!!')
                 if nt_control_mode in ['remote', 'onboard']:
                     self.control_mode = nt_control_mode
                     print(f'setting control_mode to {self.control_mode}')
@@ -131,7 +133,7 @@ class Drivetrain(SubsystemBase):
                     pass
 
             nt_thrust_limit = self.thrust_limit_sub.get()
-            print(f'nt thrust limit: {self.thrust_limit_sub.get()}')
+            if self.counter % 120 == 0: print(f'nt thrust limit: {self.thrust_limit_sub.get()}')
             if nt_thrust_limit != self.thrust_limit:
                 print('new thrust limit!')
                 if 0.1 <= nt_thrust_limit <= 1:

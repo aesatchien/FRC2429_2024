@@ -12,7 +12,7 @@ k_twist_limit = .33
 k_deadband = 0.1
 
 # control mode for chairbot is either "remote" or "onboard"
-k_control_mode = 'remote'
+k_control_mode = 'onboard'
 
 # slew rate limiters take units of 100's of percent per second (weird)
 k_thrust_slew_limit = 0.5  # 0.5 means 50 percent per second
