@@ -131,12 +131,15 @@ class Drivetrain(SubsystemBase):
                     pass
 
             nt_thrust_limit = self.thrust_limit_sub.get()
+            print(f'nt thrust limit: {self.thrust_limit_sub.get()}')
             if nt_thrust_limit != self.thrust_limit:
-                if 0.1 < nt_thrust_limit <= 1:
+                print('new thrust limit!')
+                if 0.1 <= nt_thrust_limit <= 1:
                     self.thrust_limit = nt_thrust_limit
                     print(f'setting thrust_limit to {self.thrust_limit}')
                     wpilib.SmartDashboard.putNumber('thrust_limit', self.thrust_limit)
                 else:
+                    print('rejecting out-of-bounds thrust limit')
                     self.thrust_limit_pub.set(self.thrust_limit)
 
             nt_max_thrust_change = self.max_thrust_change_sub.get()
@@ -152,7 +155,7 @@ class Drivetrain(SubsystemBase):
 
             nt_twist_limit = self.twist_limit_sub.get()
             if nt_twist_limit != self.twist_limit:
-                if 0.1 < nt_twist_limit <= 1:
+                if 0.1 <= nt_twist_limit <= 1:
                     self.twist_limit = nt_twist_limit
                     print(f'setting twist_limit to {self.twist_limit}')
                     wpilib.SmartDashboard.putNumber('twist_limit', self.twist_limit)
