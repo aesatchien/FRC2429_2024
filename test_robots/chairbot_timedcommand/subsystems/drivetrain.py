@@ -57,6 +57,7 @@ class Drivetrain(SubsystemBase):
         # networktabl
         self.inst = ntcore.NetworkTableInstance.getDefault()
         self.table = self.inst.getTable("datatable")
+
         # publishers - call the set() function to write them
         # self.thrust_limit_pub = self.table.getDoubleTopic("thrust_limit").publish()
         self.max_thrust_change_pub = self.table.getDoubleTopic("max_thrust_change").publish()
@@ -67,6 +68,7 @@ class Drivetrain(SubsystemBase):
         # self.twist_limit_pub.set(self.twist_limit)
         # self.control_mode_pub.set(self.control_mode)
         # subscribers - call the get() function to read them
+
         self.thrust_limit_sub = self.table.getDoubleTopic("thrust_limit").subscribe(self.thrust_limit)
         self.max_thrust_change_sub = self.table.getDoubleTopic("max_thrust_change").subscribe(self.max_thrust_change)
         self.twist_limit_sub = self.table.getDoubleTopic("twist_limit").subscribe(self.twist_limit)
@@ -135,7 +137,6 @@ class Drivetrain(SubsystemBase):
                 if 0.1 <= nt_thrust_limit <= 1:
                     self.thrust_limit = nt_thrust_limit
                     print(f'setting thrust_limit to {self.thrust_limit}')
-                    # wpilib.SmartDashboard.putNumber('thrust_limit', self.thrust_limit)
                 else:
                     pass
                     # self.thrust_limit_pub.set(self.thrust_limit)
@@ -156,7 +157,6 @@ class Drivetrain(SubsystemBase):
                 if 0.1 <= nt_twist_limit <= 1:
                     self.twist_limit = nt_twist_limit
                     print(f'setting twist_limit to {self.twist_limit}')
-                    # wpilib.SmartDashboard.putNumber('twist_limit', self.twist_limit)
                 else:
                     pass
                     # self.twist_limit_pub.set(self.twist_limit)

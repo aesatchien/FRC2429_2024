@@ -65,7 +65,7 @@ QSlider::handle:horizontal {
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="resources.qrc">:/stuff/chairbot.png</pixmap>
+          <pixmap>chairbot.png</pixmap>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

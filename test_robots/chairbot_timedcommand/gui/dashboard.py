@@ -35,12 +35,7 @@ class Ui(QtWidgets.QMainWindow):
         self.control_mode_publisher = self.table.getStringTopic("control_mode").publish()
         self.translation_limit_publisher = self.table.getDoubleTopic("thrust_limit").publish()
         self.twist_limit_publisher = self.table.getDoubleTopic("twist_limit").publish()
-        # self.sorted_tree = None  # keep a global list of all the nt addresses
-        # self.autonomous_list = []  # set up an autonomous list
 
-        # self.previous_frames = 0
-        self.widget_dict = {}
-        # self.command_dict = {}
         self.initialize_widgets()
 
 
