@@ -33,6 +33,8 @@ class Ui(QtWidgets.QMainWindow):
 
         self.table = self.ntinst.getTable("datatable")
         self.control_mode_publisher = self.table.getStringTopic("control_mode").publish()
+        self.translation_limit_publisher = self.table.getDoubleTopic("thrust_limit").publish()
+        self.twist_limit_publisher = self.table.getDoubleTopic("twist_limit").publish()
         # self.sorted_tree = None  # keep a global list of all the nt addresses
         # self.autonomous_list = []  # set up an autonomous list
 
@@ -56,8 +58,17 @@ class Ui(QtWidgets.QMainWindow):
     def initialize_widgets(self):
         self.qbutton_swap_sim.clicked.connect(self.increment_server)
         self.qbutton_control_mode_switch.clicked.connect(self.switch_control_modes)
-        self.qslider_translation.sliderReleased.connect(lambda value=0.1: self.ntinst.getEntry('datatable/thrust_limit').setValue((value * 9 / 1000) + 0.1))
-        self.qslider_twist.sliderReleased.connect(lambda value=0.1: self.ntinst.getEntry('datatable/twist_limit').setValue((value * 9 / 1000) + 0.1))
+        self.qslider_translation.setMinimum(1)
+        self.qslider_translation.setMaximum(10)
+        self.qslider_twist.setMinimum(1)
+        self.qslider_twist.setMaximum(10)
+        self.qslider_translation.sliderReleased.connect(lambda: self.translation_limit_publisher.set(self.qslider_translation.value()/10))
+        self.qslider_twist.sliderReleased.connect(lambda: self.twist_limit_publisher.set(self.qslider_twist.value()/10))
+
+    def set_twist_or_thrust(self, value=0.1):
+        print(f'setting translation limit; value is {value}')
+        self.translation_limit_publisher.set((value * 9 / 1000) + 0.1)
+
     def switch_control_modes(self):
         if self.robot_control_mode == 'remote':
             print('setting to onboard')
