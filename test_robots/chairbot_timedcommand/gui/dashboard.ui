@@ -215,6 +215,13 @@ padding: 10px</string>
 	border-width: 2px;
 	border-color:rgb(64, 0, 0);
 	background-color: rgb(35, 35, 35);
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+}
+
+QWidget {
+	margin-right: 10px;
 }
 
 </string>
