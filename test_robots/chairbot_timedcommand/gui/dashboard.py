@@ -33,6 +33,7 @@ class Ui(QtWidgets.QMainWindow):
 
         self.table = self.ntinst.getTable("datatable")
         self.control_mode_publisher = self.table.getStringTopic("control_mode").publish()
+        self.control_mode_subscriber = self.table.getStringTopic("control_mode").subscribe('onboard')
         self.translation_limit_publisher = self.table.getDoubleTopic("thrust_limit").publish()
         self.twist_limit_publisher = self.table.getDoubleTopic("twist_limit").publish()
 
@@ -40,8 +41,6 @@ class Ui(QtWidgets.QMainWindow):
 
 
         self.counter = 1
-
-        self.robot_control_mode = 'remote'
 
         self.refresh_time = 21  # milliseconds before refreshing
         self.timer = QTimer(self)
@@ -61,14 +60,12 @@ class Ui(QtWidgets.QMainWindow):
         self.qslider_twist.valueChanged.connect(lambda: self.twist_limit_publisher.set(self.qslider_twist.value()/10))
 
     def switch_control_modes(self):
-        if self.robot_control_mode == 'remote':
+        if self.control_mode_subscriber.get() == 'remote':
             print('setting to onboard')
             self.control_mode_publisher.set('onboard')
-            self.robot_control_mode = 'onboard'
         else:
             print('setting to remote')
             self.control_mode_publisher.set('remote')
-            self.robot_control_mode = 'remote'
 
     def update_widgets(self):
         self.counter += 1
@@ -80,6 +77,11 @@ class Ui(QtWidgets.QMainWindow):
             # todo: fix.  This is broken in the main dashboard and mine- it never goes back to being disconnected.
             self.qlabel_nt_connected.setStyleSheet('color: red')
             self.qlabel_nt_connected.setText('nt disconnected')
+
+        if self.control_mode_subscriber.get() == 'onboard':
+            self.qbutton_control_mode_switch.setText(f'switch to remote control')
+        else:
+            self.qbutton_control_mode_switch.setText('switch to onboard control')
 
         self.qlabel_twist_percent.setText(f'{self.qslider_twist.value() * 10:.0f}%')
         self.qlabel_translation_percent.setText(f'{self.qslider_translation.value() * 10:.0f}%')
