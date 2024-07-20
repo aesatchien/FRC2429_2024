@@ -32,7 +32,7 @@ class RobotContainer:
         self.joystick = wpilib.Joystick(0)
         self.buttonA = JoystickButton(self.joystick, 1)
         self.buttonA.onTrue(AutoMoveForward(container=self, drive=self.drive, joystick=self.joystick))
-        self.buttonB = JoystickButton(self.joystick, 4)
+        self.buttonB = JoystickButton(self.joystick, 2)
         self.buttonB.onTrue(LedToggle(container=self))
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot

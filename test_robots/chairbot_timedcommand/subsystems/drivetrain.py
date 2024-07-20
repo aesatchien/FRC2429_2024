@@ -30,6 +30,11 @@ class Drivetrain(SubsystemBase):
 
         self.encoder_l = self.drive_l1.getEncoder()  # c.f. wpilib.Encoder(2, 3)
         self.encoder_r = self.drive_r1.getEncoder()
+        self.encoder_l.setPositionConversionFactor(constants.kDrivingEncoderPositionFactor)
+        self.encoder_l.setVelocityConversionFactor(constants.kDrivingEncoderVelocityFactor)
+        self.encoder_r.setPositionConversionFactor(constants.kDrivingEncoderPositionFactor)
+        self.encoder_r.setVelocityConversionFactor(constants.kDrivingEncoderVelocityFactor)
+
 
         self.drive_l1.setInverted(True)  # need to see if + pwr moves motor clockwise and therefore robot fwd
         self.drive_l2.setInverted(True)
@@ -38,6 +43,10 @@ class Drivetrain(SubsystemBase):
 
         self.drive_l2.follow(self.drive_l1)  # sets 2 to follow 1
         self.drive_r2.follow(self.drive_r1)
+
+        if wpilib.RobotBase.isSimulation():  # have to do this to get the sim to update velocities, etc
+            self.l1_drivingPIDController = self.drive_l1.getPIDController()
+            self.r1_drivingPIDController = self.drive_r1.getPIDController()
 
         # class variables
         self.counter = 0
@@ -62,11 +71,11 @@ class Drivetrain(SubsystemBase):
         # self.thrust_limit_pub = self.table.getDoubleTopic("thrust_limit").publish()
         self.max_thrust_change_pub = self.table.getDoubleTopic("max_thrust_change").publish()
         # self.twist_limit_pub = self.table.getDoubleTopic("twist_limit").publish()
-        # self.control_mode_pub = self.table.getStringTopic("control_mode").publish()
+        self.control_mode_pub = self.table.getStringTopic("control_mode").publish()
         # self.thrust_limit_pub.set(self.thrust_limit)
         # self.max_thrust_change_pub.set(self.max_thrust_change)
         # self.twist_limit_pub.set(self.twist_limit)
-        # self.control_mode_pub.set(self.control_mode)
+        self.control_mode_pub.set(self.control_mode)
         # subscribers - call the get() function to read them
 
         self.thrust_limit_sub = self.table.getDoubleTopic("thrust_limit").subscribe(self.thrust_limit)
@@ -78,6 +87,14 @@ class Drivetrain(SubsystemBase):
         # teleop is quite simple for this robot - just set the motors
         self.drive_l1.set(self.thrust + self.twist)
         self.drive_r1.set(self.thrust - self.twist)
+
+        if wpilib.RobotBase.isSimulation():
+            max_meters_per_second = 4
+            left_velocity = max_meters_per_second *  (self.thrust + self.twist)
+            right_velocity = max_meters_per_second * (self.thrust - self.twist)
+            self.l1_drivingPIDController.setReference(left_velocity, rev.CANSparkBase.ControlType.kVelocity)
+            self.r1_drivingPIDController.setReference(right_velocity, rev.CANSparkBase.ControlType.kVelocity)
+
 
     def drive_forward(self, power):
         self.drive_l1.set(power)
