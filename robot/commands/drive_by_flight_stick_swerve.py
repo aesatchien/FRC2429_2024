@@ -42,7 +42,7 @@ class DriveByFlightStickSwerve(commands2.Command):
         SmartDashboard.putNumber("slowmode_multiplier", slowmode_multiplier)
 
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
-        max_angular = 1 * angular_slowmode_multiplier
+        max_angular = 2 * angular_slowmode_multiplier
 
         # note that swerve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1
@@ -83,7 +83,7 @@ class DriveByFlightStickSwerve(commands2.Command):
 
         desired_fwd = self.input_transform_linear(1.0 * transformed_joystick_translation.Y()) * max_linear
         desired_strafe = -self.input_transform_linear(1.0 * transformed_joystick_translation.X()) * max_linear
-        desired_rot = -self.input_transform(1 * self.flight_stick.getTwist()) * max_angular
+        desired_rot = -self.input_transform_linear(1 * self.flight_stick.getTwist()) * max_angular
 
         if wpilib.RobotBase.isSimulation():
             SmartDashboard.putNumberArray('joystick', [desired_fwd, desired_strafe, desired_rot])

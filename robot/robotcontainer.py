@@ -117,7 +117,7 @@ class RobotContainer:
         # The driver's controller
         self.driver_command_flightstick = CommandJoystick(constants.k_driver_controller_port)
         self.driver_command_flightstick.setThrottleChannel(2)
-        self.driver_command_flightstick.setTwistChannel(3)
+        self.driver_command_flightstick.setTwistChannel(4)
         self.trigger_1 = self.driver_command_flightstick.button(1)  # trigger
         self.trigger_2 = self.driver_command_flightstick.button(2)
         self.trigger_3 = self.driver_command_flightstick.button(3)
@@ -229,8 +229,8 @@ class RobotContainer:
         self.trigger_9.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
         climber_voltage = 4  # was 3 until Tempe
         self.trigger_10.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
-        self.trigger_left_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
-        self.trigger_right_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
+        # self.trigger_left_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
+        # self.trigger_right_rudder.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
         self.trigger_shift_11.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
