@@ -3,13 +3,13 @@ from wpilib import SmartDashboard
 from subsystems.led import Led
 
 
-class LedToggle(commands2.CommandBase):
+class LedIndicatorToggle(commands2.CommandBase):
 
     counter = 0
 
     def __init__(self, container) -> None:
         super().__init__()
-        self.setName('LedToggle')
+        self.setName('LedIndicatorToggle')
         self.container = container
         self.addRequirements(container.led)
         self.modes = [
@@ -34,17 +34,26 @@ class LedToggle(commands2.CommandBase):
         self.start_time = round(self.container.get_enabled_time(), 2)
 
         self.counter += 1
-        active_mode = self.indicators[self.counter % len(self.indicators)]
+        active_indicator = self.indicators[self.counter % len(self.indicators)]
         #active_mode = self.modes[self.counter % len(self.modes)]
-        self.container.game_piece_mode = active_mode
+        self.container.game_piece_mode = active_indicator
         # if active_mode == 'cone':
         #   self.container.led.set_mode(Led.Mode.CONE)
         # elif active_mode == 'cube':
         #   self.container.led.set_mode(Led.Mode.CUBE)
-        self.container.led.set_indicator(active_mode)
 
-        print("\n" + f"** Firing {self.getName()} with active mode {active_mode} at {self.start_time} s **", flush=True)
+        print("\n" + f"** Firing {self.getName()} with active mode {active_indicator} at {self.start_time} s **", flush=True)
         SmartDashboard.putString("alert", f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
+
+        #  Decide how to send out the changes to the LED subsystem -
+        # if you want to just set the active mode
+        # self.container.led.set_indicator(active_mode)
+
+        # if you want to run with a timeout, it is currently a command
+        self.container.led.set_indicator_with_timeout(active_indicator, 5).schedule()
+
+
+
 
     def execute(self) -> None:
         pass

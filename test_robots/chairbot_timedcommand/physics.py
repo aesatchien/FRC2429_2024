@@ -69,6 +69,7 @@ class PhysicsEngine:
         self.spark_peripheral_ids = [5, ]
 
         # allow ourselves to access the simdevice's Position, Velocity, Applied Output, etc
+        # giving self.spark_dict a key based on the names of the devices from above, then the spark values
         self.spark_names = self.spark_drives + self.spark_peripherals
         self.spark_ids = self.spark_drive_ids + self.spark_peripheral_ids
         for idx, (spark_name, can_id) in enumerate(zip(self.spark_names, self.spark_ids)):
@@ -90,6 +91,23 @@ class PhysicsEngine:
         self.theta = 0
         initial_pose = geo.Pose2d(0, 0, geo.Rotation2d())
         self.physics_controller.move_robot(geo.Transform2d(self.x, self.y, 0))
+
+        # Create a Mechanism2d display of a chairbot
+        self.chairbot_side_mech2d = wpilib.Mechanism2d(40, 60, backgroundColor=wpilib.Color8Bit(wpilib.Color.kNavy))  # window
+        self.chassis_base = self.chairbot_side_mech2d.getRoot("chassis_base", 5, 13)
+        self.chassis_ligament = self.chassis_base.appendLigament(
+            "chassis", 28, 0, 12, wpilib.Color8Bit(wpilib.Color.kGray))
+        self.chair_base = self.chairbot_side_mech2d.getRoot("chair_base", 12, 13)
+        self.chair_ligament = self.chair_base.appendLigament(
+            "chair", 18, 90, 12, wpilib.Color8Bit(wpilib.Color.kOrange))
+        self.chair_rear_wheel_base = self.chairbot_side_mech2d.getRoot("rear_wheel_base", 5, 10)
+        self.side_rear_wheel = self.chair_rear_wheel_base.appendLigament(
+            "rear_wheel", 5, 0, 24, wpilib.Color8Bit(wpilib.Color.kWhiteSmoke))
+        self.chair_front_wheel_base = self.chairbot_side_mech2d.getRoot("front_wheel_base", 18, 10)
+        self.side_front_wheel = self.chair_front_wheel_base.appendLigament(
+            "front_wheel", 5, 0, 24, wpilib.Color8Bit(wpilib.Color.kWhiteSmoke))
+        # make the sim available to the dash
+        wpilib.SmartDashboard.putData("ChairBotSim", self.chairbot_side_mech2d)
 
         # Create a Mechanism2d display of an Arm
         self.mech2d = wpilib.Mechanism2d(40, 60, backgroundColor=wpilib.Color8Bit(wpilib.Color.kNavy))
@@ -116,6 +134,7 @@ class PhysicsEngine:
             "Flywheel", 6, 0, 10, wpilib.Color8Bit(wpilib.Color.kDarkRed)
         )
 
+        # make the sim available to the dash
         wpilib.SmartDashboard.putData("Arm Sim", self.mech2d)
 
         # self.arm_motor: rev.CANSparkMax = robot.container.crank_arm.motor
@@ -178,6 +197,18 @@ class PhysicsEngine:
         # really confused about yaw vs angle
         # yaw has the wrong sign, so just never use it except to update the actual navx in the sim
         self.navx_yaw.set(self.navx_yaw.get() - math.degrees(speeds.omega * tm_diff))
+
+        # update the wheels
+        wheel_mechs = [self.side_rear_wheel, self.side_front_wheel]
+        wheel_color = None
+        if self.spark_dict['lf_drive']['velocity'].value < -0.05:
+            wheel_color = wpilib.Color8Bit(wpilib.Color.kDarkRed)
+        elif self.spark_dict['lf_drive']['velocity'].value > 0.05:
+            wheel_color = wpilib.Color8Bit(wpilib.Color.kGreen)
+        else:
+            wheel_color = wpilib.Color8Bit(wpilib.Color.kGhostWhite)
+        for wheel_mech in wheel_mechs:
+            wheel_mech.setColor(wheel_color)
 
         # Update the arm
 
