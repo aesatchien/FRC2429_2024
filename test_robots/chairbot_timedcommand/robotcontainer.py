@@ -10,7 +10,8 @@ from subsystems.drivetrain import Drivetrain
 from subsystems.led import Led
 from commands.move_robot import MoveRobot
 from commands.auto_move_forward import AutoMoveForward
-from commands.led_toggle import LedToggle
+from commands.led_indicator_toggle import LedIndicatorToggle
+from commands.led_mode_toggle import LedModeToggle
 from commands.led_loop import LedLoop
 
 class RobotContainer:
@@ -33,7 +34,9 @@ class RobotContainer:
         self.buttonA = JoystickButton(self.joystick, 1)
         self.buttonA.onTrue(AutoMoveForward(container=self, drive=self.drive, joystick=self.joystick))
         self.buttonB = JoystickButton(self.joystick, 2)
-        self.buttonB.onTrue(LedToggle(container=self))
+        self.buttonB.onTrue(LedIndicatorToggle(container=self))
+        self.buttonY = JoystickButton(self.joystick, 4)
+        self.buttonY.onTrue(LedModeToggle(container=self))
 
     def set_start_time(self):  # call in teleopInit and autonomousInit in the robot
         self.start_time = time.time()
