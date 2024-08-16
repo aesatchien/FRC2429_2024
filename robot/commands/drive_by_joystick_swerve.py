@@ -51,7 +51,7 @@ class DriveByJoystickSwerve(commands2.Command):
         #     slowmode_multiplier = sum(self.slowmode_history) / len(self.slowmode_history)
         # self.slowmode_history.pop(0)
 
-        slowmode_multiplier = 0.2 + 0.8 * self.controller.getRightTriggerAxis()
+        slowmode_multiplier = 0.2 # + 0.8 * self.controller.getRightTriggerAxis() COMMENTED OUT FOR DEMOS
         angular_slowmode_multiplier = 0.5 + 0.5 * self.controller.getRightTriggerAxis()
 
         if self.robot_oriented_debouncer.calculate(self.robot_oriented_trigger.getAsBoolean()):
