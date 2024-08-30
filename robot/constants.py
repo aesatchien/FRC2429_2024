@@ -58,10 +58,10 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':5, 'lower': 46},  # was 67, changed upper to -35 on 081124; 10 081524; 5 081524
+    'intake': {'upper':39, 'lower': 46},  # was 67, changed upper to -35 on 081124; 10 081524; 5 081524
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb; should be called trap shoot
     'low_shoot': {'upper':-84, 'lower': 45},
-    'amp': {'upper': 52, 'lower': 100}  ,
+    'amp': {'upper': 98, 'lower': 95}  ,
     'low_amp': {'upper': -70, 'lower': 108},
     'bottom': {'upper': -84, 'lower': 40},
     'climb_second': {'upper':12, 'lower':90}
