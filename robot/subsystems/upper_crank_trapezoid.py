@@ -91,6 +91,10 @@ class UpperCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         self.set_goal(self.goal)  # do we want to do this?
         self.at_goal = True
         self.enable()
+        
+        self.disable()
+        self.set_brake_mode("coast")
+
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint
