@@ -123,7 +123,7 @@ class Led(commands2.SubsystemBase):
                 else:
                     if self.mode == Led.Mode.CONE:
                         # solid yellow
-                        led.setRGB(255, 96, 0)
+                        led.setRGB(200, 200, 0)
 
                     elif self.mode == Led.Mode.CUBE:
                         # solid purple

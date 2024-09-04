@@ -6,7 +6,7 @@ from subsystems.drivetrain import Drivetrain
 
 class MoveRobot(commands2.CommandBase):  # change the name for your command
 
-    def __init__(self, container, drive:Drivetrain) -> None:
+    def __init__(self, container, drive: Drivetrain) -> None:
         super().__init__()
         self.setName('MoveRobot')  # change this to something appropriate for this command
         self.container = container
