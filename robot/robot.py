@@ -10,6 +10,7 @@ from wpilib.simulation import DriverStationSim
 import robotcontainer
 from robotcontainer import RobotContainer
 from subsystems.led import Led
+from ntcore import NetworkTableInstance
 from subsystems.swerve import Swerve
 
 # import warnings
@@ -34,6 +35,7 @@ class MyRobot(commands2.TimedCommandRobot):
 
         # Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         # autonomous chooser on the dashboard.
+        self.keys_entry = NetworkTableInstance.getDefault().getEntry("SmartDashboard/keys_pressed")
         self.container = RobotContainer()
 
     def disabledInit(self) -> None:
@@ -76,6 +78,8 @@ class MyRobot(commands2.TimedCommandRobot):
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically during operator control"""
+        print(f"keys pressed from periodic: {wpilib.SmartDashboard.getNumberArray('keys_pressed', [-999])}")
+        print(f"keys pressed from nt entry: {self.keys_entry.getIntegerArray('SmartDashboard/keys_pressed')}")
 
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode

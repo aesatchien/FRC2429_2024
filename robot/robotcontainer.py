@@ -5,6 +5,7 @@ import time
 import commands2
 import wpilib
 from commands2.button import CommandXboxController
+from ntcore import NetworkTableInstance
 
 # pathplanner
 from pathplannerlib.auto import NamedCommands, PathPlannerPath
@@ -88,6 +89,7 @@ class RobotContainer:
             self.vision = Vision()
 
         # set up driving
+        self.keys_pressed_entry = NetworkTableInstance.getDefault().getEntry("SmartDashboard/keys_pressed")  # for operator control via keyboard
         self.configure_driver_joystick()
         self.configure_swerve_bindings()
         # swerve driving
@@ -165,22 +167,23 @@ class RobotContainer:
 
         # self.co_trigger_a = commands2.button.Trigger(wpilib.SmartDashboard.getBoolean()
         def f(x):
-            print(wpilib.SmartDashboard.getData("key_pressed"))
-            return x == wpilib.SmartDashboard.getNumber("key_pressed", -999)
-        self.co_trigger_s = commands2.button.Trigger(lambda: f(83))
-        self.co_trigger_a = commands2.button.Trigger(lambda: 65 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_i = commands2.button.Trigger(lambda: 73 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_l = commands2.button.Trigger(lambda: 76 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_k = commands2.button.Trigger(lambda: 75 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_tab = commands2.button.Trigger(lambda: 16777217 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_e = commands2.button.Trigger(lambda: 69 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_b = commands2.button.Trigger(lambda: 66 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_equals = commands2.button.Trigger(lambda: 61 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_minus = commands2.button.Trigger(lambda: 45 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_plus = commands2.button.Trigger(lambda: 43 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_underscore = commands2.button.Trigger(lambda: 95 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_6 = commands2.button.Trigger(lambda: 54 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
-        self.co_trigger_g = commands2.button.Trigger(lambda: 71 in wpilib.SmartDashboard.getNumberArray("keys_pressed", []))
+            # print(wpilib.SmartDashboard.getData("key_pressed"))
+            # return x == wpilib.SmartDashboard.getNumber("key_pressed", -999)
+            return False
+        self.co_trigger_s = commands2.button.Trigger(lambda: 83 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_a = commands2.button.Trigger(lambda: 65 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_i = commands2.button.Trigger(lambda: 73 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_l = commands2.button.Trigger(lambda: 76 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_k = commands2.button.Trigger(lambda: 75 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_tab = commands2.button.Trigger(lambda: 16777217 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_e = commands2.button.Trigger(lambda: 69 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_b = commands2.button.Trigger(lambda: 66 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_equals = commands2.button.Trigger(lambda: 61 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_minus = commands2.button.Trigger(lambda: 45 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_plus = commands2.button.Trigger(lambda: 43 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_underscore = commands2.button.Trigger(lambda: 95 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_6 = commands2.button.Trigger(lambda: 54 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_g = commands2.button.Trigger(lambda: 71 in self.keys_pressed_entry.getIntegerArray([]))
 
         # armsmartgoto low shoot s
         # " amp a
