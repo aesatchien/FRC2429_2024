@@ -173,6 +173,9 @@ class Ui(QtWidgets.QMainWindow):
         # hide networktables
         self.qt_tree_widget_nt.hide()
 
+        self.keys_currently_pressed = []
+        self.setFocusPolicy(Qt.StrongFocus)
+
         # at the end of init, you need to show yourself
         self.show()
 
@@ -184,7 +187,6 @@ class Ui(QtWidgets.QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_widgets)
         self.timer.start(self.refresh_time)
-
 
         # if you need to print out the list of children
         # children = [(child.objectName()) for child in self.findChildren(QtWidgets.QWidget) if child.objectName()]
@@ -758,6 +760,32 @@ class Ui(QtWidgets.QMainWindow):
             self.qt_tree_widget_nt.setColumnWidth(1, 100)
         else:
             self.qt_text_status.appendPlainText(f'{datetime.today().strftime("%H:%M:%S")}: Unable to connect to server')
+
+    def keyPressEvent(self, a0):
+        print(f"adding key {a0.text()} whose code is {a0.key()}")
+        print(type(a0))
+        self.keys_currently_pressed.append(a0.key())
+        print(f"keys currently pressed: {self.keys_currently_pressed}")
+        self.ntinst.getEntry("SmartDashboard/keys_pressed").setIntegerArray(self.keys_currently_pressed)
+        self.ntinst.getEntry("SmartDashboard/key_pressed").setInteger(a0.key())
+
+    def keyReleaseEvent(self, a0):
+        try:
+            print(f"attempting to remove key {a0.key()} ({a0.text()}) from list {self.keys_currently_pressed} ({[chr(i) for i in self.keys_currently_pressed if 32 <= i <= 126]})")
+            self.keys_currently_pressed.remove(a0.key())
+        except:
+            pass
+        print(f"keys currently pressed: {self.keys_currently_pressed}")
+        self.ntinst.getEntry("SmartDashboard/key_pressed").setInteger(-999)
+        self.ntinst.getEntry("SmartDashboard/keys_pressed").setIntegerArray(self.keys_currently_pressed)
+
+    def focusOutEvent(self, a0):
+        # clear because we probably don't want anything happening when we're not focused
+        # pyqt can't handle alt-tabs (they get stuck in the list) so let's not use that
+        self.keys_currently_pressed = []
+        print(f"keys currently pressed: {self.keys_currently_pressed}")
+
+
 
     # -------------------  HELPER FUNCTIONS FOR THE DICTIONARIES AND WIDGETS --------------------------
     def eventFilter(self, obj, event):
