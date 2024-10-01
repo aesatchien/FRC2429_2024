@@ -107,7 +107,7 @@ class Ui(QtWidgets.QMainWindow):
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
-        self.refresh_time = 40  # milliseconds before refreshing
+        self.refresh_time = 16  # milliseconds before refreshing
         self.previous_frames = 0
         self.widget_dict = {}
         self.command_dict = {}
@@ -448,7 +448,7 @@ class Ui(QtWidgets.QMainWindow):
         style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # match time endgame - blue
         style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"  # flashing on step 1 - black with thite letters
         style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # flashing on step 2 - blue with white letters
-        style_flash = style_flash_on if self.counter % 10 < 5 else style_flash_off  # get things to blink
+        style_flash = style_flash_on if self.counter % 30 < 15 else style_flash_off  # get things to blink
 
         # update the connection indicator
         style_disconnected = "border: 7px; border-radius: 7px; background-color:rgb(180, 180, 180); color:rgb(0, 0, 0);"
@@ -666,7 +666,7 @@ class Ui(QtWidgets.QMainWindow):
         # update the 2024 arm configuration indicator
         config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
         if config.upper() not in ['LOW_SHOOT', 'INTAKE']:  # these two positions drive under the stage
-            text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
+            text_color = '(0,0,0)' if self.counter % 30 < 15 else '(255,255,255)'  # make it blink
             postion_style = f"border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb{text_color};"
         else:
             postion_style = style_on
@@ -771,8 +771,11 @@ class Ui(QtWidgets.QMainWindow):
 
     def keyReleaseEvent(self, a0):
         try:
-            print(f"attempting to remove key {a0.key()} ({a0.text()}) from list {self.keys_currently_pressed} ({[chr(i) for i in self.keys_currently_pressed if 32 <= i <= 126]})")
-            self.keys_currently_pressed.remove(a0.key())
+            while a0.key() in self.keys_currently_pressed:
+                # sometimes we get duplicates from clicking off the window while holding a key because it doesn't
+                # catch the key being released
+                print(f"attempting to remove key {a0.key()} ({a0.text()}) from list {self.keys_currently_pressed} ({[chr(i) for i in self.keys_currently_pressed if 32 <= i <= 126]})")
+                self.keys_currently_pressed.remove(a0.key())
         except:
             pass
         print(f"keys currently pressed: {self.keys_currently_pressed}")
@@ -781,7 +784,7 @@ class Ui(QtWidgets.QMainWindow):
 
     def focusOutEvent(self, a0):
         # clear because we probably don't want anything happening when we're not focused
-        # pyqt can't handle alt-tabs (they get stuck in the list) so let's not use that
+        # and also to help with the duplicates when clicking off window issue described in keyReleaseEvent
         self.keys_currently_pressed = []
         print(f"keys currently pressed: {self.keys_currently_pressed}")
 

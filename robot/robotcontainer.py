@@ -167,13 +167,23 @@ class RobotContainer:
 
         # self.co_trigger_a = commands2.button.Trigger(wpilib.SmartDashboard.getBoolean()
         def f(x):
-            # print(wpilib.SmartDashboard.getData("key_pressed"))
-            # return x == wpilib.SmartDashboard.getNumber("key_pressed", -999)
-            return False
+            print(f"keys pressed: {self.keys_pressed_entry.getIntegerArray([])}")
+            goorno = 83 in self.keys_pressed_entry.getIntegerArray([]) and 16777248 in self.keys_pressed_entry.getIntegerArray([])
+            print(f"does this count? {goorno}")
+            return goorno
+
         self.co_trigger_s = commands2.button.Trigger(lambda: 83 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_S_capitalized = commands2.button.Trigger(lambda: 83 in self.keys_pressed_entry.getIntegerArray([])
+                                                                         and 16777248 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_a = commands2.button.Trigger(lambda: 65 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_A_capitalized = commands2.button.Trigger(lambda: 65 in self.keys_pressed_entry.getIntegerArray([])
+                                                                         and 16777248 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_i = commands2.button.Trigger(lambda: 73 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_I_capitalized = commands2.button.Trigger(lambda: 73 in self.keys_pressed_entry.getIntegerArray([])
+                                                                         and 16777248 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_l = commands2.button.Trigger(lambda: 76 in self.keys_pressed_entry.getIntegerArray([]))
+        self.co_trigger_L_capitalized = commands2.button.Trigger(lambda: 76 in self.keys_pressed_entry.getIntegerArray([])
+                                                                         and 16777248 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_k = commands2.button.Trigger(lambda: 75 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_tab = commands2.button.Trigger(lambda: 16777217 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_e = commands2.button.Trigger(lambda: 69 in self.keys_pressed_entry.getIntegerArray([]))
@@ -251,15 +261,21 @@ class RobotContainer:
 
         # arm positions
         self.co_trigger_s.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        self.co_trigger_S_capitalized.onTrue(AutoShootCycle(container=self))
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_A_capitalized.onTrue(AutoShootCycle(container=self))
         self.co_trigger_i.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_l.onTrue(AutoLobCycle(container=self))  # shoot
+        self.co_trigger_I_capitalized.onTrue(SmartIntake(container=self, wait_to_finish=True))
+        self.co_trigger_l.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        self.co_trigger_L_capitalized.onTrue(AutoLobCycle(container=self))  # shoot
+
         # self.co_trigger_y.onTrue(LedToggle(container=self))
 
         # intake / shoot control
         self.co_trigger_k.onTrue(AcquireNoteToggle(container=self, force='off'))  # kill
-        self.co_trigger_tab.onTrue(AutoShootCycle(container=self))  # shoot
-        # self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
+
+        self.co_trigger_e.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter))
+
         self.co_trigger_b.onTrue(LedToggle(container=self))
 
         # bind crank arm  - TODO - figure out how to do a double-tap to make things go faster

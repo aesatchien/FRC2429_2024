@@ -11,7 +11,7 @@ from subsystems.shooter import Shooter
 class EjectAll(commands2.CommandBase):  # change the name for your command
     # When testing, make sure that an incoming shooter command will override it and it will let go of the shooter.
 
-    def __init__(self, container, intake: Intake, indexer: Indexer, shooter: Shooter, controller: CommandXboxController) -> None:
+    def __init__(self, container, intake: Intake, indexer: Indexer, shooter: Shooter, controller: CommandXboxController=None) -> None:
         super().__init__()
         self.setName('Run intake reverse by trigger')  # change this to something appropriate for this command
         self.container = container
@@ -29,10 +29,15 @@ class EjectAll(commands2.CommandBase):  # change the name for your command
                                  f"** Started {self.getName()} at {self.start_time - self.container.get_enabled_time():2.2f} s **")
 
     def execute(self) -> None:
-        trigger_val = self.controller.getLeftTriggerAxis()
-        desired_intake = - trigger_val / 2  # set_intake takes a value from 0 to 1
-        desired_indexer = - trigger_val  # set_indexer takes a value from 0 to 1 instead of volts
-        desired_voltage_shooter = - trigger_val * 2
+        if self.controller is not None:
+            trigger_val = self.controller.getLeftTriggerAxis()
+            desired_intake = - trigger_val / 2  # set_intake takes a value from 0 to 1
+            desired_indexer = - trigger_val  # set_indexer takes a value from 0 to 1 instead of volts
+            desired_voltage_shooter = - trigger_val * 2
+        else:
+            desired_intake = 6
+            desired_indexer = 1/3
+            desired_voltage_shooter = 1/6
         # 6v intake 4v indexer 2V shooter
         self.intake.set_intake(desired_intake)
         self.indexer.set_indexer(desired_indexer)
