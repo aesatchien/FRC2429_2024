@@ -344,6 +344,16 @@ class RobotContainer:
         NamedCommands.registerCommand('Acquire note toggle', AcquireNoteToggle(self))
         NamedCommands.registerCommand('Switch Shooting Direction for Auto Aim', ChangeShootingDirection(container=self))
         NamedCommands.registerCommand('Shoot from anywhere', ShootFromAnywhere(self))
+        NamedCommands.registerCommand('Smart intake on', SmartIntake(self, auto=True, timeout=6, wait_to_finish=True))
+        NamedCommands.registerCommand('Spin up flywheels', ShooterToggle(container=self, shooter=self.shooter, force='on', rpm=3200, amp_rpm=3000, # usually rpm=3500, amp_rpm=2000; changed amp_rpm from 1500 to 3000 for LCE presentation 081524
+                                       auto_amp_slowdown=True, wait_for_spinup=True).withTimeout(0.66))
+        NamedCommands.registerCommand('Stop flywheels', ShooterToggle(container=self, shooter=self.shooter, force='off'))
+        NamedCommands.registerCommand('Pull ring back from shooter', IndexerToggle(container=self, indexer=self.indexer, power=-0.33, force='on', timeout=0.1)
+                                                                            .andThen(IndexerToggle(container=self, indexer=self.indexer, power=0, force='off', timeout=None)))
+        NamedCommands.registerCommand('Put ring into shooter', IndexerToggle(container=self, indexer=self.indexer, power=1, force='on', timeout=0.65)
+                                                                            .andThen(IndexerToggle(container=self, indexer=self.indexer, power=0, force='off', timeout=None)))
+
+
 
     def get_arm_configuration(self):
         return self.arm_configuration
