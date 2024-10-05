@@ -18,7 +18,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Go to shoot"
+                  "name": "Go to intake"
                 }
               },
               {
@@ -66,12 +66,6 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Go to intake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
                         "name": "Smart intake on"
                       }
                     }
@@ -95,12 +89,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "Go to middle speaker side"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Go to shoot"
                 }
               },
               {
@@ -180,12 +168,6 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "Go to shoot"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
@@ -259,12 +241,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "Go to sourceside speaker side"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Go to shoot"
                 }
               },
               {
