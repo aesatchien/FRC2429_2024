@@ -10,6 +10,7 @@ from wpilib.simulation import DriverStationSim
 import robotcontainer
 from robotcontainer import RobotContainer
 from subsystems.led import Led
+from ntcore import NetworkTableInstance
 from subsystems.swerve import Swerve
 
 # import warnings
