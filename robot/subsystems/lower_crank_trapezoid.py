@@ -131,8 +131,6 @@ class LowerCrankArmTrapezoidal(commands2.TrapezoidProfileSubsystem):
         else:
             self.enable_arm()
 
-        self.disable_arm()
-        self.set_brake_mode("coast")
 
     def useState(self, setpoint: wpimath.trajectory.TrapezoidProfile.State) -> None:
         # Calculate the feedforward from the setpoint

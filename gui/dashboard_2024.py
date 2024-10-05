@@ -107,7 +107,7 @@ class Ui(QtWidgets.QMainWindow):
         self.sorted_tree = None  # keep a global list of all the nt addresses
         self.autonomous_list = []  # set up an autonomous list
 
-        self.refresh_time = 16  # milliseconds before refreshing
+        self.refresh_time = 1  # milliseconds before refreshing
         self.previous_frames = 0
         self.widget_dict = {}
         self.command_dict = {}
@@ -448,7 +448,7 @@ class Ui(QtWidgets.QMainWindow):
         style_low = "border: 7px; border-radius: 15px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # match time endgame - blue
         style_flash_on = "border: 7px; border-radius: 7px; background-color:rgb(0, 0, 0); color:rgb(255, 255, 255);"  # flashing on step 1 - black with thite letters
         style_flash_off = "border: 7px; border-radius: 7px; background-color:rgb(0, 20, 255); color:rgb(255, 255, 255);"  # flashing on step 2 - blue with white letters
-        style_flash = style_flash_on if self.counter % 30 < 15 else style_flash_off  # get things to blink
+        style_flash = style_flash_on if self.counter % 480 < 240 else style_flash_off  # get things to blink
 
         # update the connection indicator
         style_disconnected = "border: 7px; border-radius: 7px; background-color:rgb(180, 180, 180); color:rgb(0, 0, 0);"
@@ -623,8 +623,8 @@ class Ui(QtWidgets.QMainWindow):
             grey_val = int(225 * np.abs(best_distance-shot_distance))  # make it a more saturated green
             # blink if the angle is good
             if np.abs(angle_to_speaker) < angle_tolerance:
-                text_color = '(0,0,0)' if self.counter % 10 < 5 else '(255,255,255)'  # make it blink
-                border_color = 'solid blue' if self.counter % 10 < 5 else 'solid black'  # make it blink
+                text_color = '(0,0,0)' if self.counter % 480 < 240 else '(255,255,255)'  # make it blink
+                border_color = 'solid blue' if self.counter % 480 < 240 else 'solid black'  # make it blink
                 border_size = 6
             else:
                 text_color = '(200, 200, 200)'  # still black if we don't have the shot
@@ -666,7 +666,7 @@ class Ui(QtWidgets.QMainWindow):
         # update the 2024 arm configuration indicator
         config = self.widget_dict['qlabel_position_indicator']['entry'].getString('?')
         if config.upper() not in ['LOW_SHOOT', 'INTAKE']:  # these two positions drive under the stage
-            text_color = '(0,0,0)' if self.counter % 30 < 15 else '(255,255,255)'  # make it blink
+            text_color = '(0,0,0)' if self.counter % 480 < 240 else '(255,255,255)'  # make it blink
             postion_style = f"border: 7px; border-radius: 7px; background-color:rgb(220, 0, 0); color:rgb{text_color};"
         else:
             postion_style = style_on
@@ -674,7 +674,7 @@ class Ui(QtWidgets.QMainWindow):
         self.qlabel_position_indicator.setStyleSheet(postion_style)
 
         self.counter += 1
-        if self.counter % 80 == 0:  # display an FPS every 2s or so  REMEMBER THIS MAX IS SET BY THE STREAMER
+        if self.counter % 80 * 16 == 0:  # display an FPS every 2s or so  REMEMBER THIS MAX IS SET BY THE STREAMER
             current_time = time.time()
             time_delta = current_time - self.previous_time
             frames = self.worker.frames if self.worker is not None else 0
