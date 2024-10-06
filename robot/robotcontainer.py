@@ -220,7 +220,7 @@ class RobotContainer:
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
 
-        self.trigger_only_a.onTrue(SmartIntake(container=self, wait_to_finish=True))  # force intake on, set LEDs orange, wait for note
+        self.trigger_only_a.onTrue(GoToIntake(container=self).andThen(SmartIntake(container=self, wait_to_finish=True)))  # force intake on, set LEDs orange, wait for note
         self.trigger_shift_a.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
         # TRIGGER B BOUND IN SWERVE SECTION
 
@@ -236,7 +236,7 @@ class RobotContainer:
 
         self.trigger_l_trigger.whileTrue(commands2.ParallelRaceGroup(
             AutoDriveToNote(self),
-            SmartIntake(self, wait_to_finish=True)
+            GoToIntake(container=self).andThen(SmartIntake(self, wait_to_finish=True))
         ))
 
         # WE SHOULD NOT BIND LB.  IT IS USED AS ROBOT-CENTRIC IN DRIVE AND AS A SHIFT BUTTON ON OTHER COMMANDS

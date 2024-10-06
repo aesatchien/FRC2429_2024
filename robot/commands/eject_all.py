@@ -35,9 +35,9 @@ class EjectAll(commands2.CommandBase):  # change the name for your command
             desired_indexer = - trigger_val  # set_indexer takes a value from 0 to 1 instead of volts
             desired_voltage_shooter = - trigger_val * 2
         else:
-            desired_intake = 6
-            desired_indexer = 1/3
-            desired_voltage_shooter = 1/6
+            desired_intake = -6
+            desired_indexer = -1/3
+            desired_voltage_shooter = -1
         # 6v intake 4v indexer 2V shooter
         self.intake.set_intake(desired_intake)
         self.indexer.set_indexer(desired_indexer)

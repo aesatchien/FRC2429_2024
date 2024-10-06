@@ -39,21 +39,6 @@ class SmartIntake(commands2.Command):
 
         self.timer.restart()
 
-        # go to intake if not already there
-        if self.container.get_arm_configuration() != 'intake':
-            if not self.auto:  # works fine in teleop
-                ArmSmartGoTo(container=self.container, desired_position='intake').schedule()  # try to do it all in one
-            # else:
-            #     # ArmSmartGoTo does not play nice with the ParallelGroups - so do it from here
-            #     # LHACK 10/20/24 parallelgroups don't work with any command that calls command.schedule() so this doesn't work either
-            #     self.container.set_arm_configuration('intake')
-            #     commands2.SequentialCommandGroup(
-            #             ArmMove(self.container, self.container.crank_arm, constants.k_crank_presets['low_shoot']['lower'],
-            #                     absolute=True, wait_to_finish=True),
-            #         ArmMove(self.container, self.container.shooter_arm, constants.k_crank_presets['low_shoot']['upper'],
-            #                 absolute=True, wait_to_finish=True),
-            #     ).schedule()
-
         # always stop the shooter no matter what you do here
         self.shooter.stop_shooter()
 
@@ -75,10 +60,10 @@ class SmartIntake(commands2.Command):
 
     def end(self, interrupted: bool) -> None:
         if interrupted:
-            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, 0.5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, 4).schedule()
             print(f'Failed to intake ring from {self.getName()}')
         else:
-            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 0.5).schedule()
+            self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 4).schedule()
             self.intake.stop_intake()
             self.indexer.stop_indexer()
 
