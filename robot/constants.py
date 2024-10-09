@@ -58,10 +58,10 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':5, 'lower': 46},  # was 67, changed upper to -35 on 081124; 10 081524; 5 081524
-    'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb; should be called trap shoot
+    'intake': {'upper':-58, 'lower': 46},  # was 63
+    'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
-    'amp': {'upper': 52, 'lower': 100}  ,
+    'amp': {'upper': 52, 'lower': 100},
     'low_amp': {'upper': -70, 'lower': 108},
     'bottom': {'upper': -84, 'lower': 40},
     'climb_second': {'upper':12, 'lower':90}
@@ -112,7 +112,7 @@ k_shooter_arm_dict = {
     'name': 'upper_arm',
     'max_angle': 109, 'min_angle': -95,  # was -79 before Q7
     'motor_can_id': 8, 'follower_can_id': 9,
-    'abs_encoder_zero_offset':  0.595,  # 0.45, # 0.420,  # makes horizontal 0 with no position factor
+    'abs_encoder_zero_offset': 0.66, # 0.595,  # 0.45, # 0.420,  # makes horizontal 0 with no position factor
     'encoder_position_conversion_factor': 2 * math.pi,  # shooter crank is 1:1 with thru-bore encoder,
     'k_motor_count': 2,  #
     'k_kArmOffsetRads': -1.5,  # # The offset of the arm from the horizontal in its neutral position, measured from the horizontal

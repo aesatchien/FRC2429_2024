@@ -121,7 +121,8 @@ class Drivetrain(SubsystemBase):
             self.thrust *= self.thrust_limit
             # analog encoder is at 0.61 at neutral position (not turning) and travels .225 above and below that
             # so to scale from -1 to 1, subtract the central value and divide by .225
-            self.twist = direction * (self.steering_encoder.get() - 0.608) / 0.225
+            # as of 080324, switched encoders, neutral is now 0.93
+            self.twist = direction * (self.steering_encoder.get() - 0.926) / 0.225
             self.twist *= self.twist_limit
 
             # if math.fabs(self.twist) < self.deadband:

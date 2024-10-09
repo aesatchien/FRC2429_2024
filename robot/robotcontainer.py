@@ -265,7 +265,7 @@ class RobotContainer:
         self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
         self.co_trigger_A_capitalized.onTrue(AutoShootCycle(container=self))
         self.co_trigger_i.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
-        self.co_trigger_I_capitalized.onTrue(SmartIntake(container=self, wait_to_finish=True))
+        self.co_trigger_I_capitalized.onTrue(AutoShootCycle(container=self))
         self.co_trigger_l.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
         self.co_trigger_L_capitalized.onTrue(AutoLobCycle(container=self))  # shoot
 
