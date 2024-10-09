@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.2260656446355482,
-        "y": 7.003080254377342
+        "x": 2.3211515752560734,
+        "y": 6.604911811820771
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6712314966614046,
-        "y": 7.003080254377342
+        "x": 2.660765835083737,
+        "y": 6.780574360007495
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.1394462788925583,
-        "y": 7.003080254377342
+        "x": 3.2697293354643757,
+        "y": 7.178742802564065
       },
       "prevControl": {
-        "x": 2.7529886728817683,
-        "y": 7.003080254377342
+        "x": 2.813006710178897,
+        "y": 6.9328152351026535
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,13 +31,13 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.0,
-      "rotationDegrees": 0,
+      "rotationDegrees": 30.0,
       "rotateFast": true
     },
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": 0,
-      "rotateFast": false
+      "rotationDegrees": 30.0,
+      "rotateFast": true
     }
   ],
   "constraintZones": [
@@ -62,14 +62,11 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 30.735487701919954,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "Near Rings",
-  "previewStartingState": {
-    "rotation": 0,
-    "velocity": 0
-  },
+  "previewStartingState": null,
   "useDefaultConstraints": false
 }
