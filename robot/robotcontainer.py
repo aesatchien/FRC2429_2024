@@ -148,29 +148,22 @@ class RobotContainer:
 
     def configure_copilot_joystick(self):
 
-        # self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
-        # self.co_trigger_left_stick_y = self.co_pilot_command_controller.axisGreaterThan(axis=1, threshold=0.5)
-        # self.co_trigger_a = self.co_pilot_command_controller.a()  # 2024 way
-        # self.co_trigger_b = self.co_pilot_command_controller.b()
-        # self.co_trigger_y = self.co_pilot_command_controller.y()
-        # self.co_trigger_x = self.co_pilot_command_controller.x()
-        # self.co_trigger_rb = self.co_pilot_command_controller.rightBumper()
-        # self.co_trigger_lb = self.co_pilot_command_controller.leftBumper()
-        # self.co_trigger_r = self.co_pilot_command_controller.povRight()
-        # self.co_trigger_l = self.co_pilot_command_controller.povLeft()
-        # self.co_trigger_u = self.co_pilot_command_controller.povUp()
-        # self.co_trigger_d = self.co_pilot_command_controller.povDown()
-        # self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
-        # self.co_trigger_r_trigger = self.co_pilot_command_controller.rightTrigger(0.2)
-        # self.co_trigger_start = self.co_pilot_command_controller.start()
-        # self.co_trigger_back = self.co_pilot_command_controller.back()
-
-        # self.co_trigger_a = commands2.button.Trigger(wpilib.SmartDashboard.getBoolean()
-        def f(x):
-            print(f"keys pressed: {self.keys_pressed_entry.getIntegerArray([])}")
-            goorno = 83 in self.keys_pressed_entry.getIntegerArray([]) and 16777248 in self.keys_pressed_entry.getIntegerArray([])
-            print(f"does this count? {goorno}")
-            return goorno
+        self.co_pilot_command_controller = CommandXboxController(constants.k_co_pilot_controller_port)  # 2024 way
+        self.co_trigger_left_stick_y = self.co_pilot_command_controller.axisGreaterThan(axis=1, threshold=0.5)
+        self.co_trigger_a = self.co_pilot_command_controller.a()  # 2024 way
+        self.co_trigger_b = self.co_pilot_command_controller.b()
+        self.co_trigger_y = self.co_pilot_command_controller.y()
+        self.co_trigger_x = self.co_pilot_command_controller.x()
+        self.co_trigger_rb = self.co_pilot_command_controller.rightBumper()
+        self.co_trigger_lb = self.co_pilot_command_controller.leftBumper()
+        self.co_trigger_r = self.co_pilot_command_controller.povRight()
+        self.co_trigger_l = self.co_pilot_command_controller.povLeft()
+        self.co_trigger_u = self.co_pilot_command_controller.povUp()
+        self.co_trigger_d = self.co_pilot_command_controller.povDown()
+        self.co_trigger_l_trigger = self.co_pilot_command_controller.leftTrigger(0.2)
+        self.co_trigger_r_trigger = self.co_pilot_command_controller.rightTrigger(0.2)
+        self.co_trigger_start = self.co_pilot_command_controller.start()
+        self.co_trigger_back = self.co_pilot_command_controller.back()
 
         self.co_trigger_s = commands2.button.Trigger(lambda: 83 in self.keys_pressed_entry.getIntegerArray([]))
         self.co_trigger_S_capitalized = commands2.button.Trigger(lambda: 83 in self.keys_pressed_entry.getIntegerArray([])
@@ -258,6 +251,33 @@ class RobotContainer:
         # self.trigger_shift_y.onTrue(commands2.PrintCommand('You pressed Y and LB - and nothing else happened'))
 
     def bind_copilot_buttons(self):
+
+        # ---------------- CONTROLLER CONTROLS ---------------------
+
+        # arm positions
+        self.co_trigger_a.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
+        self.co_trigger_b.onTrue(ArmSmartGoTo(container=self, desired_position='amp'))
+        self.co_trigger_x.onTrue(ArmSmartGoTo(container=self, desired_position='intake'))
+        self.co_trigger_y.onTrue(AutoLobCycle(container=self))  # shoot
+        # self.co_trigger_y.onTrue(LedToggle(container=self))
+
+        # intake / shoot control
+        self.co_trigger_lb.onTrue(AcquireNoteToggle(container=self, force='off'))  # kill
+        self.co_trigger_rb.onTrue(AutoShootCycle(container=self))  # shoot
+        self.co_trigger_l_trigger.whileTrue(EjectAll(self, self.intake, self.indexer, self.shooter, self.co_pilot_command_controller))
+        self.co_trigger_r_trigger.onTrue(LedToggle(container=self))
+
+        # bind crank arm  - TODO - figure out how to do a double-tap to make things go faster
+        direction = None
+        self.co_trigger_r.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=8, direction=direction)) # was 15 and -15
+        self.co_trigger_l.onTrue(ArmMove(container=self, arm=self.crank_arm, degrees=-8, direction=direction))
+        self.co_trigger_u.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=5, direction=direction)) # was 10 and -10 lhack testing 3/12/24
+        self.co_trigger_d.onTrue(ArmMove(container=self, arm=self.shooter_arm, degrees=-5, direction=direction))
+
+        self.co_trigger_start.whileTrue(CalibrateLowerCrankByLimitSwitch(container=self, lower_crank=self.crank_arm, led=self.led))
+        self.co_trigger_back.onTrue(AutoClimbGiselle(self))
+
+        # ------------------- KEYBOARD CONTROLS ---------------------
 
         # arm positions
         self.co_trigger_s.onTrue(ArmSmartGoTo(container=self, desired_position='low_shoot'))
