@@ -5,6 +5,7 @@ import time
 import commands2
 import wpilib
 from commands2.button import CommandXboxController
+from commands2.button import CommandJoystick
 from ntcore import NetworkTableInstance
 
 # pathplanner
@@ -103,6 +104,9 @@ class RobotContainer:
             if constants.k_enable_copilot:
                 self.configure_copilot_joystick()
                 self.bind_copilot_buttons()
+            if constants.k_enable_button_box:
+                self.configure_button_box()
+                self.bind_button_box()
 
         # this has to be before initialize_dashboard but after configuring controls 3/22/24 LHACK
         self.registerCommands()
@@ -204,6 +208,37 @@ class RobotContainer:
         # calibrate by limit switch (no longer needed i think) 6
         # auto climb giselle g
 
+    def configure_button_box(self):
+        # The driver's controller
+        self.button_box = CommandJoystick(constants.k_button_box_port)  # 2024 way
+        # this should probably be a list completion
+        self.button_1 = self.button_box.button(1)
+        self.button_2 = self.button_box.button(2)
+        self.button_3 = self.button_box.button(3)
+        self.button_4 = self.button_box.button(4)
+        self.button_5 = self.button_box.button(5)
+        self.button_6 = self.button_box.button(6)
+        self.button_7 = self.button_box.button(7)
+        self.button_8 = self.button_box.button(8)
+        self.button_9 = self.button_box.button(9)
+        self.button_10 = self.button_box.button(10)
+
+    def bind_button_box(self):
+
+        self.button_1.onTrue(AcquireNoteToggle(container=self, force='off'))  # kill
+        self.button_6.onTrue(AutoShootCycle(container=self))  # shoot
+
+        self.button_2.onTrue(LedToggle(container=self))
+        self.button_7.onTrue(LedToggle(container=self))
+
+        self.button_3.onTrue(LedToggle(container=self))
+        self.button_8.onTrue(LedToggle(container=self))
+
+        self.button_4.onTrue(LedToggle(container=self))
+        self.button_9.onTrue(LedToggle(container=self))
+
+        self.button_5.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
+        self.button_10.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='speaker'))
 
     def configure_swerve_bindings(self):
         self.trigger_only_b.debounce(0.05).onTrue(GyroReset(self, swerve=self.drive))
