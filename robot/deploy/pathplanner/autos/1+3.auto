@@ -240,7 +240,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to sourceside speaker side"
+                  "pathName": "shoot from lineish sourceside"
                 }
               },
               {
@@ -260,6 +260,12 @@
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Go to shoot"
                 }
               }
             ]

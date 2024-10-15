@@ -171,6 +171,7 @@ k_red_amp = [14.75, 7.74, 90]  # (x, y, rotation)
 # --------------  SPEAKER POSITIONS  ---------------
 k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
 k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
+k_red_amp_corner = [1, 7.5]
 
 k_speaker_opening_height = 2  # height of speaker opening
 

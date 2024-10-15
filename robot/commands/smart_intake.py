@@ -62,6 +62,8 @@ class SmartIntake(commands2.Command):
         if interrupted:
             self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, 4).schedule()
             print(f'Failed to intake ring from {self.getName()}')
+            self.intake.stop_intake()
+            self.indexer.stop_indexer()
         else:
             self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_SUCCESS, 4).schedule()
             self.intake.stop_intake()
