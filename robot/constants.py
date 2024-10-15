@@ -19,6 +19,7 @@ k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
 k_path_from_robot_to_pathplanner_autos = 'deploy/pathplanner/autos'
 k_path_to_abs_encoder_data = '/home/lvuser/abs_encoder_data.json'
 k_enable_copilot = True
+k_enable_button_box = False
 k_reset_sparks_to_default = False
 
 k_swerve_state_messages = True  # these currently send the pose data to the sim - keep them on
@@ -28,6 +29,7 @@ k_swerve_debugging_messages = False  # these show the target angles and actual. 
 # ID for the driver's joystick (template)
 k_driver_controller_port = 0
 k_co_pilot_controller_port = 1
+k_button_box_port = 2
 
 k_slowmode_multiplier = 0.3  # cut max velocity of the robot for fine movement control
 k_field_centric = True  # True sets the robot driving to the driver's point of view, not the robot's
