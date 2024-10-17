@@ -15,11 +15,12 @@ import constants
 from subsystems.swerve_constants import DriveConstants as dc
 
 class DriveAndAutoAimChassis(commands2.Command):
-    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False, shooting_backwards=True) -> None:
+    def __init__(self, container, swerve: Swerve, velocity_multiplier=None, field_oriented=True, rate_limited=False, shooting_backwards=True, aim_target="speaker") -> None:
         super().__init__()
         self.setName('drive_and_auto_aim_chassis')
         self.container = container
         self.shooting_backwards = shooting_backwards
+        self.aim_target = aim_target
         self.swerve = swerve
         self.velocity_multiplier = velocity_multiplier
         self.field_oriented = field_oriented  # Sanjith wants this on a button instead
@@ -52,21 +53,28 @@ class DriveAndAutoAimChassis(commands2.Command):
         max_linear = 1 * slowmode_multiplier  # stick values  - actual rates are in the constants files
 
         # since we are tracking angular, we need to be able to spin faster, so up this compared to the regular way
-        max_angular = 2.5 * slowmode_multiplier  # 1.5 * slowmode_multiplier
+        max_angular = 4 * slowmode_multiplier  # 1.5 * slowmode_multiplier
 
         if wpilib.DriverStation.getAlliance() == wpilib.DriverStation.Alliance.kRed:
-            translation_origin_to_speaker = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
+            if self.aim_target == "speaker":
+                translation_origin_to_target = Translation2d(constants.k_red_speaker[0], constants.k_red_speaker[1])
+            elif self.aim_target == "amp":
+                translation_origin_to_target = Translation2d(constants.k_red_amp[0], constants.k_red_amp[1])
         else:
-            translation_origin_to_speaker = Translation2d(constants.k_blue_speaker[0], constants.k_blue_speaker[1])
+            if self.aim_target == "speaker":
+                translation_origin_to_target = Translation2d(constants.k_blue_speaker[0], constants.k_blue_speaker[1])
+            elif self.aim_target == "amp":
+                translation_origin_to_target = Translation2d(constants.k_blue_amp[0], constants.k_blue_amp[1])
+
 
         translation_origin_to_robot = self.swerve.get_pose().translation()
-        translation_robot_to_speaker = translation_origin_to_speaker - translation_origin_to_robot
+        translation_robot_to_target = translation_origin_to_target - translation_origin_to_robot
         
         if self.shooting_backwards:
-            desired_angle = translation_robot_to_speaker.angle().rotateBy(Rotation2d(math.radians(180)))
+            desired_angle = translation_robot_to_target.angle().rotateBy(Rotation2d(math.radians(180)))
         else:
-            desired_angle = translation_robot_to_speaker.angle()
-        self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards speaker since we shoot like that
+            desired_angle = translation_robot_to_target.angle()
+        self.rotation_pid.setSetpoint(desired_angle.radians())  # todo: make this point robot's back towards target since we shoot like that
 
         # note that serve's x direction is up/down on the left stick.  (normally think of this as y)
         # according to the templates, these are all multiplied by -1

@@ -456,6 +456,7 @@ class Swerve (Subsystem):
                 wpilib.SmartDashboard.putNumber('drive_y', pose.Y())
                 wpilib.SmartDashboard.putNumber('drive_theta', pose.rotation().degrees())
 
+            wpilib.SmartDashboard.putNumber('distance to amp', (pose - Pose2d(constants.k_blue_amp[0], constants.k_blue_amp[1], 0)).translation().norm())
             wpilib.SmartDashboard.putNumber('_navx', self.get_angle())
             wpilib.SmartDashboard.putNumber('_navx_yaw', self.get_yaw())
             wpilib.SmartDashboard.putNumber('_navx_angle', self.get_angle())

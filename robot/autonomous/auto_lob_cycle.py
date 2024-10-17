@@ -14,9 +14,9 @@ class AutoLobCycle(commands2.SequentialCommandGroup):
         # back up indexer, turn on shooter, wait, fire indexer full speed into,
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=-0.33, force='on', timeout=0.1))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
-        self.addCommands(ShooterToggleLob(container=self.container, shooter=self.container.shooter, force='on', rpm=1500, amp_rpm=1000, # usually rpm=3500, amp_rpm=2000
+        self.addCommands(ShooterToggleLob(container=self.container, shooter=self.container.shooter, force='on', rpm=3000, amp_rpm=1000, # usually rpm=3500, amp_rpm=2000
                                        auto_amp_slowdown=True, wait_for_spinup=True).withTimeout(0.66))
-        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=0.75))  # this is a bad timeout
+        self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=1.5))  # this is a bad timeout
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
         self.addCommands(ShooterToggleLob(container=self.container, shooter=self.container.shooter, force='off'))
 

@@ -248,7 +248,10 @@ class RobotContainer:
         PathPlannerMaker = PathPlannerConfiguration()
         # bind driver buttons not related to swerve
 
-        self.trigger_only_a.onTrue(GoToIntake(container=self).andThen(SmartIntake(container=self, wait_to_finish=True)))  # force intake on, set LEDs orange, wait for note
+        self.trigger_only_a.onTrue(GoToIntake(container=self).andThen(
+                SmartIntake(container=self, wait_to_finish=True).andThen(
+                    GoToShoot(self)
+            )))  # force intake on, set LEDs orange, wait for note
         self.trigger_shift_a.onTrue(AcquireNoteToggle(container=self, force='on'))   # old version - does not go to intake in case they get in trouble
         # TRIGGER B BOUND IN SWERVE SECTION
 
@@ -260,15 +263,24 @@ class RobotContainer:
         self.trigger_shift_x.debounce(0.05).whileTrue(DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric, rate_limited=constants.k_rate_limited, shooting_backwards=False))
 
         self.trigger_only_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='amp'))
-        self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='stage'))
+        self.trigger_shift_y.whileTrue(AutoDriveToTag(container=self, drive=self.drive, destination='speaker'))
 
         self.trigger_l_trigger.whileTrue(commands2.ParallelRaceGroup(
             AutoDriveToNote(self),
-            GoToIntake(container=self).andThen(SmartIntake(self, wait_to_finish=True))
+            GoToIntake(container=self).andThen(
+                SmartIntake(self, wait_to_finish=True).andThen(
+                    GoToShoot(self)
+                ))
         ))
 
         # WE SHOULD NOT BIND LB.  IT IS USED AS ROBOT-CENTRIC IN DRIVE AND AS A SHIFT BUTTON ON OTHER COMMANDS
-        self.trigger_rb.debounce(0.05).onTrue(commands2.InstantCommand(self.climber.toggle_trap_servo))
+        self.trigger_rb.debounce(0.05).whileTrue(commands2.ParallelCommandGroup(
+            DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric,
+                                   rate_limited=constants.k_rate_limited, shooting_backwards=True, aim_target="amp"),
+            GoToShoot(self)
+        ))
+        self.trigger_rb.debounce(0.05).onFalse(AutoLobCycle(self))
+
 
         # DPAD
         self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))

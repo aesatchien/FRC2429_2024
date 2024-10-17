@@ -19,7 +19,7 @@ k_path_from_robot_to_pathplanner_files = "deploy/pathplanner/paths"
 k_path_from_robot_to_pathplanner_autos = 'deploy/pathplanner/autos'
 k_path_to_abs_encoder_data = '/home/lvuser/abs_encoder_data.json'
 k_enable_copilot = True
-k_enable_button_box = False
+k_enable_button_box = True
 k_reset_sparks_to_default = False
 
 k_swerve_state_messages = True  # these currently send the pose data to the sim - keep them on
@@ -173,8 +173,6 @@ k_red_amp = [14.75, 7.74, 90]  # (x, y, rotation)
 # --------------  SPEAKER POSITIONS  ---------------
 k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
 k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
-k_red_amp_corner = [1, 7.5]
-
 k_speaker_opening_height = 2  # height of speaker opening
 
 #---------------- APRILTAG POSITIONS ---------------
