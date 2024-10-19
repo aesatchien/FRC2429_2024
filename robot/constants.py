@@ -63,7 +63,7 @@ k_crank_presets = {
     'intake': {'upper':-58, 'lower': 46},  # was 63
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
-    'amp': {'upper': 52, 'lower': 100},
+    'amp': {'upper': 70 , 'lower': 100},
     'low_amp': {'upper': -70, 'lower': 108},
     'bottom': {'upper': -84, 'lower': 40},
     'climb_second': {'upper':12, 'lower':90}
@@ -174,6 +174,10 @@ k_red_amp = [14.75, 7.74, 90]  # (x, y, rotation)
 k_blue_speaker = [0, 5.55, 180]  # (x, y, rotation)
 k_red_speaker = [16.5, 5.555, 0]  # (x, y, rotation)
 k_speaker_opening_height = 2  # height of speaker opening
+
+# --------------  SOURCE CORNER POSITIONS  ---------------
+k_blue_source_corner = [0, 8, 0]
+k_red_source_corner = [16, 8, 0]
 
 #---------------- APRILTAG POSITIONS ---------------
 k_speaker_tags_poses = {"blue": [-0.038100, 5.547868], "red": [16.579342, 5.547868]}

@@ -16,7 +16,7 @@ class AutoShootCycle(commands2.SequentialCommandGroup):
                                        ))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))
         # in AV speaker shots keep bouncing out - so we lowered from 3500 to 3200 rmp  20240404 CJH
-        self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='on', rpm=3000, amp_rpm=1500, # usually rpm=3500, amp_rpm=2000;
+        self.addCommands(ShooterToggle(container=self.container, shooter=self.container.shooter, force='on', rpm=3000, amp_rpm=1800, # before p1 tidal amp was 1500
                                        auto_amp_slowdown=True, wait_for_spinup=True).withTimeout(0.66))
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=1, force='on', timeout=0.65))  # this is a bad timeout
         self.addCommands(IndexerToggle(container=self.container, indexer=self.container.indexer, power=0, force='off', timeout=None))

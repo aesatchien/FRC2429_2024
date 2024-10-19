@@ -276,18 +276,18 @@ class RobotContainer:
         # WE SHOULD NOT BIND LB.  IT IS USED AS ROBOT-CENTRIC IN DRIVE AND AS A SHIFT BUTTON ON OTHER COMMANDS
         self.trigger_rb.debounce(0.05).whileTrue(commands2.ParallelCommandGroup(
             DriveAndAutoAimChassis(container=self, swerve=self.drive, field_oriented=constants.k_field_centric,
-                                   rate_limited=constants.k_rate_limited, shooting_backwards=True, aim_target="amp"),
+                                   rate_limited=constants.k_rate_limited, shooting_backwards=True, aim_target="corner"),
             GoToShoot(self)
         ))
         self.trigger_rb.debounce(0.05).onFalse(AutoLobCycle(self))
 
 
         # DPAD
-        self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
+        # self.trigger_u.onTrue(ToggleClimbServos(self, climber=self.climber, force=None))
         climber_voltage = 4  # was 3 until Tempe
-        self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
-        self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
-        self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
+        # self.trigger_d.debounce(0.05).whileTrue(AutoClimbSanjith(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=climber_voltage))
+        # self.trigger_l.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=climber_voltage, right_volts=0))
+        # self.trigger_r.debounce(0.05).whileTrue(RunClimber(container=self, climber=self.climber, left_volts=0, right_volts=climber_voltage))
 
         self.trigger_start.whileTrue(CrankArmCoast(container=self, crank_arm=self.crank_arm))
 
