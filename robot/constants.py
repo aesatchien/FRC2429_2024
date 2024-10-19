@@ -60,7 +60,7 @@ k_intake_neo_port = 5  # CAN ID
 
 #cranks
 k_crank_presets = {
-    'intake': {'upper':-58, 'lower': 46},  # was 63
+    'intake': {'upper':-55, 'lower': 46},  # was 63
     'shoot': {'upper': 1, 'lower':90}, # used to be -40 but changed it for climb
     'low_shoot': {'upper':-84, 'lower': 45},
     'amp': {'upper': 70 , 'lower': 100},
