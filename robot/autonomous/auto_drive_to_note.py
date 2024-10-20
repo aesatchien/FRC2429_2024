@@ -79,7 +79,7 @@ class AutoDriveToNote(commands2.CommandBase):
         return False  # let the button held down kill this command instead of any other end condition
 
     def end(self, interrupted: bool) -> None:
-        self.intake.stop_intake()
+        # self.intake.stop_intake()
         end_time = self.container.get_enabled_time()
         message = 'Interrupted' if interrupted else 'Ended'
         print(f"** {message} {self.getName()} at {end_time:.1f} s after {end_time - self.start_time:.1f} s **")

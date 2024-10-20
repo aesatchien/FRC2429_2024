@@ -11,8 +11,9 @@ import constants
 
 class Led(commands2.Subsystem):
     class Mode(enum.Enum):
-        RING = 'RING'  # orange
-        CUBE = 'CUBE'  # purple
+        NOTE_LOADED = 'NOTE_LOADED'
+        NOTE_SPOTTED = 'NOTE_SPOTTED'
+        NONE = 'NONE'
 
     # temporary indicators (flashing for pickup, strafing, etc)
     class Indicator(enum.Enum):
@@ -32,9 +33,10 @@ class Led(commands2.Subsystem):
 
         POLKA = 'POLKA' # black and white spots looping around led string
 
-    def __init__(self):
+    def __init__(self, container):
         super().__init__()
         self.setName('Led')
+        self.container = container
         self.counter = 0
         self.animation_counter = 0
 
@@ -50,7 +52,7 @@ class Led(commands2.Subsystem):
         self.led_strip.setData(self.led_data)
         self.led_strip.start()
 
-        self.mode = self.Mode.RING
+        self.mode = self.Mode.NONE
 
         #self.indicator = Led.Indicator.NONE
         self.indicator = Led.Indicator.POLKA
@@ -79,7 +81,7 @@ class Led(commands2.Subsystem):
             SmartDashboard.putString('led_indicator', self.indicator.value)
 
             # advertise our state to the dash
-            SmartDashboard.putBoolean('cone_selected', self.mode == self.Mode.RING)
+            # SmartDashboard.putBoolean('cone_selected', self.mode == self.Mode.RING)
 
             self.animation_counter += 1
 
@@ -134,7 +136,17 @@ class Led(commands2.Subsystem):
                         # if cycle % 2 == 0:
                         #     led.setRGB(0, 0, 0)
                         # else:
-                        led.setRGB(255, 40, 0)
+
+                        freq = 1  # 10 /s > 2x /s
+                        cycle = math.floor(self.animation_counter / freq)
+
+                        if cycle % 2 == 0:
+                            led.setRGB(255, 40, 0)
+                        else:
+                            if self.container.vision.target_available("orange"):
+                                led.setRGB(128, 128, 255)
+                            else:
+                                led.setRGB(0, 0, 0)
 
                     elif self.indicator == Led.Indicator.SHOOTER_ON:
                         led.setRGB(0, 255, 0)
@@ -187,13 +199,26 @@ class Led(commands2.Subsystem):
                             self.polka_counter *= -1
 
                 else:
-                    if self.mode == Led.Mode.RING:
-                        # solid none
-                        led.setRGB(0, 0, 0)
+                    if self.container.shooter.is_ring_loaded():
+                        self.mode = Led.Mode.NOTE_LOADED
+                    elif self.container.vision.target_available("orange"):
+                        self.mode = Led.Mode.NOTE_SPOTTED
+                    else:
+                        self.mode = Led.Mode.NONE
 
-                    elif self.mode == Led.Mode.CUBE:
-                        # solid purple
-                        led.setRGB(255, 0, 255)
+                    if self.mode == Led.Mode.NOTE_LOADED:
+                        led.setRGB(0, 128, 0)
+                    elif self.mode == Led.Mode.NOTE_SPOTTED:
+                        led.setRGB(128, 128, 255)
+                    elif self.mode == Led.Mode.NONE:
+                        led.setRGB(0, 0, 0)
+                    # if self.mode == Led.Mode.RING:
+                        # solid none
+                        # led.setRGB(0, 0, 0)
+
+                    # elif self.mode == Led.Mode.CUBE:
+                    #     # solid purple
+                    #     led.setRGB(255, 0, 255)
 
 
             self.led_strip.setData(self.led_data)

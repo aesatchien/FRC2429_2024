@@ -59,7 +59,7 @@ class SmartIntake(commands2.Command):
             return True
 
     def end(self, interrupted: bool) -> None:
-        if interrupted:
+        if not self.shooter.is_ring_loaded():
             self.led.set_indicator_with_timeout(Led.Indicator.CALIBRATION_FAIL, 4).schedule()
             print(f'Failed to intake ring from {self.getName()}')
             self.intake.stop_intake()
